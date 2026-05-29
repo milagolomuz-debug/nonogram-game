@@ -1,0 +1,1831 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#6f9192">
+<style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #e4eeee;
+  }
+
+  #cn-game {
+    color-scheme: light;
+    --cn-bg: #e4eeee;
+    --cn-game-bg: #f7f4ee;
+    --cn-ink: #202124;
+    --cn-muted: #74716b;
+    --cn-line: #9a9a9a;
+    --cn-major-line: #555555;
+    --cn-minor-stroke: 1px;
+    --cn-major-stroke: 1.5px;
+    --cn-outer-stroke: 1.5px;
+    --cn-panel: #fffdf8;
+    --cn-accent: #ffa389;
+    --cn-highlight: #ff6f61;
+    --cn-highlight-stroke: 1px;
+    --cn-cols: 25;
+    --cn-rows: 35;
+    --cn-clue-cols: 8;
+    --cn-clue-rows: 11;
+    --cn-cell: 11px;
+    --cn-board-w: 363px;
+    --cn-board-h: 506px;
+    --cn-grid-w: 275px;
+    --cn-grid-h: 385px;
+    --cn-clue-left: 88px;
+    --cn-clue-top: 121px;
+    width: 100%;
+    min-height: 852px;
+    background: var(--cn-bg);
+    color: var(--cn-ink);
+    font-family: "Montserrat", sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  #cn-game * {
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+  }
+
+  #cn-game button {
+    font: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #cn-game .cn-app {
+    width: 393px;
+    height: 852px;
+    max-width: 100vw;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: var(--cn-bg);
+  }
+
+  #cn-game .cn-toolbar {
+    position: absolute;
+    left: 0;
+    top: 72px;
+    width: 100%;
+    height: 62px;
+    display: block;
+    background: var(--cn-accent);
+    padding: 0;
+    z-index: 10;
+  }
+
+  #cn-game .cn-tool {
+    position: absolute;
+    top: 16px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1;
+    opacity: 0.96;
+    cursor: pointer;
+    padding: 0;
+    display: grid;
+    place-items: center;
+  }
+
+  #cn-game .cn-tool--back {
+    left: 15.37px;
+  }
+
+  #cn-game .cn-tool--undo {
+    left: 81.82px;
+  }
+
+  #cn-game .cn-tool--redo {
+    left: 148.28px;
+  }
+
+  #cn-game .cn-tool--mode {
+    left: 214.73px;
+  }
+
+  #cn-game .cn-tool--palette {
+    left: 281.18px;
+  }
+
+  #cn-game .cn-tool--menu {
+    left: 347.64px;
+  }
+
+  #cn-game .cn-tool.cn-muted {
+    opacity: 0.42;
+  }
+
+  #cn-game .cn-tool img,
+  #cn-game .cn-tool svg {
+    display: block;
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-tool--mode.cn-marking-active img,
+  #cn-game .cn-tool--mode.cn-marking-active svg {
+    display: none;
+  }
+
+  #cn-game .cn-tool--mode.cn-marking-active::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f6f4ed;
+  }
+
+  #cn-game .cn-play-area {
+    position: absolute;
+    left: 0;
+    top: 134px;
+    width: 100%;
+    height: 578px;
+    display: grid;
+    place-items: center;
+    padding-top: 0;
+    background: var(--cn-game-bg);
+  }
+
+  #cn-game .cn-board-wrap {
+    width: var(--cn-board-w);
+    height: var(--cn-board-h);
+    display: grid;
+    grid-template-columns: var(--cn-clue-left) var(--cn-grid-w);
+    grid-template-rows: var(--cn-clue-top) var(--cn-grid-h);
+    justify-content: start;
+    overflow: visible;
+    touch-action: none;
+    position: relative;
+  }
+
+  #cn-game .cn-board-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 7;
+    background:
+      linear-gradient(var(--cn-major-line), var(--cn-major-line)) var(--cn-clue-left) 0 / calc(100% - var(--cn-clue-left)) var(--cn-outer-stroke) no-repeat,
+      linear-gradient(var(--cn-major-line), var(--cn-major-line)) 0 var(--cn-clue-top) / var(--cn-outer-stroke) calc(100% - var(--cn-clue-top)) no-repeat,
+      linear-gradient(var(--cn-major-line), var(--cn-major-line)) right top / var(--cn-outer-stroke) 100% no-repeat,
+      linear-gradient(var(--cn-major-line), var(--cn-major-line)) left bottom / 100% var(--cn-outer-stroke) no-repeat;
+  }
+
+  #cn-game .cn-cross-row,
+  #cn-game .cn-cross-col {
+    display: none;
+    position: absolute;
+    border: var(--cn-highlight-stroke) solid var(--cn-highlight);
+    pointer-events: none;
+    z-index: 8;
+    transition: top 55ms linear, left 55ms linear;
+    will-change: top, left;
+  }
+
+  #cn-game .cn-cross-row {
+    left: 0;
+    width: 100%;
+    height: calc(var(--cn-cell) + var(--cn-highlight-stroke));
+  }
+
+  #cn-game .cn-cross-col {
+    top: 0;
+    width: calc(var(--cn-cell) + var(--cn-highlight-stroke));
+    height: 100%;
+  }
+
+  #cn-game .cn-bottom-numbers,
+  #cn-game .cn-side-numbers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 6;
+    color: #111;
+    font-size: 6px;
+    font-weight: 850;
+    line-height: 1;
+  }
+
+  #cn-game .cn-index-label {
+    position: absolute;
+    min-width: 10px;
+    text-align: center;
+  }
+
+  #cn-game .cn-cross-count {
+    display: none;
+    position: absolute;
+    min-width: 11px;
+    height: 11px;
+    padding: 0 2px;
+    box-sizing: border-box;
+    place-items: center;
+    background: #fffaf0;
+    color: #111;
+    font-size: 8px;
+    font-weight: 850;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  #cn-game .cn-corner {
+    box-shadow:
+      inset calc(var(--cn-major-stroke) * -1) 0 0 var(--cn-major-line),
+      inset 0 calc(var(--cn-major-stroke) * -1) 0 var(--cn-major-line);
+  }
+
+  #cn-game .cn-col-clues {
+    display: grid;
+    grid-template-columns: repeat(var(--cn-cols), var(--cn-cell));
+    position: relative;
+    background:
+      repeating-linear-gradient(
+        to right,
+        transparent 0 calc(var(--cn-cell) - var(--cn-minor-stroke)),
+        rgba(154, 154, 154, 0.28) calc(var(--cn-cell) - var(--cn-minor-stroke)) var(--cn-cell)
+      ),
+      var(--cn-game-bg);
+    box-shadow: inset 0 calc(var(--cn-major-stroke) * -1) 0 var(--cn-major-line);
+  }
+
+  #cn-game .cn-row-clues {
+    display: grid;
+    grid-template-rows: repeat(var(--cn-rows), var(--cn-cell));
+    position: relative;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--cn-cell) - var(--cn-minor-stroke)),
+        rgba(154, 154, 154, 0.28) calc(var(--cn-cell) - var(--cn-minor-stroke)) var(--cn-cell)
+      ),
+      var(--cn-game-bg);
+    box-shadow: inset calc(var(--cn-major-stroke) * -1) 0 0 var(--cn-major-line);
+  }
+
+  #cn-game .cn-col-clues::after,
+  #cn-game .cn-row-clues::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  #cn-game .cn-col-clues::after {
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        transparent 0 calc(var(--cn-cell) * 5 - var(--cn-major-stroke)),
+        var(--cn-major-line) calc(var(--cn-cell) * 5 - var(--cn-major-stroke)) calc(var(--cn-cell) * 5)
+      );
+  }
+
+  #cn-game .cn-row-clues::after {
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--cn-cell) * 5 - var(--cn-major-stroke)),
+        var(--cn-major-line) calc(var(--cn-cell) * 5 - var(--cn-major-stroke)) calc(var(--cn-cell) * 5)
+      );
+  }
+
+  #cn-game .cn-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--cn-cols), var(--cn-cell));
+    grid-template-rows: repeat(var(--cn-rows), var(--cn-cell));
+    background: #fffaf0;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      inset calc(var(--cn-major-stroke) * -1) 0 0 var(--cn-major-line),
+      inset 0 calc(var(--cn-major-stroke) * -1) 0 var(--cn-major-line);
+  }
+
+  #cn-game .cn-grid::before,
+  #cn-game .cn-grid::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-grid::before {
+    z-index: 3;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        transparent 0 calc(var(--cn-cell) - var(--cn-minor-stroke)),
+        var(--cn-line) calc(var(--cn-cell) - var(--cn-minor-stroke)) var(--cn-cell)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--cn-cell) - var(--cn-minor-stroke)),
+        var(--cn-line) calc(var(--cn-cell) - var(--cn-minor-stroke)) var(--cn-cell)
+      );
+  }
+
+  #cn-game .cn-grid::after {
+    z-index: 4;
+    background-image:
+      repeating-linear-gradient(
+        to right,
+        transparent 0 calc(var(--cn-cell) * 5 - var(--cn-major-stroke)),
+        var(--cn-major-line) calc(var(--cn-cell) * 5 - var(--cn-major-stroke)) calc(var(--cn-cell) * 5)
+      ),
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0 calc(var(--cn-cell) * 5 - var(--cn-major-stroke)),
+        var(--cn-major-line) calc(var(--cn-cell) * 5 - var(--cn-major-stroke)) calc(var(--cn-cell) * 5)
+      );
+  }
+
+  #cn-game .cn-clue-row,
+  #cn-game .cn-clue-col {
+    display: flex;
+    gap: 0;
+    padding: 0;
+    color: var(--cn-ink);
+  }
+
+  #cn-game .cn-clue-row {
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 0;
+    min-height: var(--cn-cell);
+  }
+
+  #cn-game .cn-clue-col {
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: var(--cn-cell);
+    min-height: 0;
+  }
+
+  #cn-game .cn-clue-col .cn-chip:last-child {
+    margin-bottom: 0;
+  }
+
+  #cn-game .cn-chip {
+    width: var(--cn-cell);
+    height: var(--cn-cell);
+    border: 0;
+    border-radius: 0;
+    display: grid;
+    place-items: center;
+    color: #111;
+    font-size: 8px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  #cn-game .cn-chip.cn-two-digit {
+    font-size: 6.2px;
+    font-weight: 900;
+  }
+
+  #cn-game .cn-chip.cn-done {
+    opacity: 0.32;
+    text-decoration: line-through;
+  }
+
+  #cn-game .cn-cell {
+    width: var(--cn-cell);
+    height: var(--cn-cell);
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fffaf0;
+    cursor: pointer;
+    display: block;
+    position: relative;
+    z-index: 1;
+    transition:
+      transform 80ms ease,
+      background 80ms ease,
+      box-shadow 80ms ease;
+  }
+
+  #cn-game .cn-cell.cn-major-right {
+    border-right: 0;
+  }
+
+  #cn-game .cn-cell.cn-major-bottom {
+    border-bottom: 0;
+  }
+
+  #cn-game .cn-cell.cn-major-right.cn-major-bottom {
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  #cn-game .cn-cell:active {
+    transform: none;
+  }
+
+  #cn-game .cn-cell.cn-hot {
+    outline: 1px solid var(--cn-highlight);
+    outline-offset: -1px;
+  }
+
+  #cn-game .cn-cell.cn-line-hot:not(.cn-hot) {
+    box-shadow: none;
+  }
+
+  #cn-game .cn-cell.cn-dot {
+    background: #fffaf0 !important;
+  }
+
+  #cn-game .cn-cell.cn-dot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #626262;
+    z-index: 2;
+  }
+
+  #cn-game .cn-cell.cn-mark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 7px;
+    height: 7px;
+    border: 1.4px solid #0d0d0d;
+    border-radius: 50%;
+    box-sizing: border-box;
+    background: transparent;
+    z-index: 3;
+  }
+
+  #cn-game .cn-cell.cn-filled.cn-mark::after {
+    border-color: #fffaf0;
+  }
+
+  #cn-game .cn-cell.cn-light-filled.cn-mark::after {
+    border-color: #0d0d0d;
+  }
+
+  #cn-game .cn-cell.cn-wrong {
+    box-shadow: inset 0 0 0 3px rgba(196, 55, 42, 0.72);
+  }
+
+  #cn-game .cn-cell.cn-reveal {
+    animation: cn-pop 420ms cubic-bezier(0.18, 0.9, 0.2, 1.2) both;
+    animation-delay: calc(var(--cn-i) * 28ms);
+  }
+
+  @keyframes cn-pop {
+    0% {
+      transform: scale(0.62);
+      filter: saturate(0.4);
+    }
+    100% {
+      transform: scale(1);
+      filter: saturate(1.08);
+    }
+  }
+
+  #cn-game .cn-palette {
+    position: absolute;
+    left: 0;
+    top: 712px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    background: var(--cn-accent);
+    width: 100%;
+    height: 58px;
+    padding: 0 0 8px;
+  }
+
+  #cn-game .cn-swatch {
+    width: 15.33px;
+    height: 15.33px;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: none;
+  }
+
+  #cn-game .cn-swatch.cn-active {
+    outline: 10px solid #fff;
+    outline-offset: 0;
+    box-shadow: none;
+  }
+
+  #cn-game .cn-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 194px max(14px, calc((100vw - 393px) / 2 + 14px)) 0 14px;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 20;
+  }
+
+  #cn-game .cn-menu-backdrop.cn-open {
+    display: flex;
+  }
+
+  #cn-game .cn-menu {
+    width: 174px;
+    position: relative;
+    border-radius: 13px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
+    padding: 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  #cn-game .cn-menu::before {
+    content: "";
+    position: absolute;
+    top: -28px;
+    right: 15px;
+    width: 0;
+    height: 0;
+    border-left: 24px solid transparent;
+    border-bottom: 34px solid rgba(255, 255, 255, 0.96);
+  }
+
+  #cn-game .cn-menu-title {
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #6f9192;
+    color: #6f9192;
+    font-size: 12px;
+    font-weight: 900;
+    text-align: left;
+  }
+
+  #cn-game .cn-menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 12px;
+  }
+
+  #cn-game .cn-menu-button {
+    min-height: 52px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #6f9192;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-menu-button span {
+    display: block;
+    font-size: 27px;
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+
+  #cn-game .cn-review-panel {
+    display: none;
+  }
+
+  #cn-game .cn-review-panel.cn-open {
+    display: grid;
+    gap: 10px;
+  }
+
+  #cn-game .cn-review-action {
+    min-height: 37px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(111, 145, 146, 0.2);
+    color: #202124;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-mark-backdrop {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.34);
+    z-index: 24;
+  }
+
+  #cn-game .cn-mark-backdrop.cn-open {
+    display: flex;
+  }
+
+  #cn-game .cn-mark-panel {
+    width: min(318px, calc(100vw - 48px));
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+    padding: 28px 18px 18px;
+    backdrop-filter: blur(14px);
+  }
+
+  #cn-game .cn-mark-title {
+    margin: 0 0 12px 12px;
+    color: #000;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  #cn-game .cn-mark-copy {
+    margin: 0 0 22px 12px;
+    color: #65605f;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  #cn-game .cn-mark-action {
+    width: 100%;
+    min-height: 56px;
+    margin-top: 11px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(195, 195, 193, 0.72);
+    color: #000;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-screen {
+    width: calc(100% + 20px);
+    min-height: calc(100svh - 78px);
+    display: none;
+    background: #e4eeee;
+    padding: 22px 16px;
+  }
+
+  #cn-game .cn-screen.cn-open {
+    display: block;
+  }
+
+  #cn-game .cn-pack-hero {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+
+  #cn-game .cn-pack-thumb {
+    width: 96px;
+    aspect-ratio: 1;
+    border: 1px solid #9aa9a9;
+    border-radius: 18px;
+    background:
+      linear-gradient(135deg, #8fc5ff 0 42%, #f5b5c8 43% 58%, #74c765 59%),
+      #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  #cn-game .cn-pack-title {
+    margin: 0 0 10px;
+    color: #6f9192;
+    font-size: 25px;
+    font-weight: 850;
+  }
+
+  #cn-game .cn-pack-stats {
+    margin: 0;
+    color: #5f6668;
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.35;
+  }
+
+  #cn-game .cn-pack-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  #cn-game .cn-puzzle-card {
+    position: relative;
+    min-height: 150px;
+    border: 0;
+    background: #fff;
+    color: #111;
+    box-shadow: inset 0 0 0 1px #9aa0a0;
+    font-weight: 850;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-puzzle-number {
+    position: absolute;
+    top: -10px;
+    left: -8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #3d7bd8;
+    color: #fff;
+    border: 4px solid #fff;
+  }
+
+  #cn-game .cn-pencil {
+    display: block;
+    margin: 34px auto 16px;
+    color: #b8c8c8;
+    font-size: 42px;
+    transform: rotate(-45deg);
+  }
+
+  #cn-game .cn-card-meta {
+    display: block;
+    font-size: 17px;
+    line-height: 1.08;
+  }
+
+  @media (max-width: 392px) {
+    #cn-game .cn-app {
+      transform-origin: top center;
+      transform: scale(calc(100vw / 393));
+    }
+  }
+</style>
+
+<div id="cn-game">
+  <main class="cn-app">
+    <nav class="cn-toolbar" aria-label="Навигация">
+      <button class="cn-tool cn-tool--back cn-muted" id="cn-back" type="button" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 17.875L6.875 11L13.75 4.125" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="cn-tool cn-tool--undo cn-muted" id="cn-undo" type="button" aria-label="Отменить"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2.0625C9.23233 2.0625 7.50436 2.58668 6.03459 3.56874C4.56483 4.55081 3.41929 5.94665 2.74283 7.57977C2.06637 9.21288 1.88938 11.0099 2.23424 12.7436C2.57909 14.4773 3.43031 16.0698 4.68024 17.3198C5.93017 18.5697 7.52268 19.4209 9.25638 19.7658C10.9901 20.1106 12.7871 19.9336 14.4202 19.2572C16.0534 18.5807 17.4492 17.4352 18.4313 15.9654C19.4133 14.4956 19.9375 12.7677 19.9375 11C19.935 8.6304 18.9926 6.35856 17.317 4.683C15.6414 3.00743 13.3696 2.065 11 2.0625ZM14.4375 11.6875H9.22196L10.7989 13.2636C10.8628 13.3275 10.9135 13.4033 10.948 13.4868C10.9826 13.5702 11.0004 13.6597 11.0004 13.75C11.0004 13.8403 10.9826 13.9298 10.948 14.0132C10.9135 14.0967 10.8628 14.1725 10.7989 14.2364C10.735 14.3003 10.6592 14.351 10.5757 14.3855C10.4923 14.4201 10.4028 14.4379 10.3125 14.4379C10.2222 14.4379 10.1327 14.4201 10.0493 14.3855C9.9658 14.351 9.88997 14.3003 9.8261 14.2364L7.0761 11.4864C7.01218 11.4226 6.96147 11.3467 6.92687 11.2633C6.89227 11.1798 6.87446 11.0903 6.87446 11C6.87446 10.9097 6.89227 10.8202 6.92687 10.7367C6.96147 10.6533 7.01218 10.5774 7.0761 10.5136L9.8261 7.76359C9.9551 7.63459 10.1301 7.56212 10.3125 7.56212C10.4949 7.56212 10.6699 7.63459 10.7989 7.76359C10.9279 7.8926 11.0004 8.06756 11.0004 8.25C11.0004 8.43244 10.9279 8.6074 10.7989 8.73641L9.22196 10.3125H14.4375C14.6198 10.3125 14.7947 10.3849 14.9236 10.5139C15.0526 10.6428 15.125 10.8177 15.125 11C15.125 11.1823 15.0526 11.3572 14.9236 11.4861C14.7947 11.6151 14.6198 11.6875 14.4375 11.6875Z" fill="#F6F4ED"/></svg></button>
+      <button class="cn-tool cn-tool--redo cn-muted" id="cn-redo" type="button" aria-label="Повторить"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2.0625C9.23233 2.0625 7.50436 2.58668 6.03459 3.56874C4.56483 4.55081 3.41929 5.94665 2.74283 7.57977C2.06637 9.21288 1.88938 11.0099 2.23424 12.7436C2.57909 14.4773 3.43031 16.0698 4.68024 17.3198C5.93017 18.5697 7.52268 19.4209 9.25638 19.7658C10.9901 20.1106 12.7871 19.9336 14.4202 19.2572C16.0534 18.5807 17.4492 17.4352 18.4313 15.9654C19.4133 14.4956 19.9375 12.7677 19.9375 11C19.935 8.6304 18.9926 6.35856 17.317 4.683C15.6414 3.00743 13.3696 2.065 11 2.0625ZM14.9239 11.4864L12.1739 14.2364C12.0449 14.3654 11.8699 14.4379 11.6875 14.4379C11.5051 14.4379 11.3301 14.3654 11.2011 14.2364C11.0721 14.1074 10.9996 13.9324 10.9996 13.75C10.9996 13.5676 11.0721 13.3926 11.2011 13.2636L12.7781 11.6875H7.5625C7.38017 11.6875 7.2053 11.6151 7.07637 11.4861C6.94744 11.3572 6.875 11.1823 6.875 11C6.875 10.8177 6.94744 10.6428 7.07637 10.5139C7.2053 10.3849 7.38017 10.3125 7.5625 10.3125H12.7781L11.2011 8.73641C11.0721 8.6074 10.9996 8.43244 10.9996 8.25C10.9996 8.06756 11.0721 7.8926 11.2011 7.76359C11.3301 7.63459 11.5051 7.56212 11.6875 7.56212C11.8699 7.56212 12.0449 7.63459 12.1739 7.76359L14.9239 10.5136C14.9878 10.5774 15.0385 10.6533 15.0731 10.7367C15.1077 10.8202 15.1255 10.9097 15.1255 11C15.1255 11.0903 15.1077 11.1798 15.0731 11.2633C15.0385 11.3467 14.9878 11.4226 14.9239 11.4864Z" fill="#F6F4ED"/></svg></button>
+      <button class="cn-tool cn-tool--mode" id="cn-mark-mode" type="button" aria-label="Marking squares"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0001 14.6069C12.992 14.6069 14.6067 12.9921 14.6067 11.0002C14.6067 9.00831 12.992 7.39355 11.0001 7.39355C9.00818 7.39355 7.39343 9.00831 7.39343 11.0002C7.39343 12.9921 9.00818 14.6069 11.0001 14.6069Z" fill="#F6F4ED"/><path d="M11 19.25C15.5563 19.25 19.25 15.5563 19.25 11C19.25 6.44365 15.5563 2.75 11 2.75C6.44365 2.75 2.75 6.44365 2.75 11C2.75 15.5563 6.44365 19.25 11 19.25Z" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="cn-tool cn-tool--palette" type="button" aria-label="Палитра"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.2537 4.63118C15.5897 2.9834 13.3418 2.0601 11 2.0625H10.908C8.55365 2.08673 6.30391 3.03904 4.64764 4.71253C2.99137 6.38602 2.06238 8.64548 2.0625 11C2.0625 14.6953 4.34672 17.7942 8.02313 19.0927C8.43778 19.2389 8.88145 19.2836 9.31692 19.2229C9.75239 19.1622 10.167 18.9981 10.5259 18.7441C10.8848 18.4901 11.1776 18.1538 11.3797 17.7634C11.5818 17.3729 11.6874 16.9397 11.6875 16.5C11.6875 16.1353 11.8324 15.7856 12.0902 15.5277C12.3481 15.2699 12.6978 15.125 13.0625 15.125H17.0337C17.6575 15.128 18.2635 14.9176 18.7513 14.5287C19.239 14.1397 19.579 13.5957 19.7149 12.9869C19.8686 12.3103 19.9433 11.6182 19.9375 10.9244C19.9287 9.75001 19.687 8.58906 19.2263 7.50879C18.7656 6.42852 18.0951 5.45043 17.2537 4.63118ZM7.21875 14.4375C7.01479 14.4375 6.81541 14.377 6.64582 14.2637C6.47623 14.1504 6.34405 13.9893 6.266 13.8009C6.18795 13.6125 6.16752 13.4051 6.20732 13.2051C6.24711 13.005 6.34532 12.8213 6.48955 12.6771C6.63377 12.5328 6.81752 12.4346 7.01756 12.3948C7.21761 12.355 7.42496 12.3755 7.61339 12.4535C7.80183 12.5316 7.96289 12.6637 8.0762 12.8333C8.18952 13.0029 8.25 13.2023 8.25 13.4063C8.25 13.6798 8.14135 13.9421 7.94795 14.1355C7.75456 14.3289 7.49225 14.4375 7.21875 14.4375ZM7.21875 9.625C7.01479 9.625 6.81541 9.56452 6.64582 9.45121C6.47623 9.33789 6.34405 9.17683 6.266 8.9884C6.18795 8.79996 6.16752 8.59261 6.20732 8.39257C6.24711 8.19252 6.34532 8.00877 6.48955 7.86455C6.63377 7.72033 6.81752 7.62211 7.01756 7.58232C7.21761 7.54253 7.42496 7.56295 7.61339 7.641C7.80183 7.71906 7.96289 7.85123 8.0762 8.02082C8.18952 8.19041 8.25 8.38979 8.25 8.59375C8.25 8.86726 8.14135 9.12956 7.94795 9.32296C7.75456 9.51636 7.49225 9.625 7.21875 9.625ZM11 7.5625C10.796 7.5625 10.5967 7.50202 10.4271 7.38871C10.2575 7.27539 10.1253 7.11433 10.0472 6.9259C9.9692 6.73746 9.94877 6.53011 9.98857 6.33007C10.0284 6.13002 10.1266 5.94627 10.2708 5.80205C10.415 5.65783 10.5988 5.55961 10.7988 5.51982C10.9989 5.48003 11.2062 5.50045 11.3946 5.5785C11.5831 5.65656 11.7441 5.78873 11.8575 5.95832C11.9708 6.12791 12.0312 6.32729 12.0312 6.53125C12.0312 6.80476 11.9226 7.06706 11.7292 7.26046C11.5358 7.45386 11.2735 7.5625 11 7.5625ZM14.7812 9.625C14.5773 9.625 14.3779 9.56452 14.2083 9.45121C14.0387 9.33789 13.9066 9.17683 13.8285 8.9884C13.7504 8.79996 13.73 8.59261 13.7698 8.39257C13.8096 8.19252 13.9078 8.00877 14.052 7.86455C14.1963 7.72033 14.38 7.62211 14.5801 7.58232C14.7801 7.54253 14.9875 7.56295 15.1759 7.641C15.3643 7.71906 15.5254 7.85123 15.6387 8.02082C15.752 8.19041 15.8125 8.38979 15.8125 8.59375C15.8125 8.86726 15.7039 9.12956 15.5105 9.32296C15.3171 9.51636 15.0548 9.625 14.7812 9.625Z" fill="#F6F4ED"/></svg></button>
+      <button class="cn-tool cn-tool--menu" id="cn-menu-toggle" type="button" aria-label="Меню"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.875 8.25L11 15.125L4.125 8.25" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </nav>
+
+    <div class="cn-play-area" id="cn-game-screen">
+      <section class="cn-board-wrap" id="cn-board" aria-label="Игровое поле">
+        <div class="cn-corner" aria-hidden="true"></div>
+        <div class="cn-col-clues" id="cn-col-clues"></div>
+        <div class="cn-row-clues" id="cn-row-clues"></div>
+        <div class="cn-grid" id="cn-grid"></div>
+        <div class="cn-cross-row" id="cn-cross-row"></div>
+        <div class="cn-cross-col" id="cn-cross-col"></div>
+        <div class="cn-cross-count" id="cn-cross-row-count"></div>
+        <div class="cn-cross-count" id="cn-cross-col-count"></div>
+        <div class="cn-bottom-numbers" id="cn-bottom-numbers"></div>
+        <div class="cn-side-numbers" id="cn-side-numbers"></div>
+      </section>
+    </div>
+
+    <section class="cn-palette" id="cn-palette" aria-label="Палитра"></section>
+
+    <div class="cn-menu-backdrop" id="cn-menu-backdrop">
+      <section class="cn-menu" aria-label="Меню">
+        <p class="cn-menu-title" id="cn-menu-title">Game paused</p>
+        <div class="cn-menu-grid" id="cn-menu-main">
+          <button class="cn-menu-button" id="cn-solve" type="button"><span>◉</span>Solve</button>
+          <button class="cn-menu-button" id="cn-review" type="button"><span>✓</span>Review</button>
+          <button class="cn-menu-button" id="cn-restart" type="button"><span>↻</span>Restart</button>
+          <button class="cn-menu-button" id="cn-info" type="button"><span>i</span>Info</button>
+          <button class="cn-menu-button" id="cn-settings" type="button"><span>⚙</span>Settings</button>
+          <button class="cn-menu-button" id="cn-help" type="button"><span>?</span>Help</button>
+        </div>
+        <div class="cn-review-panel" id="cn-review-panel">
+          <button class="cn-review-action" id="cn-show-errors" type="button">Show errors</button>
+          <button class="cn-review-action" id="cn-clear-errors" type="button">Clear errors</button>
+          <button class="cn-review-action" id="cn-show-hint" type="button">Show hint</button>
+          <button class="cn-review-action" id="cn-close-menu" type="button">Close</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="cn-mark-backdrop" id="cn-mark-backdrop">
+      <section class="cn-mark-panel" aria-label="Marking squares menu">
+        <h2 class="cn-mark-title">Marking squares</h2>
+        <p class="cn-mark-copy">You can exit the mark squares mode or clear current marks</p>
+        <button class="cn-mark-action" id="cn-exit-mark-mode" type="button">Exit mark squares mode</button>
+        <button class="cn-mark-action" id="cn-clear-marks" type="button">Clear current marks</button>
+        <button class="cn-mark-action" id="cn-cancel-mark-menu" type="button">Cancel</button>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  (() => {
+    try {
+    const makeSolution = () => {
+      const width = 25;
+      const height = 35;
+      const grid = Array.from({ length: height }, () => Array(width).fill(null));
+      const paintEllipse = (cx, cy, rx, ry, color, skipCenter = false) => {
+        for (let row = 0; row < height; row += 1) {
+          for (let col = 0; col < width; col += 1) {
+            const inside = ((col - cx) ** 2) / (rx ** 2) + ((row - cy) ** 2) / (ry ** 2) <= 1;
+            if (inside && (!skipCenter || Math.abs(col - 12) > 1)) grid[row][col] = color;
+          }
+        }
+      };
+      const paintLine = (row, from, to, color) => {
+        for (let col = from; col <= to; col += 1) grid[row][col] = color;
+      };
+
+      paintEllipse(7, 9, 5, 6, "blue", true);
+      paintEllipse(17, 9, 5, 6, "blue", true);
+      paintEllipse(7, 18, 6, 8, "yellow", true);
+      paintEllipse(17, 18, 6, 8, "yellow", true);
+      paintEllipse(7, 8, 2, 1, "red", true);
+      paintEllipse(17, 8, 2, 1, "red", true);
+      paintEllipse(7, 18, 3, 4, "green", true);
+      paintEllipse(17, 18, 3, 4, "green", true);
+
+      for (let row = 5; row <= 27; row += 1) grid[row][12] = "black";
+      for (let row = 7; row <= 23; row += 1) {
+        if (row % 3 !== 0) {
+          grid[row][11] = "black";
+          grid[row][13] = "black";
+        }
+      }
+      grid[4][12] = "black";
+      grid[4][11] = "black";
+      grid[4][13] = "black";
+      grid[3][10] = "black";
+      grid[3][14] = "black";
+      grid[2][9] = "black";
+      grid[2][15] = "black";
+
+      paintLine(28, 4, 8, "red");
+      paintLine(28, 16, 20, "red");
+      paintLine(30, 6, 10, "green");
+      paintLine(30, 14, 18, "green");
+      paintLine(32, 8, 11, "blue");
+      paintLine(32, 13, 16, "blue");
+
+      paintLine(34, 0, 24, "brown");
+      for (let row = 0; row < height; row += 1) {
+        if (!grid[row].some(Boolean)) grid[row][row % 2 === 0 ? 2 : 22] = row % 2 === 0 ? "green" : "black";
+      }
+
+      return grid;
+    };
+
+    const puzzle = {
+      id: "filled-25x35-v3",
+      width: 25,
+      height: 35,
+      palette: [
+        { id: "blue", label: "B", color: "#4d94ea" },
+        { id: "black", label: "K", color: "#000000" },
+        { id: "yellow", label: "Y", color: "#ffe04f" },
+        { id: "red", label: "R", color: "#f23c2f" },
+        { id: "green", label: "G", color: "#74ee3b" },
+        { id: "brown", label: "O", color: "#b47a1c" },
+      ],
+      solution: makeSolution(),
+    };
+
+    const state = {
+      activeColor: puzzle.palette[0].id,
+      isDrawing: false,
+      moved: false,
+      armedValue: null,
+      isPaintingDrag: false,
+      drawStart: null,
+      drawAxis: null,
+      gestureCellsBase: null,
+      gestureMarksBase: null,
+      gestureAxis: null,
+      drawValue: null,
+      markMode: false,
+      markValue: true,
+      holdTimer: null,
+      lastCell: null,
+      showErrors: false,
+      undoStack: [],
+      redoStack: [],
+      pointerId: null,
+      startX: 0,
+      startY: 0,
+      currentRow: null,
+      currentCol: null,
+      cells: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null)),
+      marks: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false)),
+      clueDone: new Set(),
+      clueTimers: new Map(),
+      solved: false,
+    };
+
+    const root = document.getElementById("cn-game");
+    const byId = (id) => root.querySelector(`#${id}`);
+    const colorById = Object.fromEntries(puzzle.palette.map((color) => [color.id, color]));
+    const storageKey = `color-nonogram:${puzzle.id}`;
+
+    function storageGet(key) {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function storageSet(key, value) {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch (error) {
+        // Standalone iOS/file previews can block storage; the game should still render.
+      }
+    }
+
+    function storageRemove(key) {
+      try {
+        window.localStorage.removeItem(key);
+      } catch (error) {
+        // Ignore storage errors in standalone mode.
+      }
+    }
+
+    function textColorFor(hex) {
+      const value = hex.replace("#", "");
+      const red = parseInt(value.slice(0, 2), 16);
+      const green = parseInt(value.slice(2, 4), 16);
+      const blue = parseInt(value.slice(4, 6), 16);
+      const luminance = (red * 299 + green * 587 + blue * 114) / 1000;
+      return luminance < 135 ? "#fff" : "#111";
+    }
+
+    function buildClues(lines) {
+      return lines.map((line) => {
+        const clues = [];
+        let current = null;
+        let count = 0;
+        let start = 0;
+
+        for (let index = 0; index < line.length; index += 1) {
+          const cell = line[index];
+          if (cell && cell === current) {
+            count += 1;
+          } else {
+            if (current) clues.push({ color: current, count, start, end: index - 1 });
+            current = cell;
+            start = index;
+            count = cell ? 1 : 0;
+          }
+        }
+
+        if (current) clues.push({ color: current, count, start, end: line.length - 1 });
+        return clues;
+      });
+    }
+
+    const rowClues = buildClues(puzzle.solution);
+    const colClues = buildClues(
+      Array.from({ length: puzzle.width }, (_, col) => puzzle.solution.map((row) => row[col])),
+    );
+    const clueCols = 8;
+    const clueRows = 11;
+    root.style.setProperty("--cn-cols", puzzle.width);
+    root.style.setProperty("--cn-rows", puzzle.height);
+    root.style.setProperty("--cn-clue-cols", clueCols);
+    root.style.setProperty("--cn-clue-rows", clueRows);
+
+    function isCellCorrect(cell, solutionCell) {
+      return solutionCell ? cell === solutionCell : cell === "dot";
+    }
+
+    function isLineSolved(kind, index) {
+      if (kind === "row") {
+        return state.cells[index].every((cell, col) => isCellCorrect(cell, puzzle.solution[index][col]));
+      }
+
+      return state.cells.every((row, rowIndex) => isCellCorrect(row[index], puzzle.solution[rowIndex][index]));
+    }
+
+    function isSolved() {
+      return state.cells.every((row, rowIndex) =>
+        row.every((cell, colIndex) => isCellCorrect(cell, puzzle.solution[rowIndex][colIndex])),
+      );
+    }
+
+    function coloredLineIsCorrect(kind, index) {
+      if (kind === "row") {
+        if (!puzzle.solution[index].some(Boolean)) return false;
+        return puzzle.solution[index].every((solutionCell, col) => {
+          const cell = state.cells[index][col];
+          return solutionCell ? cell === solutionCell : !cell || cell === "dot";
+        });
+      }
+
+      if (!puzzle.solution.some((row) => row[index])) return false;
+      return puzzle.solution.every((row, rowIndex) => {
+        const solutionCell = row[index];
+        const cell = state.cells[rowIndex][index];
+        return solutionCell ? cell === solutionCell : !cell || cell === "dot";
+      });
+    }
+
+    function autoDotSolvedClueGaps() {
+      rowClues.forEach((line, rowIndex) => {
+        line.forEach((clue, clueIndex) => {
+          const nextClue = line[clueIndex + 1];
+          const gapCol = clue.end + 1;
+          if (
+            nextClue?.color === clue.color &&
+            gapCol < puzzle.width &&
+            isClueSolved("cn-clue-row", rowIndex, clue) &&
+            !state.cells[rowIndex][gapCol]
+          ) {
+            state.cells[rowIndex][gapCol] = "dot";
+          }
+        });
+      });
+
+      colClues.forEach((line, colIndex) => {
+        line.forEach((clue, clueIndex) => {
+          const nextClue = line[clueIndex + 1];
+          const gapRow = clue.end + 1;
+          if (
+            nextClue?.color === clue.color &&
+            gapRow < puzzle.height &&
+            isClueSolved("cn-clue-col", colIndex, clue) &&
+            !state.cells[gapRow][colIndex]
+          ) {
+            state.cells[gapRow][colIndex] = "dot";
+          }
+        });
+      });
+    }
+
+    function autoDotCompletedLines() {
+      for (let row = 0; row < puzzle.height; row += 1) {
+        if (coloredLineIsCorrect("row", row)) {
+          for (let col = 0; col < puzzle.width; col += 1) {
+            if (!puzzle.solution[row][col] && !state.cells[row][col]) state.cells[row][col] = "dot";
+          }
+        }
+      }
+
+      for (let col = 0; col < puzzle.width; col += 1) {
+        if (coloredLineIsCorrect("col", col)) {
+          for (let row = 0; row < puzzle.height; row += 1) {
+            if (!puzzle.solution[row][col] && !state.cells[row][col]) state.cells[row][col] = "dot";
+          }
+        }
+      }
+    }
+
+    function isClueSolved(className, lineIndex, clue) {
+      if (className === "cn-clue-row") {
+        for (let col = clue.start; col <= clue.end; col += 1) {
+          if (state.cells[lineIndex][col] !== clue.color) return false;
+        }
+        if (clue.start > 0 && state.cells[lineIndex][clue.start - 1] === clue.color) return false;
+        if (clue.end < puzzle.width - 1 && state.cells[lineIndex][clue.end + 1] === clue.color) return false;
+        return true;
+      }
+
+      for (let row = clue.start; row <= clue.end; row += 1) {
+        if (state.cells[row][lineIndex] !== clue.color) return false;
+      }
+      if (clue.start > 0 && state.cells[clue.start - 1][lineIndex] === clue.color) return false;
+      if (clue.end < puzzle.height - 1 && state.cells[clue.end + 1][lineIndex] === clue.color) return false;
+      return true;
+    }
+
+    function clueKey(className, lineIndex, clue) {
+      return `${className}:${lineIndex}:${clue.start}:${clue.end}:${clue.color}`;
+    }
+
+    function renderAllClues() {
+      renderClue(byId("cn-row-clues"), rowClues, "cn-clue-row");
+      renderClue(byId("cn-col-clues"), colClues, "cn-clue-col");
+    }
+
+    function syncClueDoneState() {
+      [
+        ["cn-clue-row", rowClues],
+        ["cn-clue-col", colClues],
+      ].forEach(([className, clueLines]) => {
+        clueLines.forEach((line, lineIndex) => {
+          line.forEach((clue) => {
+            const key = clueKey(className, lineIndex, clue);
+            const solved = isClueSolved(className, lineIndex, clue);
+
+            if (!solved) {
+              window.clearTimeout(state.clueTimers.get(key));
+              state.clueTimers.delete(key);
+              state.clueDone.delete(key);
+              return;
+            }
+
+            if (state.clueDone.has(key) || state.clueTimers.has(key)) return;
+            state.clueTimers.set(
+              key,
+              window.setTimeout(() => {
+                state.clueTimers.delete(key);
+                if (isClueSolved(className, lineIndex, clue)) {
+                  state.clueDone.add(key);
+                  renderAllClues();
+                }
+              }, 500),
+            );
+          });
+        });
+      });
+    }
+
+    function clearClueDoneState() {
+      state.clueTimers.forEach((timer) => window.clearTimeout(timer));
+      state.clueTimers.clear();
+      state.clueDone.clear();
+    }
+
+    function renderClue(container, clues, className) {
+      container.innerHTML = "";
+      clues.forEach((line, index) => {
+        const isHot =
+          (className === "cn-clue-row" && state.currentRow === index) ||
+          (className === "cn-clue-col" && state.currentCol === index);
+        const item = document.createElement("div");
+        item.className = `${className}${isHot ? " cn-hot" : ""}`;
+
+        const visibleClues = className === "cn-clue-row" ? line.slice(-clueCols) : line.slice(-clueRows);
+        visibleClues.forEach((clue) => {
+          const chip = document.createElement("span");
+          chip.className = `cn-chip${clue.count >= 10 ? " cn-two-digit" : ""}${state.clueDone.has(clueKey(className, index, clue)) ? " cn-done" : ""}`;
+          chip.style.background = colorById[clue.color].color;
+          chip.style.color = textColorFor(colorById[clue.color].color);
+          chip.textContent = clue.count;
+          item.appendChild(chip);
+        });
+
+        container.appendChild(item);
+      });
+    }
+
+    function renderPalette() {
+      const palette = byId("cn-palette");
+      palette.innerHTML = "";
+
+      puzzle.palette.forEach((color) => {
+        const swatch = document.createElement("button");
+        swatch.className = `cn-swatch${state.activeColor === color.id ? " cn-active" : ""}`;
+        swatch.type = "button";
+        swatch.style.background = color.color;
+        swatch.setAttribute("aria-label", color.id);
+        swatch.addEventListener("click", () => {
+          state.activeColor = color.id;
+          renderPalette();
+        });
+        palette.appendChild(swatch);
+      });
+    }
+
+    function renderModeButton() {
+      byId("cn-mark-mode").classList.toggle("cn-marking-active", state.markMode);
+    }
+
+    function setPointerCell(rowIndex, colIndex) {
+      state.currentRow = rowIndex;
+      state.currentCol = colIndex;
+    }
+
+    function cloneCells() {
+      return state.cells.map((row) => [...row]);
+    }
+
+    function cloneMarks() {
+      return state.marks.map((row) => [...row]);
+    }
+
+    function updateHistoryButtons() {
+      byId("cn-undo").classList.toggle("cn-muted", state.undoStack.length === 0);
+      byId("cn-redo").classList.toggle("cn-muted", state.redoStack.length === 0);
+    }
+
+    function pushHistory() {
+      state.undoStack.push(cloneCells());
+      if (state.undoStack.length > 80) state.undoStack.shift();
+      state.redoStack = [];
+      updateHistoryButtons();
+    }
+
+    function restoreCells(cells) {
+      state.cells = cells.map((row) => [...row]);
+      state.showErrors = false;
+      update();
+      updateHistoryButtons();
+    }
+
+    function undo() {
+      if (!state.undoStack.length) return;
+      state.redoStack.push(cloneCells());
+      restoreCells(state.undoStack.pop());
+    }
+
+    function redo() {
+      if (!state.redoStack.length) return;
+      state.undoStack.push(cloneCells());
+      restoreCells(state.redoStack.pop());
+    }
+
+    function nextCellValue(cell) {
+      if (!cell) return state.activeColor;
+      if (cell === "dot") return null;
+      return "dot";
+    }
+
+    function paintCell(rowIndex, colIndex) {
+      if (state.solved) return;
+      const baseCell = state.gestureCellsBase?.[rowIndex]?.[colIndex];
+      const isStartCell = state.drawStart?.row === rowIndex && state.drawStart?.col === colIndex;
+      if (baseCell && !isStartCell) return;
+      state.cells[rowIndex][colIndex] = state.drawValue;
+    }
+
+    function markCell(rowIndex, colIndex) {
+      state.marks[rowIndex][colIndex] = state.markValue;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function cellSizePx() {
+      return Number.parseFloat(getComputedStyle(root).getPropertyValue("--cn-cell")) || 11;
+    }
+
+    function dominantAxis(event) {
+      const dx = event.clientX - state.startX;
+      const dy = event.clientY - state.startY;
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+      if (Math.max(absX, absY) < cellSizePx() * 1.15) return null;
+      if (absX > absY * 1.35) return "row";
+      if (absY > absX * 1.35) return "col";
+      return null;
+    }
+
+    function quantizedOffset(delta) {
+      const step = cellSizePx() * 1.75;
+      const abs = Math.abs(delta);
+      if (abs < step) return 0;
+      return Math.sign(delta) * Math.floor(abs / step);
+    }
+
+    function freeCellFromPointer(event, origin) {
+      const step = cellSizePx() * 1.45;
+      const rowOffset = Math.trunc((event.clientY - state.startY) / step);
+      const colOffset = Math.trunc((event.clientX - state.startX) / step);
+      return {
+        row: clamp(origin.row + rowOffset, 0, puzzle.height - 1),
+        col: clamp(origin.col + colOffset, 0, puzzle.width - 1),
+      };
+    }
+
+    function relativeCellFromPointer(event, origin) {
+      const axis = state.gestureAxis;
+      const rowOffset = axis === "col" ? quantizedOffset(event.clientY - state.startY) : 0;
+      const colOffset = axis === "row" ? quantizedOffset(event.clientX - state.startX) : 0;
+      return {
+        row: clamp(origin.row + rowOffset, 0, puzzle.height - 1),
+        col: clamp(origin.col + colOffset, 0, puzzle.width - 1),
+      };
+    }
+
+    function paintPath(fromCell, toCell) {
+      if (!fromCell || !toCell || state.solved || state.drawValue === undefined) return;
+
+      if (!state.drawAxis && state.gestureAxis) state.drawAxis = state.gestureAxis;
+      if (state.gestureCellsBase) state.cells = state.gestureCellsBase.map((row) => [...row]);
+
+      const target = { row: toCell.row, col: toCell.col };
+      if (state.drawAxis === "row") target.row = state.drawStart.row;
+      if (state.drawAxis === "col") target.col = state.drawStart.col;
+
+      if (state.drawAxis === "row") {
+        const from = Math.min(state.drawStart.col, target.col);
+        const to = Math.max(state.drawStart.col, target.col);
+        for (let col = from; col <= to; col += 1) paintCell(state.drawStart.row, col);
+      } else if (state.drawAxis === "col") {
+        const from = Math.min(state.drawStart.row, target.row);
+        const to = Math.max(state.drawStart.row, target.row);
+        for (let row = from; row <= to; row += 1) paintCell(row, state.drawStart.col);
+      } else {
+        paintCell(target.row, target.col);
+      }
+
+      state.lastCell = target;
+      setPointerCell(target.row, target.col);
+      update();
+    }
+
+    function markPath(fromCell, toCell) {
+      if (!fromCell || !toCell) return;
+      if (!state.drawAxis && state.gestureAxis) state.drawAxis = state.gestureAxis;
+      if (state.gestureMarksBase) state.marks = state.gestureMarksBase.map((row) => [...row]);
+
+      const target = { row: toCell.row, col: toCell.col };
+      if (state.drawAxis === "row") target.row = state.drawStart.row;
+      if (state.drawAxis === "col") target.col = state.drawStart.col;
+
+      if (state.drawAxis === "row") {
+        const from = Math.min(state.drawStart.col, target.col);
+        const to = Math.max(state.drawStart.col, target.col);
+        for (let col = from; col <= to; col += 1) markCell(state.drawStart.row, col);
+      } else if (state.drawAxis === "col") {
+        const from = Math.min(state.drawStart.row, target.row);
+        const to = Math.max(state.drawStart.row, target.row);
+        for (let row = from; row <= to; row += 1) markCell(row, state.drawStart.col);
+      } else {
+        markCell(target.row, target.col);
+      }
+
+      state.lastCell = target;
+      setPointerCell(target.row, target.col);
+      update();
+    }
+
+    function syncHotCell(prevRow, prevCol) {
+      const grid = byId("cn-grid");
+      const previous = grid.querySelector(`[data-row="${prevRow}"][data-col="${prevCol}"]`);
+      const current = grid.querySelector(`[data-row="${state.currentRow}"][data-col="${state.currentCol}"]`);
+      if (previous) previous.classList.remove("cn-hot");
+      if (current) current.classList.add("cn-hot");
+    }
+
+    function moveCross(toRow, toCol) {
+      const prevRow = state.currentRow;
+      const prevCol = state.currentCol;
+      setPointerCell(toRow, toCol);
+      renderCross();
+      syncHotCell(prevRow, prevCol);
+    }
+
+    function cellRunKey(cell) {
+      return cell && cell !== "dot" ? cell : "empty";
+    }
+
+    function sameRunKind(cell, key) {
+      return key === "empty" ? !cell || cell === "dot" : cell === key;
+    }
+
+    function countRun(rowIndex, colIndex, axis) {
+      const key = cellRunKey(state.cells[rowIndex][colIndex]);
+      let count = 1;
+
+      if (axis === "row") {
+        for (let col = colIndex - 1; col >= 0 && sameRunKind(state.cells[rowIndex][col], key); col -= 1) count += 1;
+        for (let col = colIndex + 1; col < puzzle.width && sameRunKind(state.cells[rowIndex][col], key); col += 1) count += 1;
+        return count;
+      }
+
+      for (let row = rowIndex - 1; row >= 0 && sameRunKind(state.cells[row][colIndex], key); row -= 1) count += 1;
+      for (let row = rowIndex + 1; row < puzzle.height && sameRunKind(state.cells[row][colIndex], key); row += 1) count += 1;
+      return count;
+    }
+
+    function handleTap(row, col) {
+      const targetRow = state.currentRow === null ? row : state.currentRow;
+      const targetCol = state.currentCol === null ? col : state.currentCol;
+      if (state.markMode) {
+        state.marks[targetRow][targetCol] = !state.marks[targetRow][targetCol];
+        update();
+        return;
+      }
+      pushHistory();
+      setPointerCell(targetRow, targetCol);
+      const nextValue = nextCellValue(state.cells[targetRow][targetCol]);
+      state.cells[targetRow][targetCol] = nextValue;
+      state.armedValue = nextValue;
+      state.showErrors = false;
+      update();
+    }
+
+    function cellFromPoint(event) {
+      const element = document.elementFromPoint(event.clientX, event.clientY);
+      const cell = element && element.closest ? element.closest(".cn-cell") : null;
+      if (!cell || !root.contains(cell)) return null;
+      return {
+        row: Number(cell.dataset.row),
+        col: Number(cell.dataset.col),
+      };
+    }
+
+    function renderGrid() {
+      const grid = byId("cn-grid");
+      grid.innerHTML = "";
+
+      state.cells.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          const button = document.createElement("button");
+          const filled = cell && cell !== "dot";
+          const lightFilled = filled && textColorFor(colorById[cell].color) === "#111";
+          const wrong =
+            state.showErrors &&
+            ((cell && cell !== "dot" && cell !== puzzle.solution[rowIndex][colIndex]) ||
+              (cell === "dot" && puzzle.solution[rowIndex][colIndex]));
+          const hot = state.currentRow === rowIndex && state.currentCol === colIndex;
+          const lineHot = state.currentRow === rowIndex || state.currentCol === colIndex;
+          const majorRight = (colIndex + 1) % 5 === 0 && colIndex + 1 < puzzle.width;
+          const majorBottom = (rowIndex + 1) % 5 === 0 && rowIndex + 1 < puzzle.height;
+          button.className = `cn-cell${majorRight ? " cn-major-right" : ""}${majorBottom ? " cn-major-bottom" : ""}${filled ? " cn-filled" : ""}${lightFilled ? " cn-light-filled" : ""}${cell === "dot" ? " cn-dot" : ""}${state.marks[rowIndex][colIndex] ? " cn-mark" : ""}${wrong ? " cn-wrong" : ""}${lineHot ? " cn-line-hot" : ""}${hot ? " cn-hot" : ""}${state.solved ? " cn-reveal" : ""}`;
+          button.type = "button";
+          button.dataset.row = rowIndex;
+          button.dataset.col = colIndex;
+          button.style.setProperty("--cn-i", rowIndex * puzzle.width + colIndex);
+          button.style.background = cell && cell !== "dot" ? colorById[cell].color : "#fffaf0";
+          button.setAttribute("aria-label", `${rowIndex + 1}:${colIndex + 1}`);
+
+          grid.appendChild(button);
+        });
+      });
+    }
+
+    function update() {
+      autoDotSolvedClueGaps();
+      autoDotCompletedLines();
+      syncClueDoneState();
+      state.solved = isSolved();
+      renderAllClues();
+      renderGrid();
+      renderCross();
+      renderModeButton();
+
+      saveProgress();
+    }
+
+    function renderCross() {
+      const row = byId("cn-cross-row");
+      const col = byId("cn-cross-col");
+      const rowCount = byId("cn-cross-row-count");
+      const colCount = byId("cn-cross-col-count");
+      const clueH = clueRows;
+
+      if (state.currentRow === null || state.currentCol === null) {
+        row.style.display = "none";
+        col.style.display = "none";
+        rowCount.style.display = "none";
+        colCount.style.display = "none";
+        return;
+      }
+
+      row.style.display = "block";
+      col.style.display = "block";
+      rowCount.style.display = "grid";
+      colCount.style.display = "grid";
+      row.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow})`;
+      col.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol})`;
+      rowCount.textContent = countRun(state.currentRow, state.currentCol, "row");
+      colCount.textContent = countRun(state.currentRow, state.currentCol, "col");
+      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 1px)`;
+      rowCount.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow} + var(--cn-cell) / 2)`;
+      rowCount.style.transform = "translateY(-50%)";
+      colCount.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} + var(--cn-cell) / 2)`;
+      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} + 1px)`;
+      colCount.style.transform = "translateX(-50%)";
+    }
+
+    function renderIndexLabels() {
+      const bottom = byId("cn-bottom-numbers");
+      const side = byId("cn-side-numbers");
+      bottom.innerHTML = "";
+      side.innerHTML = "";
+
+      for (let col = 5; col < puzzle.width; col += 5) {
+        const label = document.createElement("span");
+        label.className = "cn-index-label";
+        label.textContent = col;
+        label.style.left = `calc(var(--cn-cell) * ${clueCols + col})`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} - 7px)`;
+        label.style.transform = "translateX(-50%)";
+        bottom.appendChild(label);
+      }
+
+      for (let row = 5; row < puzzle.height; row += 5) {
+        const label = document.createElement("span");
+        label.className = "cn-index-label";
+        label.textContent = row;
+        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 8px)`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + row} - 4px)`;
+        label.style.transform = "translateY(-50%)";
+        side.appendChild(label);
+      }
+    }
+
+    function saveProgress() {
+      const data = {
+        cells: state.cells,
+        marks: state.marks,
+        activeColor: state.activeColor,
+        currentRow: state.currentRow,
+        currentCol: state.currentCol,
+      };
+      storageSet(storageKey, JSON.stringify(data));
+    }
+
+    function loadProgress() {
+      try {
+        const raw = storageGet(storageKey);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!Array.isArray(data.cells)) return;
+        state.cells = Array.from({ length: puzzle.height }, (_, rowIndex) =>
+          Array.from({ length: puzzle.width }, (_, col) => {
+            const row = data.cells[rowIndex];
+            const cell = row && row[col];
+            return cell === "dot" || colorById[cell] ? cell : null;
+          }),
+        );
+        state.marks = Array.from({ length: puzzle.height }, (_, rowIndex) =>
+          Array.from({ length: puzzle.width }, (_, col) => Boolean(data.marks?.[rowIndex]?.[col])),
+        );
+        state.activeColor = colorById[data.activeColor] ? data.activeColor : state.activeColor;
+        state.currentRow = Number.isInteger(data.currentRow) ? data.currentRow : null;
+        state.currentCol = Number.isInteger(data.currentCol) ? data.currentCol : null;
+      } catch (error) {
+        storageRemove(storageKey);
+      }
+    }
+
+    function resetPuzzle() {
+      pushHistory();
+      state.cells = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
+      state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
+      state.activeColor = puzzle.palette[0].id;
+      state.isDrawing = false;
+      state.moved = false;
+      state.armedValue = null;
+      state.isPaintingDrag = false;
+      state.drawStart = null;
+      state.drawAxis = null;
+      state.gestureCellsBase = null;
+      state.gestureMarksBase = null;
+      state.gestureAxis = null;
+      state.drawValue = null;
+      state.markMode = false;
+      state.markValue = true;
+      state.holdTimer = null;
+      state.lastCell = null;
+      state.showErrors = false;
+      state.currentRow = null;
+      state.currentCol = null;
+      state.solved = false;
+      clearClueDoneState();
+      storageRemove(storageKey);
+      renderPalette();
+      update();
+    }
+
+    function countErrors() {
+      let errors = 0;
+      state.cells.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          const solutionCell = puzzle.solution[rowIndex][colIndex];
+          if (cell && cell !== "dot" && cell !== solutionCell) errors += 1;
+          if (cell === "dot" && solutionCell) errors += 1;
+        });
+      });
+      return errors;
+    }
+
+    function setMenuMode(mode) {
+      const isReview = mode === "review";
+      byId("cn-menu-main").style.display = isReview ? "none" : "grid";
+      byId("cn-review-panel").classList.toggle("cn-open", isReview);
+      byId("cn-menu-title").textContent = isReview ? `Review: ${countErrors()} error(s)` : "Game paused";
+    }
+
+    function clearErrors() {
+      pushHistory();
+      state.cells.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          const solutionCell = puzzle.solution[rowIndex][colIndex];
+          if (cell && cell !== "dot" && cell !== solutionCell) state.cells[rowIndex][colIndex] = null;
+          if (cell === "dot" && solutionCell) state.cells[rowIndex][colIndex] = null;
+        });
+      });
+      state.showErrors = false;
+      update();
+      setMenuMode("review");
+    }
+
+    function showHint() {
+      for (let row = 0; row < puzzle.height; row += 1) {
+        for (let col = 0; col < puzzle.width; col += 1) {
+          const solutionCell = puzzle.solution[row][col];
+          if (solutionCell && state.cells[row][col] !== solutionCell) {
+            pushHistory();
+            state.cells[row][col] = solutionCell;
+            setPointerCell(row, col);
+            update();
+            setMenuMode("review");
+            return;
+          }
+        }
+      }
+    }
+
+    byId("cn-menu-toggle").addEventListener("click", () => {
+      byId("cn-menu-backdrop").classList.add("cn-open");
+    });
+
+    byId("cn-mark-mode").addEventListener("click", () => {
+      if (state.markMode) {
+        byId("cn-mark-backdrop").classList.add("cn-open");
+        return;
+      }
+      state.markMode = true;
+      renderModeButton();
+      saveProgress();
+    });
+
+    byId("cn-exit-mark-mode").addEventListener("click", () => {
+      state.markMode = false;
+      byId("cn-mark-backdrop").classList.remove("cn-open");
+      renderModeButton();
+      saveProgress();
+    });
+
+    byId("cn-clear-marks").addEventListener("click", () => {
+      state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
+      byId("cn-mark-backdrop").classList.remove("cn-open");
+      update();
+    });
+
+    byId("cn-cancel-mark-menu").addEventListener("click", () => {
+      byId("cn-mark-backdrop").classList.remove("cn-open");
+    });
+
+    byId("cn-mark-backdrop").addEventListener("click", (event) => {
+      if (event.target === byId("cn-mark-backdrop")) byId("cn-mark-backdrop").classList.remove("cn-open");
+    });
+
+    byId("cn-close-menu").addEventListener("click", () => {
+      byId("cn-menu-backdrop").classList.remove("cn-open");
+      setMenuMode("main");
+    });
+
+    byId("cn-menu-backdrop").addEventListener("click", (event) => {
+      if (event.target === byId("cn-menu-backdrop")) {
+        byId("cn-menu-backdrop").classList.remove("cn-open");
+        setMenuMode("main");
+      }
+    });
+
+    byId("cn-restart").addEventListener("click", () => {
+      resetPuzzle();
+      byId("cn-menu-backdrop").classList.remove("cn-open");
+      setMenuMode("main");
+    });
+
+    byId("cn-review").addEventListener("click", () => setMenuMode("review"));
+    byId("cn-show-errors").addEventListener("click", () => {
+      state.showErrors = true;
+      update();
+      setMenuMode("review");
+    });
+    byId("cn-clear-errors").addEventListener("click", clearErrors);
+    byId("cn-show-hint").addEventListener("click", showHint);
+    byId("cn-undo").addEventListener("click", undo);
+    byId("cn-redo").addEventListener("click", redo);
+    byId("cn-back").addEventListener("click", () => {});
+
+    byId("cn-board").addEventListener("pointerdown", (event) => {
+      const cell = cellFromPoint(event);
+      if (!cell || state.solved) return;
+      event.preventDefault();
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      state.pointerId = event.pointerId;
+      state.isDrawing = true;
+      state.moved = false;
+      state.isPaintingDrag = false;
+      const anchor = {
+        row: state.currentRow === null ? cell.row : state.currentRow,
+        col: state.currentCol === null ? cell.col : state.currentCol,
+      };
+      if (state.currentRow === null || state.currentCol === null) setPointerCell(anchor.row, anchor.col);
+      state.drawStart = anchor;
+      state.drawAxis = null;
+      state.gestureAxis = null;
+      state.gestureCellsBase = null;
+      state.gestureMarksBase = null;
+      state.drawValue = undefined;
+      state.lastCell = anchor;
+      state.startX = event.clientX;
+      state.startY = event.clientY;
+      window.clearTimeout(state.holdTimer);
+      state.holdTimer = window.setTimeout(() => {
+        if (!state.isDrawing || state.moved || state.solved) return;
+        state.isPaintingDrag = true;
+        state.showErrors = false;
+        if (state.markMode) {
+          state.gestureMarksBase = cloneMarks();
+          state.markValue = !state.marks[anchor.row][anchor.col];
+          markPath(anchor, anchor);
+          return;
+        }
+        pushHistory();
+        state.gestureCellsBase = cloneCells();
+        state.drawValue = nextCellValue(state.cells[anchor.row][anchor.col]);
+        state.armedValue = state.drawValue;
+        paintPath(anchor, anchor);
+      }, 260);
+    });
+
+    byId("cn-board").addEventListener("pointermove", (event) => {
+      if (!state.isDrawing) return;
+      if (!state.drawStart) return;
+      event.preventDefault();
+      const distance = Math.hypot(event.clientX - state.startX, event.clientY - state.startY);
+      if (distance > 6) {
+        state.moved = true;
+        if (!state.isPaintingDrag) {
+          window.clearTimeout(state.holdTimer);
+          const cell = freeCellFromPointer(event, state.drawStart);
+          moveCross(cell.row, cell.col);
+          return;
+        }
+        if (!state.gestureAxis) {
+          state.gestureAxis = dominantAxis(event);
+          if (!state.gestureAxis) return;
+        }
+        const cell = relativeCellFromPointer(event, state.drawStart);
+        if (state.markMode) markPath(state.lastCell, cell);
+        else paintPath(state.lastCell, cell);
+        return;
+      }
+    });
+
+    window.addEventListener("pointerup", (event) => {
+      window.clearTimeout(state.holdTimer);
+      if (state.pointerId !== null && event.pointerId !== state.pointerId) return;
+      if (state.isDrawing && !state.moved && !state.isPaintingDrag && state.drawStart && !state.solved) {
+        const targetRow = state.currentRow === null ? state.drawStart.row : state.currentRow;
+        const targetCol = state.currentCol === null ? state.drawStart.col : state.currentCol;
+        handleTap(targetRow, targetCol);
+      }
+      state.isDrawing = false;
+      state.moved = false;
+      state.isPaintingDrag = false;
+      state.drawStart = null;
+      state.drawAxis = null;
+      state.gestureCellsBase = null;
+      state.gestureMarksBase = null;
+      state.gestureAxis = null;
+      state.drawValue = null;
+      state.markValue = true;
+      state.lastCell = null;
+      state.pointerId = null;
+    });
+
+    loadProgress();
+    renderPalette();
+    renderIndexLabels();
+    updateHistoryButtons();
+    update();
+    window.setTimeout(() => window.scrollTo(0, 1), 250);
+    } catch (error) {
+      const root = document.getElementById("cn-game");
+      if (root) {
+        root.insertAdjacentHTML(
+          "beforeend",
+          `<pre style="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;margin:0;padding:8px;background:#fff;color:#b00020;font:12px monospace;white-space:pre-wrap">${String(error?.stack || error)}</pre>`,
+        );
+      }
+      throw error;
+    }
+  })();
+</script>
