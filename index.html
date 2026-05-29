@@ -25,7 +25,7 @@
     --cn-outer-stroke: 1.5px;
     --cn-panel: #fffdf8;
     --cn-accent: #ffa389;
-    --cn-highlight: #ff6f61;
+    --cn-highlight: #6B51FF;
     --cn-highlight-stroke: 1px;
     --cn-cols: 25;
     --cn-rows: 35;
@@ -193,7 +193,9 @@
     border: var(--cn-highlight-stroke) solid var(--cn-highlight);
     pointer-events: none;
     z-index: 8;
-    transition: top 55ms linear, left 55ms linear;
+    transition:
+      top 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      left 130ms cubic-bezier(0.2, 0.8, 0.2, 1);
     will-change: top, left;
   }
 
@@ -242,6 +244,9 @@
     line-height: 1;
     pointer-events: none;
     z-index: 10;
+    transition:
+      top 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      left 130ms cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
   #cn-game .cn-corner {
@@ -525,6 +530,12 @@
     width: 100%;
     height: 58px;
     padding: 0 0 8px;
+    transition: opacity 120ms ease;
+  }
+
+  #cn-game .cn-palette.cn-hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 
   #cn-game .cn-swatch {
@@ -546,9 +557,9 @@
     position: fixed;
     inset: 0;
     display: none;
-    align-items: flex-start;
-    justify-content: flex-end;
-    padding: 194px max(14px, calc((100vw - 393px) / 2 + 14px)) 0 14px;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
     background: rgba(0, 0, 0, 0.35);
     z-index: 20;
   }
@@ -558,58 +569,73 @@
   }
 
   #cn-game .cn-menu {
-    width: 174px;
+    width: 284px;
     position: relative;
-    border-radius: 13px;
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24);
-    padding: 16px;
-    backdrop-filter: blur(10px);
+    border-radius: 27px;
+    background: #f6f4ed;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    padding: 33px 30px 30px;
+  }
+
+  #cn-game .cn-menu.cn-menu--review {
+    padding-top: 31px;
   }
 
   #cn-game .cn-menu::before {
-    content: "";
-    position: absolute;
-    top: -28px;
-    right: 15px;
-    width: 0;
-    height: 0;
-    border-left: 24px solid transparent;
-    border-bottom: 34px solid rgba(255, 255, 255, 0.96);
+    content: none;
   }
 
   #cn-game .cn-menu-title {
-    margin: 0 0 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid #6f9192;
-    color: #6f9192;
-    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    gap: 9px;
+    margin: 0 0 23px;
+    color: #4a6f73;
+    font-size: 13px;
     font-weight: 900;
-    text-align: left;
+    line-height: 1;
+    text-align: center;
+  }
+
+  #cn-game .cn-menu-time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  #cn-game .cn-menu.cn-menu--review .cn-menu-title {
+    display: none;
   }
 
   #cn-game .cn-menu-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 12px;
+    grid-template-columns: 106px 106px;
+    gap: 12px;
   }
 
   #cn-game .cn-menu-button {
-    min-height: 52px;
+    min-height: 40px;
     border: 0;
-    border-radius: 8px;
-    background: transparent;
-    color: #6f9192;
-    font-size: 12px;
+    border-radius: 20px;
+    background: rgba(74, 111, 115, 0.3);
+    color: #4a6f73;
+    font-size: 13px;
     font-weight: 900;
     cursor: pointer;
+    font-family: inherit;
   }
 
   #cn-game .cn-menu-button span {
     display: block;
-    font-size: 27px;
+    font-size: 22px;
     line-height: 1;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
+  }
+
+  #cn-game .cn-menu-button--tile {
+    min-height: 65px;
+  }
+
+  #cn-game .cn-menu-button--wide {
+    grid-column: 1 / -1;
   }
 
   #cn-game .cn-review-panel {
@@ -618,18 +644,40 @@
 
   #cn-game .cn-review-panel.cn-open {
     display: grid;
-    gap: 10px;
+    gap: 12px;
+  }
+
+  #cn-game .cn-review-title {
+    margin: 0;
+    color: #000;
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  #cn-game .cn-review-copy {
+    margin: 7px 0 10px;
+    color: #4a6f73;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
   }
 
   #cn-game .cn-review-action {
-    min-height: 37px;
+    min-height: 40px;
     border: 0;
-    border-radius: 999px;
-    background: rgba(111, 145, 146, 0.2);
-    color: #202124;
+    border-radius: 20px;
+    background: rgba(74, 111, 115, 0.3);
+    color: #000;
     font-size: 13px;
     font-weight: 800;
+    font-family: inherit;
     cursor: pointer;
+  }
+
+  #cn-game .cn-review-action:disabled {
+    color: rgba(74, 111, 115, 0.5);
+    cursor: default;
   }
 
   #cn-game .cn-mark-backdrop {
@@ -813,17 +861,20 @@
     <section class="cn-palette" id="cn-palette" aria-label="Палитра"></section>
 
     <div class="cn-menu-backdrop" id="cn-menu-backdrop">
-      <section class="cn-menu" aria-label="Меню">
-        <p class="cn-menu-title" id="cn-menu-title">Game paused</p>
+      <section class="cn-menu" id="cn-menu" aria-label="Меню">
+        <div class="cn-menu-title" id="cn-menu-title">
+          <span id="cn-menu-title-label">Game paused:</span>
+          <span class="cn-menu-time" id="cn-menu-time">00:00:00</span>
+        </div>
         <div class="cn-menu-grid" id="cn-menu-main">
-          <button class="cn-menu-button" id="cn-solve" type="button"><span>◉</span>Solve</button>
-          <button class="cn-menu-button" id="cn-review" type="button"><span>✓</span>Review</button>
-          <button class="cn-menu-button" id="cn-restart" type="button"><span>↻</span>Restart</button>
-          <button class="cn-menu-button" id="cn-info" type="button"><span>i</span>Info</button>
-          <button class="cn-menu-button" id="cn-settings" type="button"><span>⚙</span>Settings</button>
-          <button class="cn-menu-button" id="cn-help" type="button"><span>?</span>Help</button>
+          <button class="cn-menu-button cn-menu-button--tile" id="cn-review" type="button"><span>◉</span>Review</button>
+          <button class="cn-menu-button cn-menu-button--tile" id="cn-restart" type="button"><span>↻</span>Restart</button>
+          <button class="cn-menu-button cn-menu-button--wide" id="cn-settings" type="button">Settings</button>
+          <button class="cn-menu-button cn-menu-button--wide" id="cn-close-menu-main" type="button">Close</button>
         </div>
         <div class="cn-review-panel" id="cn-review-panel">
+          <h2 class="cn-review-title">Review</h2>
+          <p class="cn-review-copy" id="cn-review-copy">You have 0 error(s)</p>
           <button class="cn-review-action" id="cn-show-errors" type="button">Show errors</button>
           <button class="cn-review-action" id="cn-clear-errors" type="button">Clear errors</button>
           <button class="cn-review-action" id="cn-show-hint" type="button">Show hint</button>
@@ -930,6 +981,7 @@
       gestureAxis: null,
       drawValue: null,
       markMode: false,
+      paletteHidden: false,
       markValue: true,
       holdTimer: null,
       lastCell: null,
@@ -941,6 +993,10 @@
       startY: 0,
       currentRow: null,
       currentCol: null,
+      elapsedMs: 0,
+      timerStartedAt: null,
+      timerRunning: false,
+      timerInterval: null,
       cells: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null)),
       marks: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false)),
       clueDone: new Set(),
@@ -1198,6 +1254,7 @@
     function renderPalette() {
       const palette = byId("cn-palette");
       palette.innerHTML = "";
+      palette.classList.toggle("cn-hidden", state.paletteHidden);
 
       puzzle.palette.forEach((color) => {
         const swatch = document.createElement("button");
@@ -1215,6 +1272,12 @@
 
     function renderModeButton() {
       byId("cn-mark-mode").classList.toggle("cn-marking-active", state.markMode);
+    }
+
+    function togglePalette() {
+      state.paletteHidden = !state.paletteHidden;
+      renderPalette();
+      saveProgress();
     }
 
     function setPointerCell(rowIndex, colIndex) {
@@ -1395,11 +1458,15 @@
     }
 
     function cellRunKey(cell) {
-      return cell && cell !== "dot" ? cell : "empty";
+      if (!cell) return "empty";
+      if (cell === "dot") return "dot";
+      return cell;
     }
 
     function sameRunKind(cell, key) {
-      return key === "empty" ? !cell || cell === "dot" : cell === key;
+      if (key === "empty") return !cell;
+      if (key === "dot") return cell === "dot";
+      return cell === key;
     }
 
     function countRun(rowIndex, colIndex, axis) {
@@ -1479,6 +1546,7 @@
       autoDotCompletedLines();
       syncClueDoneState();
       state.solved = isSolved();
+      if (state.solved) pauseTimer();
       renderAllClues();
       renderGrid();
       renderCross();
@@ -1545,13 +1613,54 @@
       }
     }
 
+    function formatElapsed(ms) {
+      const total = Math.max(0, Math.floor(ms / 1000));
+      const hours = Math.floor(total / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const seconds = total % 60;
+      return [hours, minutes, seconds].map((value) => String(value).padStart(2, "0")).join(":");
+    }
+
+    function getElapsedMs() {
+      if (!state.timerRunning || state.timerStartedAt === null) return state.elapsedMs;
+      return state.elapsedMs + Date.now() - state.timerStartedAt;
+    }
+
+    function renderTimer() {
+      const timer = byId("cn-menu-time");
+      if (timer) timer.textContent = formatElapsed(getElapsedMs());
+    }
+
+    function startTimer() {
+      if (state.timerRunning || state.solved) return;
+      state.timerRunning = true;
+      state.timerStartedAt = Date.now();
+      window.clearInterval(state.timerInterval);
+      state.timerInterval = window.setInterval(saveProgress, 10000);
+    }
+
+    function pauseTimer() {
+      if (!state.timerRunning) {
+        renderTimer();
+        return;
+      }
+      state.elapsedMs = getElapsedMs();
+      state.timerRunning = false;
+      state.timerStartedAt = null;
+      window.clearInterval(state.timerInterval);
+      renderTimer();
+      saveProgress();
+    }
+
     function saveProgress() {
       const data = {
         cells: state.cells,
         marks: state.marks,
         activeColor: state.activeColor,
+        paletteHidden: state.paletteHidden,
         currentRow: state.currentRow,
         currentCol: state.currentCol,
+        elapsedMs: getElapsedMs(),
       };
       storageSet(storageKey, JSON.stringify(data));
     }
@@ -1573,8 +1682,10 @@
           Array.from({ length: puzzle.width }, (_, col) => Boolean(data.marks?.[rowIndex]?.[col])),
         );
         state.activeColor = colorById[data.activeColor] ? data.activeColor : state.activeColor;
+        state.paletteHidden = Boolean(data.paletteHidden);
         state.currentRow = Number.isInteger(data.currentRow) ? data.currentRow : null;
         state.currentCol = Number.isInteger(data.currentCol) ? data.currentCol : null;
+        state.elapsedMs = Number.isFinite(data.elapsedMs) ? Math.max(0, data.elapsedMs) : 0;
       } catch (error) {
         storageRemove(storageKey);
       }
@@ -1582,6 +1693,7 @@
 
     function resetPuzzle() {
       pushHistory();
+      window.clearInterval(state.timerInterval);
       state.cells = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
       state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
       state.activeColor = puzzle.palette[0].id;
@@ -1602,11 +1714,16 @@
       state.showErrors = false;
       state.currentRow = null;
       state.currentCol = null;
+      state.elapsedMs = 0;
+      state.timerStartedAt = null;
+      state.timerRunning = false;
+      state.timerInterval = null;
       state.solved = false;
       clearClueDoneState();
       storageRemove(storageKey);
       renderPalette();
       update();
+      startTimer();
     }
 
     function countErrors() {
@@ -1623,9 +1740,27 @@
 
     function setMenuMode(mode) {
       const isReview = mode === "review";
+      const errors = countErrors();
+      byId("cn-menu").classList.toggle("cn-menu--review", isReview);
       byId("cn-menu-main").style.display = isReview ? "none" : "grid";
       byId("cn-review-panel").classList.toggle("cn-open", isReview);
-      byId("cn-menu-title").textContent = isReview ? `Review: ${countErrors()} error(s)` : "Game paused";
+      byId("cn-menu-title-label").textContent = isReview ? "Review:" : "Game paused:";
+      byId("cn-menu-time").textContent = isReview ? `${errors} error(s)` : formatElapsed(getElapsedMs());
+      byId("cn-review-copy").textContent = `You have ${errors} error(s)`;
+      byId("cn-show-errors").disabled = errors === 0;
+      byId("cn-clear-errors").disabled = errors === 0;
+    }
+
+    function openMenu() {
+      pauseTimer();
+      setMenuMode("main");
+      byId("cn-menu-backdrop").classList.add("cn-open");
+    }
+
+    function closeMenu() {
+      byId("cn-menu-backdrop").classList.remove("cn-open");
+      setMenuMode("main");
+      startTimer();
     }
 
     function clearErrors() {
@@ -1658,9 +1793,9 @@
       }
     }
 
-    byId("cn-menu-toggle").addEventListener("click", () => {
-      byId("cn-menu-backdrop").classList.add("cn-open");
-    });
+    byId("cn-menu-toggle").addEventListener("click", openMenu);
+
+    byId("cn-game").querySelector(".cn-tool--palette").addEventListener("click", togglePalette);
 
     byId("cn-mark-mode").addEventListener("click", () => {
       if (state.markMode) {
@@ -1693,15 +1828,12 @@
       if (event.target === byId("cn-mark-backdrop")) byId("cn-mark-backdrop").classList.remove("cn-open");
     });
 
-    byId("cn-close-menu").addEventListener("click", () => {
-      byId("cn-menu-backdrop").classList.remove("cn-open");
-      setMenuMode("main");
-    });
+    byId("cn-close-menu-main").addEventListener("click", closeMenu);
+    byId("cn-close-menu").addEventListener("click", closeMenu);
 
     byId("cn-menu-backdrop").addEventListener("click", (event) => {
       if (event.target === byId("cn-menu-backdrop")) {
-        byId("cn-menu-backdrop").classList.remove("cn-open");
-        setMenuMode("main");
+        closeMenu();
       }
     });
 
@@ -1816,6 +1948,7 @@
     renderIndexLabels();
     updateHistoryButtons();
     update();
+    startTimer();
     window.setTimeout(() => window.scrollTo(0, 1), 250);
     } catch (error) {
       const root = document.getElementById("cn-game");
