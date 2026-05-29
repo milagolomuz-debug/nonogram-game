@@ -4,6 +4,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#6f9192">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
 <style>
   html,
   body {
@@ -570,6 +573,7 @@
 
   #cn-game .cn-menu {
     width: 284px;
+    min-height: 300px;
     position: relative;
     border-radius: 27px;
     background: #f6f4ed;
@@ -578,6 +582,7 @@
   }
 
   #cn-game .cn-menu.cn-menu--review {
+    min-height: 326px;
     padding-top: 31px;
   }
 
@@ -624,14 +629,25 @@
   }
 
   #cn-game .cn-menu-button span {
-    display: block;
-    font-size: 22px;
+    display: inline-flex;
+  }
+
+  #cn-game .cn-menu-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 22px;
     line-height: 1;
     margin-bottom: 5px;
   }
 
   #cn-game .cn-menu-button--tile {
     min-height: 65px;
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    gap: 6px;
+    line-height: 1;
   }
 
   #cn-game .cn-menu-button--wide {
@@ -678,6 +694,10 @@
   #cn-game .cn-review-action:disabled {
     color: rgba(74, 111, 115, 0.5);
     cursor: default;
+  }
+
+  #cn-game .cn-review-action.cn-review-muted {
+    color: rgba(74, 111, 115, 0.5);
   }
 
   #cn-game .cn-mark-backdrop {
@@ -867,8 +887,8 @@
           <span class="cn-menu-time" id="cn-menu-time">00:00:00</span>
         </div>
         <div class="cn-menu-grid" id="cn-menu-main">
-          <button class="cn-menu-button cn-menu-button--tile" id="cn-review" type="button"><span>◉</span>Review</button>
-          <button class="cn-menu-button cn-menu-button--tile" id="cn-restart" type="button"><span>↻</span>Restart</button>
+          <button class="cn-menu-button cn-menu-button--tile" id="cn-review" type="button"><span class="cn-menu-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.2532 10.7216C21.2231 10.6537 20.4952 9.03891 18.877 7.4207C16.7209 5.26453 13.9975 4.125 11 4.125C8.00251 4.125 5.27915 5.26453 3.12298 7.4207C1.50477 9.03891 0.773445 10.6562 0.746804 10.7216C0.707714 10.8095 0.687515 10.9046 0.687515 11.0009C0.687515 11.0971 0.707714 11.1922 0.746804 11.2802C0.776882 11.348 1.50477 12.962 3.12298 14.5802C5.27915 16.7355 8.00251 17.875 11 17.875C13.9975 17.875 16.7209 16.7355 18.877 14.5802C20.4952 12.962 21.2231 11.348 21.2532 11.2802C21.2923 11.1922 21.3125 11.0971 21.3125 11.0009C21.3125 10.9046 21.2923 10.8095 21.2532 10.7216ZM11 14.4375C10.3201 14.4375 9.65553 14.2359 9.09023 13.8582C8.52494 13.4805 8.08435 12.9436 7.82417 12.3155C7.56399 11.6874 7.49592 10.9962 7.62856 10.3294C7.76119 9.66257 8.08858 9.05006 8.56933 8.56932C9.05007 8.08858 9.66257 7.76119 10.3294 7.62855C10.9962 7.49591 11.6874 7.56399 12.3155 7.82416C12.9436 8.08434 13.4805 8.52493 13.8582 9.09023C14.2359 9.65552 14.4375 10.3201 14.4375 11C14.4375 11.9117 14.0753 12.786 13.4307 13.4307C12.786 14.0753 11.9117 14.4375 11 14.4375Z" fill="#4A6F73"/></svg></span><span>Review</span></button>
+          <button class="cn-menu-button cn-menu-button--tile" id="cn-restart" type="button"><span class="cn-menu-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.25 11C19.2502 13.169 18.3962 15.2508 16.873 16.7948C15.3497 18.3388 13.2796 19.2209 11.1109 19.25H11C8.89302 19.2553 6.86493 18.4489 5.33672 16.9984C5.27109 16.9364 5.21834 16.862 5.18146 16.7795C5.14458 16.6971 5.12431 16.6081 5.1218 16.5179C5.11928 16.4276 5.13458 16.3377 5.16681 16.2533C5.19904 16.1689 5.24758 16.0917 5.30965 16.0261C5.37172 15.9604 5.44611 15.9077 5.52857 15.8708C5.61102 15.8339 5.69994 15.8136 5.79023 15.8111C5.88053 15.8086 5.97043 15.8239 6.05482 15.8561C6.1392 15.8884 6.21641 15.9369 6.28203 15.999C7.26498 16.926 8.49929 17.5428 9.83076 17.7724C11.1622 18.002 12.5318 17.8341 13.7685 17.2898C15.0051 16.7456 16.054 15.849 16.784 14.712C17.514 13.5751 17.8929 12.2483 17.8732 10.8973C17.8536 9.54637 17.4363 8.23113 16.6735 7.11594C15.9107 6.00074 14.8362 5.13504 13.5842 4.62696C12.3323 4.11889 10.9584 3.99097 9.63415 4.25919C8.30992 4.52741 7.09408 5.17987 6.13852 6.13508C6.1315 6.14267 6.12403 6.14985 6.11617 6.15656L5.21039 6.98586L6.67133 8.4468C6.76892 8.54256 6.83573 8.66524 6.86325 8.79917C6.89076 8.9331 6.87771 9.07219 6.82577 9.19866C6.77384 9.32514 6.68537 9.43326 6.57167 9.5092C6.45798 9.58514 6.32422 9.62546 6.1875 9.625H2.0625C1.88016 9.625 1.7053 9.55257 1.57636 9.42364C1.44743 9.2947 1.375 9.11984 1.375 8.9375V4.8125C1.37421 4.67615 1.41398 4.54265 1.48925 4.42896C1.56452 4.31528 1.6719 4.22654 1.79774 4.17403C1.92357 4.12153 2.06217 4.10762 2.19593 4.13408C2.32968 4.16055 2.45255 4.22619 2.54891 4.32266L4.23758 6.01563L5.17773 5.15625C6.33272 4.00575 7.80267 3.22323 9.40202 2.90746C11.0014 2.5917 12.6584 2.75685 14.164 3.38206C15.6696 4.00727 16.9561 5.06452 17.8613 6.42035C18.7665 7.77617 19.2498 9.36978 19.25 11Z" fill="#4A6F73"/></svg></span><span>Restart</span></button>
           <button class="cn-menu-button cn-menu-button--wide" id="cn-settings" type="button">Settings</button>
           <button class="cn-menu-button cn-menu-button--wide" id="cn-close-menu-main" type="button">Close</button>
         </div>
@@ -1747,8 +1767,8 @@
       byId("cn-menu-title-label").textContent = isReview ? "Review:" : "Game paused:";
       byId("cn-menu-time").textContent = isReview ? `${errors} error(s)` : formatElapsed(getElapsedMs());
       byId("cn-review-copy").textContent = `You have ${errors} error(s)`;
-      byId("cn-show-errors").disabled = errors === 0;
-      byId("cn-clear-errors").disabled = errors === 0;
+      byId("cn-show-errors").classList.toggle("cn-review-muted", errors === 0);
+      byId("cn-clear-errors").classList.toggle("cn-review-muted", errors === 0);
     }
 
     function openMenu() {
