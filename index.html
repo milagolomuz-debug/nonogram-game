@@ -764,6 +764,10 @@
     display: block;
   }
 
+  #cn-game .cn-play-area.cn-open {
+    display: grid;
+  }
+
   #cn-game .cn-app[data-view="pack"] .cn-play-area,
   #cn-game .cn-app[data-view="library"] .cn-play-area,
   #cn-game .cn-app[data-view="pack"] .cn-palette,
@@ -776,12 +780,33 @@
     display: none;
   }
 
+  #cn-game .cn-app[data-view="pack"] .cn-tool--back {
+    width: 86px;
+    place-items: center start;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-tool--back::after {
+    content: "Library";
+    position: absolute;
+    left: 26px;
+    top: 6px;
+    color: #f6f4ed;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
   #cn-game .cn-screen {
     position: absolute;
     inset: 134px 0 0;
     overflow: hidden auto;
     background: #e4eeee;
     padding: 22px 11px 30px;
+  }
+
+  #cn-game #cn-pack-screen {
+    background: #f6f4ed;
+    padding: 12px 11px 32px;
   }
 
   #cn-game .cn-screen-title {
@@ -833,8 +858,8 @@
   #cn-game .cn-pack-title {
     margin: 0;
     color: #4a6f73;
-    font-size: 18px;
-    font-weight: 900;
+    font-size: 15px;
+    font-weight: 600;
     line-height: 1.1;
   }
 
@@ -843,8 +868,37 @@
     margin: 6px 0 0;
     color: rgba(74, 111, 115, 0.78);
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 500;
     line-height: 1.25;
+  }
+
+  #cn-game .cn-pack-stats {
+    display: grid;
+    gap: 5px;
+    margin-top: 47px;
+  }
+
+  #cn-game .cn-pack-stat {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  #cn-game .cn-pack-stat::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: #ffa389;
+  }
+
+  #cn-game .cn-pack-stat--saved::before {
+    background: #5cd5f6;
+  }
+
+  #cn-game .cn-pack-stat--solved::before {
+    background: #31ca6c;
   }
 
   #cn-game .cn-pack-more {
@@ -862,66 +916,114 @@
 
   #cn-game .cn-pack-hero {
     display: grid;
-    grid-template-columns: 88px 1fr;
-    gap: 15px;
-    align-items: center;
-    margin: 2px 11px 20px;
+    grid-template-columns: 116px 1fr;
+    gap: 11px;
+    align-items: start;
+    margin: 0 0 10px;
   }
 
   #cn-game .cn-pack-thumb {
-    width: 88px;
-    height: 88px;
-    border-radius: 18px;
+    width: 116px;
+    height: 116px;
+    border-radius: 20px;
   }
 
   #cn-game .cn-pack-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 117px);
     gap: 10px;
   }
 
   #cn-game .cn-puzzle-card {
     position: relative;
-    min-height: 126px;
+    width: 117px;
+    height: 117px;
+    min-height: 117px;
     border: 0;
-    border-radius: 0;
-    background: #fff;
+    border-radius: 20px;
+    background: #e6e6e6;
     color: #111;
-    box-shadow: inset 0 0 0 1px #929b9c;
-    font-weight: 850;
+    box-shadow: inset 0 0 0 1px rgba(74, 111, 115, 0.5);
+    font-weight: 600;
     cursor: pointer;
-    padding: 0 4px 8px;
+    padding: 0;
+    overflow: visible;
   }
 
   #cn-game .cn-puzzle-number {
     position: absolute;
-    top: -9px;
-    left: -7px;
-    width: 28px;
-    height: 28px;
+    top: 11px;
+    left: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: #3d7bd8;
-    color: #fff;
-    border: 4px solid #fff;
-    font-size: 13px;
-    font-weight: 900;
+    background: #ffa389;
+    color: transparent;
+    border: 0;
+    font-size: 0;
+  }
+
+  #cn-game .cn-puzzle-card:nth-child(3n + 2) .cn-puzzle-number {
+    background: #5cd5f6;
+  }
+
+  #cn-game .cn-puzzle-card:nth-child(3n) .cn-puzzle-number {
+    background: #31ca6c;
   }
 
   #cn-game .cn-card-thumb {
-    width: 78px;
-    height: 78px;
-    margin: 15px auto 7px;
-    border-radius: 8px;
-    opacity: 0.55;
+    width: 97px;
+    height: 97px;
+    margin: 10px auto 0;
+    border-radius: 10px;
+    opacity: 0.78;
   }
 
-  #cn-game .cn-card-meta {
+  #cn-game .cn-puzzle-card strong {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    bottom: 20px;
     display: block;
-    font-size: 12px;
-    line-height: 1.05;
+    font-size: 10px;
+    line-height: 1;
     text-align: center;
+  }
+
+  #cn-game .cn-card-status,
+  #cn-game .cn-puzzle-card small {
+    display: none;
+  }
+
+  #cn-game .cn-card-progress {
+    position: absolute;
+    left: 10px;
+    bottom: 12px;
+    width: 97px;
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(74, 111, 115, 0.3);
+  }
+
+  #cn-game .cn-card-progress::before {
+    content: "";
+    display: block;
+    width: var(--cn-card-progress, 0%);
+    height: 100%;
+    border-radius: inherit;
+    background: #4a6f73;
+  }
+
+  #cn-game .cn-puzzle-card--empty {
+    cursor: default;
+  }
+
+  #cn-game .cn-puzzle-card--empty .cn-card-thumb,
+  #cn-game .cn-puzzle-card--empty strong {
+    opacity: 0.35;
   }
 
   #cn-game .cn-pack-settings-backdrop {
@@ -1448,11 +1550,32 @@
     function renderPack(pack = currentPack) {
       const counts = packCounts(pack);
       byId("cn-pack-title").textContent = pack.title;
-      byId("cn-pack-stats").innerHTML = `${counts.new} New<br>${counts.saved} Saved<br>${counts.solved} Solved`;
+      byId("cn-pack-stats").innerHTML = `
+        <span class="cn-pack-stat cn-pack-stat--new">${counts.new} New</span>
+        <span class="cn-pack-stat cn-pack-stat--saved">${counts.saved} Saved</span>
+        <span class="cn-pack-stat cn-pack-stat--solved">${counts.solved} Solved</span>
+      `;
       const grid = byId("cn-pack-grid");
       grid.textContent = "";
-      pack.puzzles.forEach((nextPuzzle, index) => {
+      const slotCount = Math.max(20, pack.puzzles.length);
+      for (let index = 0; index < slotCount; index += 1) {
+        const nextPuzzle = pack.puzzles[index];
+        if (!nextPuzzle) {
+          const card = document.createElement("button");
+          card.className = "cn-puzzle-card cn-puzzle-card--empty";
+          card.type = "button";
+          card.disabled = true;
+          card.innerHTML = `
+            <span class="cn-puzzle-number">${index + 1}</span>
+            <div class="cn-card-thumb" aria-hidden="true"></div>
+            <strong>Empty</strong>
+            <span class="cn-card-progress" style="--cn-card-progress: 0%"></span>
+          `;
+          grid.appendChild(card);
+          continue;
+        }
         const progress = progressFor(nextPuzzle);
+        const progressAmount = progress.status === "solved" ? 100 : progress.status === "saved" ? 45 : 0;
         const card = document.createElement("button");
         card.className = "cn-puzzle-card";
         card.type = "button";
@@ -1460,12 +1583,13 @@
           <span class="cn-puzzle-number">${index + 1}</span>
           <div class="cn-card-thumb" aria-hidden="true"></div>
           <strong>${nextPuzzle.width}x${nextPuzzle.height}</strong>
-          <span>${progress.status === "new" ? "New" : progress.status === "saved" ? "Saved" : "Solved"}</span>
+          <span class="cn-card-status">${progress.status === "new" ? "New" : progress.status === "saved" ? "Saved" : "Solved"}</span>
           <small>${formatElapsed(progress.elapsedMs)}</small>
+          <span class="cn-card-progress" style="--cn-card-progress: ${progressAmount}%"></span>
         `;
         card.addEventListener("click", () => loadPuzzle(pack, nextPuzzle));
         grid.appendChild(card);
-      });
+      }
     }
 
     function showLibrary() {
@@ -2111,7 +2235,7 @@
         label.className = "cn-index-label";
         label.textContent = col;
         label.style.left = `calc(var(--cn-cell) * ${clueCols + col})`;
-        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} - 7px)`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} + 2px)`;
         label.style.transform = "translateX(-50%)";
         bottom.appendChild(label);
       }
@@ -2120,8 +2244,8 @@
         const label = document.createElement("span");
         label.className = "cn-index-label";
         label.textContent = row;
-        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 8px)`;
-        label.style.top = `calc(var(--cn-cell) * ${clueRows + row} - 4px)`;
+        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 3px)`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + row} + var(--cn-cell) / 2)`;
         label.style.transform = "translateY(-50%)";
         side.appendChild(label);
       }
