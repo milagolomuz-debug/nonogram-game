@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#6f9192">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap" rel="stylesheet">
 <style>
   html,
   body {
@@ -46,6 +46,7 @@
     background: var(--cn-bg);
     color: var(--cn-ink);
     font-family: "Montserrat", sans-serif;
+    font-weight: 500;
     -webkit-user-select: none;
     user-select: none;
     touch-action: manipulation;
@@ -137,19 +138,6 @@
     height: 22px;
     object-fit: contain;
     pointer-events: none;
-  }
-
-  #cn-game .cn-tool--mode.cn-marking-active img,
-  #cn-game .cn-tool--mode.cn-marking-active svg {
-    display: none;
-  }
-
-  #cn-game .cn-tool--mode.cn-marking-active::before {
-    content: "";
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: #f6f4ed;
   }
 
   #cn-game .cn-play-area {
@@ -533,12 +521,13 @@
     width: 100%;
     height: 58px;
     padding: 0 0 8px;
-    transition: opacity 120ms ease;
+    transition: opacity 160ms ease;
   }
 
   #cn-game .cn-palette.cn-hidden {
     opacity: 0;
     pointer-events: none;
+    transition-delay: 180ms;
   }
 
   #cn-game .cn-swatch {
@@ -562,8 +551,8 @@
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 18px;
-    background: rgba(0, 0, 0, 0.35);
+    padding: 0;
+    background: rgba(0, 0, 0, 0.3);
     z-index: 20;
   }
 
@@ -573,17 +562,16 @@
 
   #cn-game .cn-menu {
     width: 284px;
-    min-height: 300px;
+    height: 300px;
     position: relative;
-    border-radius: 27px;
+    border-radius: 26.667px;
     background: #f6f4ed;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-    padding: 33px 30px 30px;
+    box-shadow: 0 1.333px 1.333px rgba(0, 0, 0, 0.25);
+    padding: 0;
   }
 
   #cn-game .cn-menu.cn-menu--review {
-    min-height: 326px;
-    padding-top: 31px;
+    height: 326px;
   }
 
   #cn-game .cn-menu::before {
@@ -591,13 +579,17 @@
   }
 
   #cn-game .cn-menu-title {
+    position: absolute;
+    top: 36px;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 9px;
-    margin: 0 0 23px;
+    margin: 0;
     color: #4a6f73;
     font-size: 13px;
-    font-weight: 900;
+    font-weight: 600;
     line-height: 1;
     text-align: center;
   }
@@ -611,6 +603,9 @@
   }
 
   #cn-game .cn-menu-grid {
+    position: absolute;
+    left: 30px;
+    top: 101px;
     display: grid;
     grid-template-columns: 106px 106px;
     gap: 12px;
@@ -623,7 +618,7 @@
     background: rgba(74, 111, 115, 0.3);
     color: #4a6f73;
     font-size: 13px;
-    font-weight: 900;
+    font-weight: 600;
     cursor: pointer;
     font-family: inherit;
   }
@@ -642,7 +637,9 @@
   }
 
   #cn-game .cn-menu-button--tile {
-    min-height: 65px;
+    width: 106px;
+    height: 65.333px;
+    min-height: 65.333px;
     display: grid;
     align-content: center;
     justify-items: center;
@@ -652,6 +649,8 @@
 
   #cn-game .cn-menu-button--wide {
     grid-column: 1 / -1;
+    width: 224px;
+    height: 40px;
   }
 
   #cn-game .cn-review-panel {
@@ -659,6 +658,10 @@
   }
 
   #cn-game .cn-review-panel.cn-open {
+    position: absolute;
+    left: 30px;
+    top: 31px;
+    width: 224px;
     display: grid;
     gap: 12px;
   }
@@ -667,7 +670,7 @@
     margin: 0;
     color: #000;
     font-size: 16px;
-    font-weight: 900;
+    font-weight: 600;
     line-height: 1;
   }
 
@@ -686,7 +689,7 @@
     background: rgba(74, 111, 115, 0.3);
     color: #000;
     font-size: 13px;
-    font-weight: 800;
+    font-weight: 600;
     font-family: inherit;
     cursor: pointer;
   }
@@ -753,95 +756,246 @@
     cursor: pointer;
   }
 
-  #cn-game .cn-screen {
-    width: calc(100% + 20px);
-    min-height: calc(100svh - 78px);
+  #cn-game .cn-view {
     display: none;
-    background: #e4eeee;
-    padding: 22px 16px;
   }
 
-  #cn-game .cn-screen.cn-open {
+  #cn-game .cn-view.cn-open {
     display: block;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-play-area,
+  #cn-game .cn-app[data-view="library"] .cn-play-area,
+  #cn-game .cn-app[data-view="pack"] .cn-palette,
+  #cn-game .cn-app[data-view="library"] .cn-palette {
+    display: none;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-tool:not(.cn-tool--back),
+  #cn-game .cn-app[data-view="library"] .cn-tool:not(.cn-tool--back) {
+    display: none;
+  }
+
+  #cn-game .cn-screen {
+    position: absolute;
+    inset: 134px 0 0;
+    overflow: hidden auto;
+    background: #e4eeee;
+    padding: 22px 11px 30px;
+  }
+
+  #cn-game .cn-screen-title {
+    margin: 0 0 18px;
+    color: #4a6f73;
+    font-size: 27px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 0;
+  }
+
+  #cn-game .cn-library-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  #cn-game .cn-library-card {
+    position: relative;
+    display: grid;
+    grid-template-columns: 72px 1fr 32px;
+    gap: 12px;
+    align-items: center;
+    min-height: 88px;
+    padding: 10px 12px;
+    border: 0;
+    border-radius: 20px;
+    background: #f6f4ed;
+    color: #4a6f73;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-library-thumb,
+  #cn-game .cn-pack-thumb,
+  #cn-game .cn-card-thumb {
+    border: 1px solid rgba(74, 111, 115, 0.5);
+    background:
+      linear-gradient(135deg, #8fc5ff 0 40%, #f6b3c8 41% 58%, #81e959 59% 100%),
+      #fff;
+  }
+
+  #cn-game .cn-library-thumb {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+  }
+
+  #cn-game .cn-library-title,
+  #cn-game .cn-pack-title {
+    margin: 0;
+    color: #4a6f73;
+    font-size: 18px;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  #cn-game .cn-library-meta,
+  #cn-game .cn-pack-stats {
+    margin: 6px 0 0;
+    color: rgba(74, 111, 115, 0.78);
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+
+  #cn-game .cn-pack-more {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #4a6f73;
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    cursor: pointer;
   }
 
   #cn-game .cn-pack-hero {
     display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 16px;
+    grid-template-columns: 88px 1fr;
+    gap: 15px;
     align-items: center;
-    margin-bottom: 22px;
+    margin: 2px 11px 20px;
   }
 
   #cn-game .cn-pack-thumb {
-    width: 96px;
-    aspect-ratio: 1;
-    border: 1px solid #9aa9a9;
+    width: 88px;
+    height: 88px;
     border-radius: 18px;
-    background:
-      linear-gradient(135deg, #8fc5ff 0 42%, #f5b5c8 43% 58%, #74c765 59%),
-      #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  }
-
-  #cn-game .cn-pack-title {
-    margin: 0 0 10px;
-    color: #6f9192;
-    font-size: 25px;
-    font-weight: 850;
-  }
-
-  #cn-game .cn-pack-stats {
-    margin: 0;
-    color: #5f6668;
-    font-size: 16px;
-    font-weight: 750;
-    line-height: 1.35;
   }
 
   #cn-game .cn-pack-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    gap: 10px;
   }
 
   #cn-game .cn-puzzle-card {
     position: relative;
-    min-height: 150px;
+    min-height: 126px;
     border: 0;
+    border-radius: 0;
     background: #fff;
     color: #111;
-    box-shadow: inset 0 0 0 1px #9aa0a0;
+    box-shadow: inset 0 0 0 1px #929b9c;
     font-weight: 850;
     cursor: pointer;
+    padding: 0 4px 8px;
   }
 
   #cn-game .cn-puzzle-number {
     position: absolute;
-    top: -10px;
-    left: -8px;
-    width: 32px;
-    height: 32px;
+    top: -9px;
+    left: -7px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: grid;
     place-items: center;
     background: #3d7bd8;
     color: #fff;
     border: 4px solid #fff;
+    font-size: 13px;
+    font-weight: 900;
   }
 
-  #cn-game .cn-pencil {
-    display: block;
-    margin: 34px auto 16px;
-    color: #b8c8c8;
-    font-size: 42px;
-    transform: rotate(-45deg);
+  #cn-game .cn-card-thumb {
+    width: 78px;
+    height: 78px;
+    margin: 15px auto 7px;
+    border-radius: 8px;
+    opacity: 0.55;
   }
 
   #cn-game .cn-card-meta {
     display: block;
-    font-size: 17px;
-    line-height: 1.08;
+    font-size: 12px;
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  #cn-game .cn-pack-settings-backdrop {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.32);
+    z-index: 24;
+  }
+
+  #cn-game .cn-pack-settings-backdrop.cn-open {
+    display: flex;
+  }
+
+  #cn-game .cn-pack-settings {
+    width: 284px;
+    border-radius: 27px;
+    background: #f6f4ed;
+    padding: 28px 30px 30px;
+    display: grid;
+    gap: 12px;
+  }
+
+  #cn-game .cn-pack-settings-title {
+    margin: 0 0 4px;
+    color: #4a6f73;
+    font-size: 16px;
+    font-weight: 900;
+    text-align: center;
+  }
+
+  #cn-game .cn-pack-settings-action {
+    min-height: 40px;
+    border: 0;
+    border-radius: 20px;
+    background: rgba(74, 111, 115, 0.3);
+    color: #4a6f73;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-tool,
+  #cn-game .cn-chip,
+  #cn-game .cn-chip.cn-two-digit,
+  #cn-game .cn-cross-count,
+  #cn-game .cn-bottom-numbers,
+  #cn-game .cn-side-numbers,
+  #cn-game .cn-menu-title,
+  #cn-game .cn-menu-button,
+  #cn-game .cn-review-title,
+  #cn-game .cn-review-action,
+  #cn-game .cn-mark-title,
+  #cn-game .cn-mark-action,
+  #cn-game .cn-screen-title,
+  #cn-game .cn-library-title,
+  #cn-game .cn-pack-title,
+  #cn-game .cn-pack-more,
+  #cn-game .cn-puzzle-card,
+  #cn-game .cn-puzzle-number,
+  #cn-game .cn-pack-settings-title,
+  #cn-game .cn-pack-settings-action {
+    font-weight: 600;
+  }
+
+  #cn-game .cn-review-copy,
+  #cn-game .cn-mark-copy,
+  #cn-game .cn-library-meta,
+  #cn-game .cn-pack-stats,
+  #cn-game .cn-card-meta {
+    font-weight: 500;
   }
 
   @media (max-width: 392px) {
@@ -853,9 +1007,9 @@
 </style>
 
 <div id="cn-game">
-  <main class="cn-app">
+  <main class="cn-app" data-view="game">
     <nav class="cn-toolbar" aria-label="Навигация">
-      <button class="cn-tool cn-tool--back cn-muted" id="cn-back" type="button" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 17.875L6.875 11L13.75 4.125" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="cn-tool cn-tool--back" id="cn-back" type="button" aria-label="Назад"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.75 17.875L6.875 11L13.75 4.125" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="cn-tool cn-tool--undo cn-muted" id="cn-undo" type="button" aria-label="Отменить"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2.0625C9.23233 2.0625 7.50436 2.58668 6.03459 3.56874C4.56483 4.55081 3.41929 5.94665 2.74283 7.57977C2.06637 9.21288 1.88938 11.0099 2.23424 12.7436C2.57909 14.4773 3.43031 16.0698 4.68024 17.3198C5.93017 18.5697 7.52268 19.4209 9.25638 19.7658C10.9901 20.1106 12.7871 19.9336 14.4202 19.2572C16.0534 18.5807 17.4492 17.4352 18.4313 15.9654C19.4133 14.4956 19.9375 12.7677 19.9375 11C19.935 8.6304 18.9926 6.35856 17.317 4.683C15.6414 3.00743 13.3696 2.065 11 2.0625ZM14.4375 11.6875H9.22196L10.7989 13.2636C10.8628 13.3275 10.9135 13.4033 10.948 13.4868C10.9826 13.5702 11.0004 13.6597 11.0004 13.75C11.0004 13.8403 10.9826 13.9298 10.948 14.0132C10.9135 14.0967 10.8628 14.1725 10.7989 14.2364C10.735 14.3003 10.6592 14.351 10.5757 14.3855C10.4923 14.4201 10.4028 14.4379 10.3125 14.4379C10.2222 14.4379 10.1327 14.4201 10.0493 14.3855C9.9658 14.351 9.88997 14.3003 9.8261 14.2364L7.0761 11.4864C7.01218 11.4226 6.96147 11.3467 6.92687 11.2633C6.89227 11.1798 6.87446 11.0903 6.87446 11C6.87446 10.9097 6.89227 10.8202 6.92687 10.7367C6.96147 10.6533 7.01218 10.5774 7.0761 10.5136L9.8261 7.76359C9.9551 7.63459 10.1301 7.56212 10.3125 7.56212C10.4949 7.56212 10.6699 7.63459 10.7989 7.76359C10.9279 7.8926 11.0004 8.06756 11.0004 8.25C11.0004 8.43244 10.9279 8.6074 10.7989 8.73641L9.22196 10.3125H14.4375C14.6198 10.3125 14.7947 10.3849 14.9236 10.5139C15.0526 10.6428 15.125 10.8177 15.125 11C15.125 11.1823 15.0526 11.3572 14.9236 11.4861C14.7947 11.6151 14.6198 11.6875 14.4375 11.6875Z" fill="#F6F4ED"/></svg></button>
       <button class="cn-tool cn-tool--redo cn-muted" id="cn-redo" type="button" aria-label="Повторить"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2.0625C9.23233 2.0625 7.50436 2.58668 6.03459 3.56874C4.56483 4.55081 3.41929 5.94665 2.74283 7.57977C2.06637 9.21288 1.88938 11.0099 2.23424 12.7436C2.57909 14.4773 3.43031 16.0698 4.68024 17.3198C5.93017 18.5697 7.52268 19.4209 9.25638 19.7658C10.9901 20.1106 12.7871 19.9336 14.4202 19.2572C16.0534 18.5807 17.4492 17.4352 18.4313 15.9654C19.4133 14.4956 19.9375 12.7677 19.9375 11C19.935 8.6304 18.9926 6.35856 17.317 4.683C15.6414 3.00743 13.3696 2.065 11 2.0625ZM14.9239 11.4864L12.1739 14.2364C12.0449 14.3654 11.8699 14.4379 11.6875 14.4379C11.5051 14.4379 11.3301 14.3654 11.2011 14.2364C11.0721 14.1074 10.9996 13.9324 10.9996 13.75C10.9996 13.5676 11.0721 13.3926 11.2011 13.2636L12.7781 11.6875H7.5625C7.38017 11.6875 7.2053 11.6151 7.07637 11.4861C6.94744 11.3572 6.875 11.1823 6.875 11C6.875 10.8177 6.94744 10.6428 7.07637 10.5139C7.2053 10.3849 7.38017 10.3125 7.5625 10.3125H12.7781L11.2011 8.73641C11.0721 8.6074 10.9996 8.43244 10.9996 8.25C10.9996 8.06756 11.0721 7.8926 11.2011 7.76359C11.3301 7.63459 11.5051 7.56212 11.6875 7.56212C11.8699 7.56212 12.0449 7.63459 12.1739 7.76359L14.9239 10.5136C14.9878 10.5774 15.0385 10.6533 15.0731 10.7367C15.1077 10.8202 15.1255 10.9097 15.1255 11C15.1255 11.0903 15.1077 11.1798 15.0731 11.2633C15.0385 11.3467 14.9878 11.4226 14.9239 11.4864Z" fill="#F6F4ED"/></svg></button>
       <button class="cn-tool cn-tool--mode" id="cn-mark-mode" type="button" aria-label="Marking squares"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0001 14.6069C12.992 14.6069 14.6067 12.9921 14.6067 11.0002C14.6067 9.00831 12.992 7.39355 11.0001 7.39355C9.00818 7.39355 7.39343 9.00831 7.39343 11.0002C7.39343 12.9921 9.00818 14.6069 11.0001 14.6069Z" fill="#F6F4ED"/><path d="M11 19.25C15.5563 19.25 19.25 15.5563 19.25 11C19.25 6.44365 15.5563 2.75 11 2.75C6.44365 2.75 2.75 6.44365 2.75 11C2.75 15.5563 6.44365 19.25 11 19.25Z" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -863,7 +1017,23 @@
       <button class="cn-tool cn-tool--menu" id="cn-menu-toggle" type="button" aria-label="Меню"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.875 8.25L11 15.125L4.125 8.25" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </nav>
 
-    <div class="cn-play-area" id="cn-game-screen">
+    <section class="cn-screen cn-view" id="cn-library-screen" aria-label="Библиотека">
+      <h1 class="cn-screen-title">Library</h1>
+      <div class="cn-library-list" id="cn-library-list"></div>
+    </section>
+
+    <section class="cn-screen cn-view" id="cn-pack-screen" aria-label="Пек">
+      <div class="cn-pack-hero">
+        <div class="cn-pack-thumb" aria-hidden="true"></div>
+        <div>
+          <h1 class="cn-pack-title" id="cn-pack-title">Our Planet 1</h1>
+          <p class="cn-pack-stats" id="cn-pack-stats">0 New<br>0 Saved<br>0 Solved</p>
+        </div>
+      </div>
+      <div class="cn-pack-grid" id="cn-pack-grid"></div>
+    </section>
+
+    <div class="cn-play-area cn-view cn-open" id="cn-game-screen">
       <section class="cn-board-wrap" id="cn-board" aria-label="Игровое поле">
         <div class="cn-corner" aria-hidden="true"></div>
         <div class="cn-col-clues" id="cn-col-clues"></div>
@@ -910,6 +1080,15 @@
         <button class="cn-mark-action" id="cn-exit-mark-mode" type="button">Exit mark squares mode</button>
         <button class="cn-mark-action" id="cn-clear-marks" type="button">Clear current marks</button>
         <button class="cn-mark-action" id="cn-cancel-mark-menu" type="button">Cancel</button>
+      </section>
+    </div>
+
+    <div class="cn-pack-settings-backdrop" id="cn-pack-settings-backdrop">
+      <section class="cn-pack-settings" aria-label="Pack settings">
+        <h2 class="cn-pack-settings-title">Pack settings</h2>
+        <button class="cn-pack-settings-action" id="cn-restart-pack" type="button">Restart pack</button>
+        <button class="cn-pack-settings-action" id="cn-archive-pack" type="button">Archive</button>
+        <button class="cn-pack-settings-action" id="cn-close-pack-settings" type="button">Close</button>
       </section>
     </div>
   </main>
@@ -973,20 +1152,101 @@
       return grid;
     };
 
-    const puzzle = {
-      id: "filled-25x35-v3",
-      width: 25,
-      height: 35,
-      palette: [
-        { id: "blue", label: "B", color: "#4d94ea" },
-        { id: "black", label: "K", color: "#000000" },
-        { id: "yellow", label: "Y", color: "#ffe04f" },
-        { id: "red", label: "R", color: "#f23c2f" },
-        { id: "green", label: "G", color: "#74ee3b" },
-        { id: "brown", label: "O", color: "#b47a1c" },
-      ],
-      solution: makeSolution(),
+    const makeSolution30 = () => {
+      const width = 30;
+      const height = 45;
+      const grid = Array.from({ length: height }, () => Array(width).fill(null));
+      const paintEllipse = (cx, cy, rx, ry, color) => {
+        for (let row = 0; row < height; row += 1) {
+          for (let col = 0; col < width; col += 1) {
+            if (((col - cx) ** 2) / (rx ** 2) + ((row - cy) ** 2) / (ry ** 2) <= 1) grid[row][col] = color;
+          }
+        }
+      };
+      const paintLine = (row, from, to, color) => {
+        for (let col = from; col <= to; col += 1) grid[row][col] = color;
+      };
+      const paintVLine = (col, from, to, color) => {
+        for (let row = from; row <= to; row += 1) grid[row][col] = color;
+      };
+
+      paintEllipse(14.5, 10, 8, 8, "blue");
+      paintEllipse(14.5, 18, 10, 10, "yellow");
+      paintEllipse(8, 20, 5, 8, "green");
+      paintEllipse(21, 20, 5, 8, "green");
+      paintEllipse(14.5, 27, 8, 10, "orange");
+      paintEllipse(14.5, 34, 5, 7, "red");
+      for (let row = 7; row <= 38; row += 1) {
+        grid[row][14] = "black";
+        grid[row][15] = "black";
+      }
+      for (let row = 13; row <= 28; row += 1) {
+        if (row % 3 !== 1) {
+          grid[row][12] = "black";
+          grid[row][17] = "black";
+        }
+      }
+      paintLine(42, 2, 27, "blue");
+      paintLine(40, 5, 24, "red");
+      paintVLine(3, 6, 16, "yellow");
+      paintVLine(26, 6, 16, "yellow");
+
+      for (let row = 0; row < height; row += 1) {
+        if (!grid[row].some(Boolean)) grid[row][row % width] = row % 2 ? "black" : "green";
+      }
+      for (let col = 0; col < width; col += 1) {
+        if (!grid.some((row) => row[col])) grid[col % height][col] = col % 2 ? "red" : "blue";
+      }
+      return grid;
     };
+
+    const makeSolutionVariant = () => {
+      const grid = makeSolution().map((row) => [...row]);
+      grid.forEach((row, rowIndex) => {
+        row.forEach((cell, colIndex) => {
+          if (cell === "blue" && rowIndex % 3 === 0) row[colIndex] = "green";
+          if (cell === "yellow" && colIndex % 4 === 0) row[colIndex] = "orange";
+        });
+      });
+      return grid;
+    };
+
+    const basePalette = [
+      { id: "blue", label: "B", color: "#4d94ea" },
+      { id: "black", label: "K", color: "#000000" },
+      { id: "yellow", label: "Y", color: "#ffe04f" },
+      { id: "red", label: "R", color: "#f23c2f" },
+      { id: "green", label: "G", color: "#74ee3b" },
+      { id: "brown", label: "O", color: "#b47a1c" },
+      { id: "orange", label: "O", color: "#eca258" },
+    ];
+
+    const packs = [
+      {
+        id: "planet-1",
+        title: "Our Planet 1",
+        puzzles: [
+          { id: "filled-25x35-v3", title: "Puzzle #1", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
+        ],
+      },
+      {
+        id: "planet-2",
+        title: "Our Planet 2",
+        puzzles: [
+          { id: "planet-30x45-v1", title: "Puzzle #1", width: 30, height: 45, palette: basePalette, solution: makeSolution30() },
+        ],
+      },
+      {
+        id: "planet-3",
+        title: "Our Planet 3",
+        puzzles: [
+          { id: "planet-25x35-v2", title: "Puzzle #1", width: 25, height: 35, palette: basePalette, solution: makeSolutionVariant() },
+        ],
+      },
+    ];
+
+    let currentPack = packs[0];
+    let puzzle = currentPack.puzzles[0];
 
     const state = {
       activeColor: puzzle.palette[0].id,
@@ -1002,6 +1262,7 @@
       drawValue: null,
       markMode: false,
       paletteHidden: false,
+      paletteButtonColor: puzzle.palette[0].id,
       markValue: true,
       holdTimer: null,
       lastCell: null,
@@ -1025,9 +1286,15 @@
     };
 
     const root = document.getElementById("cn-game");
+    const app = root.querySelector(".cn-app");
     const byId = (id) => root.querySelector(`#${id}`);
-    const colorById = Object.fromEntries(puzzle.palette.map((color) => [color.id, color]));
-    const storageKey = `color-nonogram:${puzzle.id}`;
+    const markModeButton = byId("cn-mark-mode");
+    const markModeDefaultIcon = markModeButton.innerHTML;
+    const markModeActiveIcon = `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19.25C15.5563 19.25 19.25 15.5563 19.25 11C19.25 6.44365 15.5563 2.75 11 2.75C6.44365 2.75 2.75 6.44365 2.75 11C2.75 15.5563 6.44365 19.25 11 19.25Z" fill="#F6F4ED" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 17C14.3137 17 17 14.3137 17 11C17 7.68629 14.3137 5 11 5C7.68629 5 5 7.68629 5 11C5 14.3137 7.68629 17 11 17Z" stroke="#4A6F73" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const paletteButton = root.querySelector(".cn-tool--palette");
+    const paletteDefaultIcon = paletteButton.innerHTML;
+    let colorById = Object.fromEntries(puzzle.palette.map((color) => [color.id, color]));
+    let storageKey = `color-nonogram:${puzzle.id}`;
 
     function storageGet(key) {
       try {
@@ -1051,6 +1318,188 @@
       } catch (error) {
         // Ignore storage errors in standalone mode.
       }
+    }
+
+    function loadArchivedPackIds() {
+      try {
+        const ids = JSON.parse(storageGet("color-nonogram:archived-packs") || "[]");
+        return new Set(Array.isArray(ids) ? ids : []);
+      } catch (error) {
+        return new Set();
+      }
+    }
+
+    const archivedPacks = loadArchivedPackIds();
+    let currentView = "game";
+    let selectedPackForSettings = currentPack;
+
+    function emptyCells() {
+      return Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
+    }
+
+    function emptyMarks() {
+      return Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
+    }
+
+    function resetRuntimeState(options = {}) {
+      window.clearTimeout(state.holdTimer);
+      window.clearInterval(state.timerInterval);
+      state.activeColor = puzzle.palette[0].id;
+      state.isDrawing = false;
+      state.moved = false;
+      state.armedValue = null;
+      state.isPaintingDrag = false;
+      state.drawStart = null;
+      state.drawAxis = null;
+      state.gestureCellsBase = null;
+      state.gestureMarksBase = null;
+      state.gestureAxis = null;
+      state.drawValue = null;
+      state.markMode = false;
+      state.paletteHidden = false;
+      state.paletteButtonColor = state.activeColor;
+      state.markValue = true;
+      state.holdTimer = null;
+      state.lastCell = null;
+      state.showErrors = false;
+      state.undoStack = [];
+      state.redoStack = [];
+      state.pointerId = null;
+      state.currentRow = null;
+      state.currentCol = null;
+      state.elapsedMs = options.keepElapsed ? state.elapsedMs : 0;
+      state.timerStartedAt = null;
+      state.timerRunning = false;
+      state.timerInterval = null;
+      state.cells = emptyCells();
+      state.marks = emptyMarks();
+      state.solved = false;
+      clearClueDoneState();
+    }
+
+    function progressFor(nextPuzzle) {
+      const raw = storageGet(`color-nonogram:${nextPuzzle.id}`);
+      if (!raw) return { status: "new", elapsedMs: 0, filled: 0 };
+      try {
+        const data = JSON.parse(raw);
+        const filled = Array.isArray(data.cells) ? data.cells.flat().filter(Boolean).length : 0;
+        const solved = Boolean(data.solved);
+        return {
+          status: solved ? "solved" : filled ? "saved" : "new",
+          elapsedMs: Number.isFinite(data.elapsedMs) ? data.elapsedMs : 0,
+          filled,
+        };
+      } catch (error) {
+        return { status: "new", elapsedMs: 0, filled: 0 };
+      }
+    }
+
+    function packCounts(pack) {
+      return pack.puzzles.reduce(
+        (counts, nextPuzzle) => {
+          counts[progressFor(nextPuzzle).status] += 1;
+          return counts;
+        },
+        { new: 0, saved: 0, solved: 0 },
+      );
+    }
+
+    function setView(view) {
+      currentView = view;
+      app.dataset.view = view;
+      byId("cn-game-screen").classList.toggle("cn-open", view === "game");
+      byId("cn-pack-screen").classList.toggle("cn-open", view === "pack");
+      byId("cn-library-screen").classList.toggle("cn-open", view === "library");
+      if (view === "game") startTimer();
+      else pauseTimer();
+    }
+
+    function renderLibrary() {
+      const list = byId("cn-library-list");
+      list.textContent = "";
+      packs
+        .filter((pack) => !archivedPacks.has(pack.id))
+        .forEach((pack) => {
+          const counts = packCounts(pack);
+          const card = document.createElement("button");
+          card.className = "cn-library-card";
+          card.type = "button";
+          card.innerHTML = `
+            <div class="cn-library-thumb" aria-hidden="true"></div>
+            <div>
+              <h2 class="cn-library-title">${pack.title}</h2>
+              <p class="cn-library-meta">${pack.puzzles.length} puzzle<br>${counts.new} New · ${counts.saved} Saved · ${counts.solved} Solved</p>
+            </div>
+            <span class="cn-pack-more" aria-label="Pack settings">...</span>
+          `;
+          card.addEventListener("click", (event) => {
+            if (event.target.closest(".cn-pack-more")) {
+              event.stopPropagation();
+              selectedPackForSettings = pack;
+              byId("cn-pack-settings-backdrop").classList.add("cn-open");
+              return;
+            }
+            showPack(pack.id);
+          });
+          list.appendChild(card);
+        });
+    }
+
+    function renderPack(pack = currentPack) {
+      const counts = packCounts(pack);
+      byId("cn-pack-title").textContent = pack.title;
+      byId("cn-pack-stats").innerHTML = `${counts.new} New<br>${counts.saved} Saved<br>${counts.solved} Solved`;
+      const grid = byId("cn-pack-grid");
+      grid.textContent = "";
+      pack.puzzles.forEach((nextPuzzle, index) => {
+        const progress = progressFor(nextPuzzle);
+        const card = document.createElement("button");
+        card.className = "cn-puzzle-card";
+        card.type = "button";
+        card.innerHTML = `
+          <span class="cn-puzzle-number">${index + 1}</span>
+          <div class="cn-card-thumb" aria-hidden="true"></div>
+          <strong>${nextPuzzle.width}x${nextPuzzle.height}</strong>
+          <span>${progress.status === "new" ? "New" : progress.status === "saved" ? "Saved" : "Solved"}</span>
+          <small>${formatElapsed(progress.elapsedMs)}</small>
+        `;
+        card.addEventListener("click", () => loadPuzzle(pack, nextPuzzle));
+        grid.appendChild(card);
+      });
+    }
+
+    function showLibrary() {
+      renderLibrary();
+      setView("library");
+    }
+
+    function showPack(packId = currentPack.id) {
+      const nextPack = packs.find((pack) => pack.id === packId) || currentPack;
+      currentPack = nextPack;
+      selectedPackForSettings = nextPack;
+      renderPack(nextPack);
+      setView("pack");
+    }
+
+    function showGame() {
+      renderLibrary();
+      renderPack(currentPack);
+      setView("game");
+    }
+
+    function loadPuzzle(pack, nextPuzzle) {
+      pauseTimer();
+      saveProgress();
+      currentPack = pack;
+      puzzle = nextPuzzle;
+      refreshPuzzleRefs();
+      resetRuntimeState();
+      loadProgress();
+      renderPalette();
+      renderIndexLabels();
+      updateHistoryButtons();
+      update();
+      showGame();
     }
 
     function textColorFor(hex) {
@@ -1086,16 +1535,41 @@
       });
     }
 
-    const rowClues = buildClues(puzzle.solution);
-    const colClues = buildClues(
+    let rowClues = buildClues(puzzle.solution);
+    let colClues = buildClues(
       Array.from({ length: puzzle.width }, (_, col) => puzzle.solution.map((row) => row[col])),
     );
-    const clueCols = 8;
-    const clueRows = 11;
-    root.style.setProperty("--cn-cols", puzzle.width);
-    root.style.setProperty("--cn-rows", puzzle.height);
-    root.style.setProperty("--cn-clue-cols", clueCols);
-    root.style.setProperty("--cn-clue-rows", clueRows);
+    let clueCols = 8;
+    let clueRows = 11;
+
+    function configurePuzzleGeometry() {
+      clueCols = puzzle.width >= 30 ? 9 : 8;
+      clueRows = puzzle.height >= 45 ? 12 : 11;
+      const cell = puzzle.width >= 30 ? 9.55 : 11;
+      root.style.setProperty("--cn-cols", puzzle.width);
+      root.style.setProperty("--cn-rows", puzzle.height);
+      root.style.setProperty("--cn-clue-cols", clueCols);
+      root.style.setProperty("--cn-clue-rows", clueRows);
+      root.style.setProperty("--cn-cell", `${cell}px`);
+      root.style.setProperty("--cn-clue-left", `${clueCols * cell}px`);
+      root.style.setProperty("--cn-clue-top", `${clueRows * cell}px`);
+      root.style.setProperty("--cn-grid-w", `${puzzle.width * cell}px`);
+      root.style.setProperty("--cn-grid-h", `${puzzle.height * cell}px`);
+      root.style.setProperty("--cn-board-w", `${(clueCols + puzzle.width) * cell}px`);
+      root.style.setProperty("--cn-board-h", `${(clueRows + puzzle.height) * cell}px`);
+    }
+
+    function refreshPuzzleRefs() {
+      colorById = Object.fromEntries(puzzle.palette.map((color) => [color.id, color]));
+      storageKey = `color-nonogram:${puzzle.id}`;
+      rowClues = buildClues(puzzle.solution);
+      colClues = buildClues(
+        Array.from({ length: puzzle.width }, (_, col) => puzzle.solution.map((row) => row[col])),
+      );
+      configurePuzzleGeometry();
+    }
+
+    refreshPuzzleRefs();
 
     function isCellCorrect(cell, solutionCell) {
       return solutionCell ? cell === solutionCell : cell === "dot";
@@ -1288,14 +1762,34 @@
         });
         palette.appendChild(swatch);
       });
+      renderPaletteButton();
     }
 
     function renderModeButton() {
-      byId("cn-mark-mode").classList.toggle("cn-marking-active", state.markMode);
+      markModeButton.classList.toggle("cn-marking-active", state.markMode);
+      markModeButton.innerHTML = state.markMode ? markModeActiveIcon : markModeDefaultIcon;
+    }
+
+    function paletteActiveIcon(color) {
+      return `<svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.9375 2C9.16983 2 7.44186 2.52418 5.9721 3.50624C4.50233 4.48831 3.35679 5.88415 2.68033 7.51727C2.00387 9.15038 1.82688 10.9474 2.17174 12.6811C2.51659 14.4148 3.36781 16.0073 4.61774 17.2573C5.86767 18.5072 7.46018 19.3584 9.19388 19.7033C10.9276 20.0481 12.7246 19.8711 14.3577 19.1947C15.9909 18.5182 17.3867 17.3727 18.3688 15.9029C19.3508 14.4331 19.875 12.7052 19.875 10.9375C19.8725 8.5679 18.9301 6.29606 17.2545 4.6205C15.5789 2.94493 13.3071 2.0025 10.9375 2Z" fill="${color}"/></svg>`;
+    }
+
+    function renderPaletteButton() {
+      if (!state.paletteHidden) {
+        paletteButton.innerHTML = paletteDefaultIcon;
+        return;
+      }
+      const color = colorById[state.paletteButtonColor]?.color || colorById[state.activeColor]?.color || "#f6f4ed";
+      paletteButton.innerHTML = paletteActiveIcon(color);
     }
 
     function togglePalette() {
-      state.paletteHidden = !state.paletteHidden;
+      if (!state.paletteHidden) {
+        state.paletteButtonColor = state.activeColor;
+        state.paletteHidden = true;
+      } else {
+        state.paletteHidden = false;
+      }
       renderPalette();
       saveProgress();
     }
@@ -1678,9 +2172,11 @@
         marks: state.marks,
         activeColor: state.activeColor,
         paletteHidden: state.paletteHidden,
+        paletteButtonColor: state.paletteButtonColor,
         currentRow: state.currentRow,
         currentCol: state.currentCol,
         elapsedMs: getElapsedMs(),
+        solved: state.solved || isSolved(),
       };
       storageSet(storageKey, JSON.stringify(data));
     }
@@ -1703,6 +2199,7 @@
         );
         state.activeColor = colorById[data.activeColor] ? data.activeColor : state.activeColor;
         state.paletteHidden = Boolean(data.paletteHidden);
+        state.paletteButtonColor = colorById[data.paletteButtonColor] ? data.paletteButtonColor : state.activeColor;
         state.currentRow = Number.isInteger(data.currentRow) ? data.currentRow : null;
         state.currentCol = Number.isInteger(data.currentCol) ? data.currentCol : null;
         state.elapsedMs = Number.isFinite(data.elapsedMs) ? Math.max(0, data.elapsedMs) : 0;
@@ -1717,6 +2214,7 @@
       state.cells = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
       state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
       state.activeColor = puzzle.palette[0].id;
+      state.paletteButtonColor = state.activeColor;
       state.isDrawing = false;
       state.moved = false;
       state.armedValue = null;
@@ -1873,7 +2371,51 @@
     byId("cn-show-hint").addEventListener("click", showHint);
     byId("cn-undo").addEventListener("click", undo);
     byId("cn-redo").addEventListener("click", redo);
-    byId("cn-back").addEventListener("click", () => {});
+    byId("cn-back").addEventListener("click", () => {
+      if (currentView === "game") {
+        showPack(currentPack.id);
+        return;
+      }
+      if (currentView === "pack") {
+        showLibrary();
+        return;
+      }
+      showGame();
+    });
+
+    byId("cn-close-pack-settings").addEventListener("click", () => {
+      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+    });
+
+    byId("cn-pack-settings-backdrop").addEventListener("click", (event) => {
+      if (event.target === byId("cn-pack-settings-backdrop")) {
+        byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      }
+    });
+
+    byId("cn-restart-pack").addEventListener("click", () => {
+      selectedPackForSettings.puzzles.forEach((nextPuzzle) => storageRemove(`color-nonogram:${nextPuzzle.id}`));
+      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      if (selectedPackForSettings.id === currentPack.id) {
+        const stillCurrent = selectedPackForSettings.puzzles.some((nextPuzzle) => nextPuzzle.id === puzzle.id);
+        if (stillCurrent) {
+          resetRuntimeState();
+          renderPalette();
+          renderIndexLabels();
+          updateHistoryButtons();
+          update();
+        }
+      }
+      renderLibrary();
+      renderPack(currentPack);
+    });
+
+    byId("cn-archive-pack").addEventListener("click", () => {
+      archivedPacks.add(selectedPackForSettings.id);
+      storageSet("color-nonogram:archived-packs", JSON.stringify([...archivedPacks]));
+      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      showLibrary();
+    });
 
     byId("cn-board").addEventListener("pointerdown", (event) => {
       const cell = cellFromPoint(event);
@@ -1966,9 +2508,11 @@
     loadProgress();
     renderPalette();
     renderIndexLabels();
+    renderLibrary();
+    renderPack(currentPack);
     updateHistoryButtons();
     update();
-    startTimer();
+    setView("game");
     window.setTimeout(() => window.scrollTo(0, 1), 250);
     } catch (error) {
       const root = document.getElementById("cn-game");
