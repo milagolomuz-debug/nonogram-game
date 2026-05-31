@@ -809,6 +809,11 @@
     padding: 12px 11px 32px;
   }
 
+  #cn-game #cn-library-screen {
+    background: #f6f4ed;
+    padding: 21px 11px 32px;
+  }
+
   #cn-game .cn-screen-title {
     margin: 0 0 18px;
     color: #4a6f73;
@@ -820,20 +825,24 @@
 
   #cn-game .cn-library-list {
     display: grid;
-    gap: 12px;
+    gap: 0;
+  }
+
+  #cn-game #cn-library-screen .cn-screen-title {
+    display: none;
   }
 
   #cn-game .cn-library-card {
     position: relative;
     display: grid;
-    grid-template-columns: 72px 1fr 32px;
-    gap: 12px;
+    grid-template-columns: 52px 1fr 30px;
+    gap: 11px;
     align-items: center;
-    min-height: 88px;
-    padding: 10px 12px;
+    min-height: 82px;
+    padding: 9px 0;
     border: 0;
-    border-radius: 20px;
-    background: #f6f4ed;
+    border-radius: 0;
+    background: transparent;
     color: #4a6f73;
     text-align: left;
     cursor: pointer;
@@ -849,9 +858,9 @@
   }
 
   #cn-game .cn-library-thumb {
-    width: 72px;
-    height: 72px;
-    border-radius: 16px;
+    width: 52px;
+    height: 52px;
+    border-radius: 9px;
   }
 
   #cn-game .cn-library-title,
@@ -870,6 +879,10 @@
     font-size: 12px;
     font-weight: 500;
     line-height: 1.25;
+  }
+
+  #cn-game .cn-library-meta {
+    margin-top: 9px;
   }
 
   #cn-game .cn-pack-stats {
@@ -902,16 +915,30 @@
   }
 
   #cn-game .cn-pack-more {
+    position: relative;
+    display: grid;
+    place-items: center;
     width: 30px;
     height: 30px;
     border: 0;
     border-radius: 50%;
     background: transparent;
     color: #4a6f73;
-    font-size: 22px;
+    font-size: 0;
     font-weight: 900;
     line-height: 1;
     cursor: pointer;
+  }
+
+  #cn-game .cn-pack-more::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #4a6f73;
+    box-shadow:
+      0 -7px 0 #4a6f73,
+      0 7px 0 #4a6f73;
   }
 
   #cn-game .cn-pack-hero {
@@ -1030,43 +1057,66 @@
     position: fixed;
     inset: 0;
     display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
     background: rgba(0, 0, 0, 0.32);
     z-index: 24;
   }
 
   #cn-game .cn-pack-settings-backdrop.cn-open {
-    display: flex;
+    display: block;
   }
 
   #cn-game .cn-pack-settings {
+    position: fixed;
+    left: var(--cn-pack-settings-left, 54px);
+    top: var(--cn-pack-settings-top, 292px);
     width: 284px;
+    height: 152px;
+    box-sizing: border-box;
     border-radius: 27px;
     background: #f6f4ed;
-    padding: 28px 30px 30px;
+    padding: 30px;
     display: grid;
     gap: 12px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  #cn-game .cn-pack-settings::before {
+    content: "";
+    position: absolute;
+    left: var(--cn-pack-settings-arrow-left, 142px);
+    top: -26px;
+    width: 31px;
+    height: 31px;
+    background: #f6f4ed;
+    border-radius: 4px 0 0;
+    transform: rotate(45deg);
+    transform-origin: center;
+  }
+
+  #cn-game .cn-pack-settings.cn-pack-settings--above::before {
+    top: auto;
+    bottom: -15px;
+    border-radius: 0 0 4px;
   }
 
   #cn-game .cn-pack-settings-title {
-    margin: 0 0 4px;
-    color: #4a6f73;
-    font-size: 16px;
-    font-weight: 900;
-    text-align: center;
+    display: none;
   }
 
   #cn-game .cn-pack-settings-action {
+    position: relative;
     min-height: 40px;
     border: 0;
     border-radius: 20px;
     background: rgba(74, 111, 115, 0.3);
     color: #4a6f73;
-    font-size: 13px;
-    font-weight: 900;
+    font-size: 17px;
+    font-weight: 600;
     cursor: pointer;
+  }
+
+  #cn-game #cn-close-pack-settings {
+    display: none;
   }
 
   #cn-game .cn-tool,
@@ -1188,7 +1238,7 @@
     <div class="cn-pack-settings-backdrop" id="cn-pack-settings-backdrop">
       <section class="cn-pack-settings" aria-label="Pack settings">
         <h2 class="cn-pack-settings-title">Pack settings</h2>
-        <button class="cn-pack-settings-action" id="cn-restart-pack" type="button">Restart pack</button>
+        <button class="cn-pack-settings-action" id="cn-restart-pack" type="button">Restart</button>
         <button class="cn-pack-settings-action" id="cn-archive-pack" type="button">Archive</button>
         <button class="cn-pack-settings-action" id="cn-close-pack-settings" type="button">Close</button>
       </section>
@@ -1532,13 +1582,12 @@
               <h2 class="cn-library-title">${pack.title}</h2>
               <p class="cn-library-meta">${pack.puzzles.length} puzzle<br>${counts.new} New · ${counts.saved} Saved · ${counts.solved} Solved</p>
             </div>
-            <span class="cn-pack-more" aria-label="Pack settings">...</span>
+            <span class="cn-pack-more" aria-label="Pack settings">&#8942;</span>
           `;
           card.addEventListener("click", (event) => {
             if (event.target.closest(".cn-pack-more")) {
               event.stopPropagation();
-              selectedPackForSettings = pack;
-              byId("cn-pack-settings-backdrop").classList.add("cn-open");
+              openPackSettings(pack, card);
               return;
             }
             showPack(pack.id);
@@ -1595,6 +1644,36 @@
     function showLibrary() {
       renderLibrary();
       setView("library");
+    }
+
+    function closePackSettings() {
+      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+    }
+
+    function openPackSettings(pack, anchor) {
+      selectedPackForSettings = pack;
+      const backdrop = byId("cn-pack-settings-backdrop");
+      const panel = backdrop.querySelector(".cn-pack-settings");
+      const rect = anchor.getBoundingClientRect();
+      const panelWidth = 284;
+      const panelHeight = 152;
+      const margin = 11;
+      const gap = 25;
+      const centerX = rect.left + rect.width / 2;
+      const left = Math.max(margin, Math.min(window.innerWidth - panelWidth - margin, centerX - panelWidth / 2));
+      const topBelow = rect.bottom + gap;
+      const topAbove = rect.top - panelHeight - gap;
+      const useAbove = topBelow + panelHeight + margin > window.innerHeight && topAbove >= margin;
+      const top = useAbove
+        ? Math.max(margin, topAbove)
+        : Math.min(window.innerHeight - panelHeight - margin, topBelow);
+      const arrowLeft = Math.max(18, Math.min(panelWidth - 49, centerX - left - 15.5));
+
+      backdrop.style.setProperty("--cn-pack-settings-left", `${left}px`);
+      backdrop.style.setProperty("--cn-pack-settings-top", `${top}px`);
+      backdrop.style.setProperty("--cn-pack-settings-arrow-left", `${arrowLeft}px`);
+      panel.classList.toggle("cn-pack-settings--above", useAbove);
+      backdrop.classList.add("cn-open");
     }
 
     function showPack(packId = currentPack.id) {
@@ -2507,19 +2586,17 @@
       showGame();
     });
 
-    byId("cn-close-pack-settings").addEventListener("click", () => {
-      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
-    });
+    byId("cn-close-pack-settings").addEventListener("click", closePackSettings);
 
     byId("cn-pack-settings-backdrop").addEventListener("click", (event) => {
       if (event.target === byId("cn-pack-settings-backdrop")) {
-        byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+        closePackSettings();
       }
     });
 
     byId("cn-restart-pack").addEventListener("click", () => {
       selectedPackForSettings.puzzles.forEach((nextPuzzle) => storageRemove(`color-nonogram:${nextPuzzle.id}`));
-      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      closePackSettings();
       if (selectedPackForSettings.id === currentPack.id) {
         const stillCurrent = selectedPackForSettings.puzzles.some((nextPuzzle) => nextPuzzle.id === puzzle.id);
         if (stillCurrent) {
@@ -2537,7 +2614,7 @@
     byId("cn-archive-pack").addEventListener("click", () => {
       archivedPacks.add(selectedPackForSettings.id);
       storageSet("color-nonogram:archived-packs", JSON.stringify([...archivedPacks]));
-      byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      closePackSettings();
       showLibrary();
     });
 
