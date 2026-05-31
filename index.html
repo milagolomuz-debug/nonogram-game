@@ -131,6 +131,12 @@
     opacity: 0.42;
   }
 
+  #cn-game .cn-tool:disabled,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-tool:not(.cn-tool--back):not(.cn-tool--menu) {
+    opacity: 0.42;
+    pointer-events: none;
+  }
+
   #cn-game .cn-tool img,
   #cn-game .cn-tool svg {
     display: block;
@@ -494,18 +500,22 @@
   }
 
   #cn-game .cn-cell.cn-reveal {
-    animation: cn-pop 420ms cubic-bezier(0.18, 0.9, 0.2, 1.2) both;
-    animation-delay: calc(var(--cn-i) * 28ms);
+    animation: cn-pop 190ms cubic-bezier(0.18, 0.9, 0.22, 1) both;
+    animation-delay: calc(var(--cn-i) * 5ms);
   }
 
   @keyframes cn-pop {
     0% {
-      transform: scale(0.62);
-      filter: saturate(0.4);
+      transform: scale(0.9);
+      filter: brightness(1);
+    }
+    55% {
+      transform: scale(1.08);
+      filter: brightness(1.18);
     }
     100% {
       transform: scale(1);
-      filter: saturate(1.08);
+      filter: brightness(1);
     }
   }
 
@@ -530,6 +540,28 @@
     transition-delay: 180ms;
   }
 
+  #cn-game .cn-palette.cn-solved-nav {
+    gap: 18px;
+    padding: 0 26px 8px;
+  }
+
+  #cn-game .cn-solved-nav-button {
+    width: 147px;
+    height: 38px;
+    border: 0;
+    border-radius: 19px;
+    background: #f6f4ed;
+    color: #4a6f73;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #cn-game .cn-solved-nav-button:disabled {
+    opacity: 0.42;
+    cursor: default;
+  }
+
   #cn-game .cn-swatch {
     width: 15.33px;
     height: 15.33px;
@@ -543,6 +575,48 @@
     outline: 10px solid #fff;
     outline-offset: 0;
     box-shadow: none;
+  }
+
+  #cn-game .cn-solved-info {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    top: 614px;
+    z-index: 9;
+    display: none;
+    text-align: center;
+    color: #4a6f73;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-solved-info {
+    display: block;
+    animation: cn-solved-info-in 180ms ease-out 430ms both;
+  }
+
+  #cn-game .cn-solved-title {
+    margin: 0 0 5px;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.1;
+  }
+
+  #cn-game .cn-solved-copy {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  @keyframes cn-solved-info-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   #cn-game .cn-menu-backdrop {
@@ -692,6 +766,11 @@
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
+  }
+
+  #cn-game .cn-menu-button:disabled {
+    opacity: 0.42;
+    cursor: default;
   }
 
   #cn-game .cn-review-action:disabled {
@@ -1200,6 +1279,14 @@
       </section>
     </div>
 
+    <section class="cn-solved-info" id="cn-solved-info" aria-live="polite">
+      <h1 class="cn-solved-title" id="cn-solved-title">Puzzle solved!</h1>
+      <p class="cn-solved-copy">
+        <span id="cn-solved-name">Puzzle</span> solved<br>
+        Time spent: <span id="cn-solved-time">00:00:00</span>
+      </p>
+    </section>
+
     <section class="cn-palette" id="cn-palette" aria-label="Палитра"></section>
 
     <div class="cn-menu-backdrop" id="cn-menu-backdrop">
@@ -1690,6 +1777,17 @@
       setView("game");
     }
 
+    function currentPuzzleIndex() {
+      return currentPack.puzzles.findIndex((nextPuzzle) => nextPuzzle.id === puzzle.id);
+    }
+
+    function loadRelativePuzzle(delta) {
+      const nextIndex = currentPuzzleIndex() + delta;
+      const nextPuzzle = currentPack.puzzles[nextIndex];
+      if (!nextPuzzle) return;
+      loadPuzzle(currentPack, nextPuzzle);
+    }
+
     function loadPuzzle(pack, nextPuzzle) {
       pauseTimer();
       saveProgress();
@@ -1951,6 +2049,26 @@
     function renderPalette() {
       const palette = byId("cn-palette");
       palette.innerHTML = "";
+      palette.classList.toggle("cn-solved-nav", state.solved);
+      if (state.solved) {
+        palette.classList.remove("cn-hidden");
+        const index = currentPuzzleIndex();
+        const buttons = [
+          { label: "Previous puzzle", delta: -1, disabled: index <= 0 },
+          { label: "Next puzzle", delta: 1, disabled: index < 0 || index >= currentPack.puzzles.length - 1 },
+        ];
+        buttons.forEach((item) => {
+          const button = document.createElement("button");
+          button.className = "cn-solved-nav-button";
+          button.type = "button";
+          button.textContent = item.label;
+          button.disabled = item.disabled;
+          button.addEventListener("click", () => loadRelativePuzzle(item.delta));
+          palette.appendChild(button);
+        });
+        renderPaletteButton();
+        return;
+      }
       palette.classList.toggle("cn-hidden", state.paletteHidden);
 
       puzzle.palette.forEach((color) => {
@@ -1978,6 +2096,10 @@
     }
 
     function renderPaletteButton() {
+      if (state.solved) {
+        paletteButton.innerHTML = paletteDefaultIcon;
+        return;
+      }
       if (!state.paletteHidden) {
         paletteButton.innerHTML = paletteDefaultIcon;
         return;
@@ -1987,6 +2109,7 @@
     }
 
     function togglePalette() {
+      if (state.solved) return;
       if (!state.paletteHidden) {
         state.paletteButtonColor = state.activeColor;
         state.paletteHidden = true;
@@ -2011,8 +2134,12 @@
     }
 
     function updateHistoryButtons() {
-      byId("cn-undo").classList.toggle("cn-muted", state.undoStack.length === 0);
-      byId("cn-redo").classList.toggle("cn-muted", state.redoStack.length === 0);
+      const undoButton = byId("cn-undo");
+      const redoButton = byId("cn-redo");
+      undoButton.disabled = state.solved || state.undoStack.length === 0;
+      redoButton.disabled = state.solved || state.redoStack.length === 0;
+      undoButton.classList.toggle("cn-muted", undoButton.disabled);
+      redoButton.classList.toggle("cn-muted", redoButton.disabled);
     }
 
     function pushHistory() {
@@ -2245,17 +2372,28 @@
           const lineHot = state.currentRow === rowIndex || state.currentCol === colIndex;
           const majorRight = (colIndex + 1) % 5 === 0 && colIndex + 1 < puzzle.width;
           const majorBottom = (rowIndex + 1) % 5 === 0 && rowIndex + 1 < puzzle.height;
-          button.className = `cn-cell${majorRight ? " cn-major-right" : ""}${majorBottom ? " cn-major-bottom" : ""}${filled ? " cn-filled" : ""}${lightFilled ? " cn-light-filled" : ""}${cell === "dot" ? " cn-dot" : ""}${state.marks[rowIndex][colIndex] ? " cn-mark" : ""}${wrong ? " cn-wrong" : ""}${lineHot ? " cn-line-hot" : ""}${hot ? " cn-hot" : ""}${state.solved ? " cn-reveal" : ""}`;
+          button.className = `cn-cell${majorRight ? " cn-major-right" : ""}${majorBottom ? " cn-major-bottom" : ""}${filled ? " cn-filled" : ""}${lightFilled ? " cn-light-filled" : ""}${cell === "dot" ? " cn-dot" : ""}${state.marks[rowIndex][colIndex] ? " cn-mark" : ""}${wrong ? " cn-wrong" : ""}${lineHot ? " cn-line-hot" : ""}${hot ? " cn-hot" : ""}${state.solved && filled ? " cn-reveal" : ""}`;
           button.type = "button";
           button.dataset.row = rowIndex;
           button.dataset.col = colIndex;
-          button.style.setProperty("--cn-i", rowIndex * puzzle.width + colIndex);
+          button.style.setProperty("--cn-i", rowIndex + colIndex);
           button.style.background = cell && cell !== "dot" ? colorById[cell].color : "#fffaf0";
           button.setAttribute("aria-label", `${rowIndex + 1}:${colIndex + 1}`);
 
           grid.appendChild(button);
         });
       });
+    }
+
+    function renderSolvedState() {
+      app.classList.toggle("cn-solved", state.solved);
+      byId("cn-solved-title").textContent = puzzle.title;
+      byId("cn-solved-name").textContent = puzzle.title;
+      byId("cn-solved-time").textContent = formatElapsed(getElapsedMs());
+      byId("cn-mark-mode").disabled = state.solved;
+      paletteButton.disabled = state.solved;
+      byId("cn-review").disabled = state.solved;
+      updateHistoryButtons();
     }
 
     function update() {
@@ -2268,6 +2406,8 @@
       renderGrid();
       renderCross();
       renderModeButton();
+      renderSolvedState();
+      renderPalette();
 
       saveProgress();
     }
@@ -2460,7 +2600,7 @@
     }
 
     function setMenuMode(mode) {
-      const isReview = mode === "review";
+      const isReview = mode === "review" && !state.solved;
       const errors = countErrors();
       byId("cn-menu").classList.toggle("cn-menu--review", isReview);
       byId("cn-menu-main").style.display = isReview ? "none" : "grid";
@@ -2470,6 +2610,7 @@
       byId("cn-review-copy").textContent = `You have ${errors} error(s)`;
       byId("cn-show-errors").classList.toggle("cn-review-muted", errors === 0);
       byId("cn-clear-errors").classList.toggle("cn-review-muted", errors === 0);
+      byId("cn-review").disabled = state.solved;
     }
 
     function openMenu() {
@@ -2519,6 +2660,7 @@
     root.querySelector(".cn-tool--palette").addEventListener("click", togglePalette);
 
     byId("cn-mark-mode").addEventListener("click", () => {
+      if (state.solved) return;
       if (state.markMode) {
         byId("cn-mark-backdrop").classList.add("cn-open");
         return;
@@ -2564,7 +2706,10 @@
       setMenuMode("main");
     });
 
-    byId("cn-review").addEventListener("click", () => setMenuMode("review"));
+    byId("cn-review").addEventListener("click", () => {
+      if (state.solved) return;
+      setMenuMode("review");
+    });
     byId("cn-show-errors").addEventListener("click", () => {
       state.showErrors = true;
       update();
