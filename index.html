@@ -1006,28 +1006,35 @@
       linear-gradient(180deg, rgba(247, 244, 238, 0.78) 0%, rgba(255, 163, 137, 0.92) 52%, var(--cn-accent) 100%);
   }
 
-  #cn-game .cn-app[data-view="pack"] .cn-toolbar::after,
-  #cn-game .cn-app[data-view="library"] .cn-toolbar::after {
-    content: "Solving now";
+  #cn-game .cn-solving-now {
+    display: none;
     position: absolute;
-    right: 31px;
-    bottom: 28px;
+    right: 16px;
+    bottom: 20px;
+    height: 30px;
+    align-items: center;
+    gap: 7px;
+    border: 0;
+    background: transparent;
     color: #fffaf0;
     font-size: 15px;
     font-weight: 600;
     line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    z-index: 2;
   }
 
-  #cn-game .cn-app[data-view="pack"] .cn-toolbar::before,
-  #cn-game .cn-app[data-view="library"] .cn-toolbar::before {
-    content: "";
-    position: absolute;
-    right: 16px;
-    bottom: 20px;
+  #cn-game .cn-solving-now svg {
+    display: block;
     width: 13px;
     height: 22px;
-    background: no-repeat center / contain
-      url("data:image/svg+xml,%3Csvg width='13' height='22' viewBox='0 0 13 22' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2L11 11L2 20' stroke='%23FFFAF0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-solving-now,
+  #cn-game .cn-app[data-view="library"] .cn-solving-now {
+    display: flex;
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool:not(.cn-tool--back),
@@ -1036,17 +1043,18 @@
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool--back {
-    top: 139px;
+    top: 134px;
     left: 16px;
-    width: 86px;
-    place-items: center start;
+    width: 110px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool--back::after {
     content: "Library";
-    position: absolute;
-    left: 26px;
-    top: 6px;
     color: #f6f4ed;
     font-size: 15px;
     font-weight: 500;
@@ -1054,10 +1062,10 @@
   }
 
   #cn-game .cn-app[data-view="library"] .cn-tool--back {
-    top: 139px;
+    top: 134px;
     left: 20px;
-    width: 22px;
-    height: 22px;
+    width: 30px;
+    height: 32px;
   }
 
   #cn-game .cn-app[data-view="library"] .cn-tool--back svg {
@@ -1320,8 +1328,10 @@
     opacity: 1;
   }
 
-  #cn-game .cn-puzzle-card strong {
-    display: block;
+  #cn-game .cn-card-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 0 0 12px;
     color: #4a6f73;
     font-size: 13.5px;
@@ -1330,7 +1340,6 @@
     white-space: nowrap;
   }
 
-  #cn-game .cn-card-status,
   #cn-game .cn-puzzle-card small,
   #cn-game .cn-card-detail {
     display: block;
