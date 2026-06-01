@@ -191,21 +191,21 @@
     pointer-events: none;
     z-index: 8;
     transition:
-      top 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
-      left 130ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      top 170ms cubic-bezier(0.22, 0.86, 0.28, 1),
+      left 170ms cubic-bezier(0.22, 0.86, 0.28, 1);
     will-change: top, left;
   }
 
   #cn-game .cn-cross-row {
-    left: 0;
-    width: 100%;
-    height: calc(var(--cn-cell) + var(--cn-highlight-stroke));
+    left: calc(var(--cn-highlight-stroke) * -1);
+    width: calc(100% + var(--cn-highlight-stroke) * 2);
+    height: calc(var(--cn-cell) + var(--cn-highlight-stroke) * 2);
   }
 
   #cn-game .cn-cross-col {
-    top: 0;
-    width: calc(var(--cn-cell) + var(--cn-highlight-stroke));
-    height: 100%;
+    top: calc(var(--cn-highlight-stroke) * -1);
+    width: calc(var(--cn-cell) + var(--cn-highlight-stroke) * 2);
+    height: calc(100% + var(--cn-highlight-stroke) * 2);
   }
 
   #cn-game .cn-bottom-numbers,
@@ -229,18 +229,18 @@
   #cn-game .cn-cross-count {
     display: none;
     position: absolute;
-    min-width: 11px;
-    height: 11px;
-    padding: 0 2px;
+    min-width: 9px;
+    height: 9px;
+    padding: 0 1px;
     box-sizing: border-box;
     place-items: center;
     background: #fffaf0;
     color: #111;
-    font-size: 8px;
+    font-size: 7px;
     font-weight: 850;
     line-height: 1;
     pointer-events: none;
-    z-index: 10;
+    z-index: 11;
     transition:
       top 130ms cubic-bezier(0.2, 0.8, 0.2, 1),
       left 130ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -357,6 +357,61 @@
       );
   }
 
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-play-area {
+    display: block;
+    place-items: unset;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-board-wrap {
+    position: absolute;
+    left: 50%;
+    top: 131px;
+    width: var(--cn-solved-w);
+    height: var(--cn-solved-h);
+    display: block;
+    overflow: hidden;
+    border: 1px solid #4a6f73;
+    border-radius: 14px;
+    transform: translateX(-50%);
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-board-wrap::before,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-corner,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-col-clues,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-row-clues,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cross-row,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cross-col,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cross-count,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-bottom-numbers,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-side-numbers {
+    display: none !important;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-grid {
+    width: var(--cn-solved-w);
+    height: var(--cn-solved-h);
+    display: grid;
+    grid-template-columns: repeat(var(--cn-cols), var(--cn-solved-cell));
+    grid-template-rows: repeat(var(--cn-rows), var(--cn-solved-cell));
+    overflow: hidden;
+    box-shadow: none;
+    border-radius: inherit;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-grid::before,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-grid::after,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cell::before,
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cell::after {
+    display: none;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-cell {
+    width: var(--cn-solved-cell);
+    height: var(--cn-solved-cell);
+    pointer-events: none;
+    transition: none;
+  }
+
   #cn-game .cn-clue-row,
   #cn-game .cn-clue-col {
     display: flex;
@@ -407,8 +462,9 @@
   }
 
   #cn-game .cn-chip.cn-done {
-    opacity: 0.32;
-    text-decoration: line-through;
+    background: transparent !important;
+    color: var(--cn-clue-color) !important;
+    text-decoration: none;
   }
 
   #cn-game .cn-cell {
@@ -504,6 +560,19 @@
     animation-delay: calc(var(--cn-i) * 5ms);
   }
 
+  #cn-game .cn-cell.cn-just-changed {
+    animation: cn-cell-settle 120ms ease-out both;
+  }
+
+  @keyframes cn-cell-settle {
+    from {
+      opacity: 0.62;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
   @keyframes cn-pop {
     0% {
       transform: scale(0.9);
@@ -526,40 +595,67 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 35px;
     background: var(--cn-accent);
     width: 100%;
     height: 58px;
     padding: 0 0 8px;
-    transition: opacity 160ms ease;
+    overflow: hidden;
+  }
+
+  #cn-game .cn-palette-items {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 35px;
+    width: 100%;
+    height: 100%;
+    transition: transform 220ms ease, opacity 180ms ease;
+    will-change: transform, opacity;
   }
 
   #cn-game .cn-palette.cn-hidden {
-    opacity: 0;
     pointer-events: none;
-    transition-delay: 180ms;
+  }
+
+  #cn-game .cn-palette.cn-hidden .cn-palette-items {
+    opacity: 0;
+    transform: translateY(44px);
   }
 
   #cn-game .cn-palette.cn-solved-nav {
-    gap: 18px;
-    padding: 0 26px 8px;
+    padding: 0 24px 8px;
+  }
+
+  #cn-game .cn-palette.cn-solved-nav .cn-palette-items {
+    justify-content: space-between;
+    gap: 0;
   }
 
   #cn-game .cn-solved-nav-button {
-    width: 147px;
-    height: 38px;
+    width: auto;
+    height: 42px;
     border: 0;
-    border-radius: 19px;
-    background: #f6f4ed;
-    color: #4a6f73;
+    border-radius: 0;
+    background: transparent;
+    color: #fffaf0;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
   }
 
   #cn-game .cn-solved-nav-button:disabled {
     opacity: 0.42;
     cursor: default;
+  }
+
+  #cn-game .cn-solved-nav-button svg {
+    width: 13px;
+    height: 22px;
+    display: block;
   }
 
   #cn-game .cn-swatch {
@@ -579,9 +675,9 @@
 
   #cn-game .cn-solved-info {
     position: absolute;
-    left: 64px;
-    right: 64px;
-    top: 614px;
+    left: 0;
+    right: 0;
+    top: 224px;
     z-index: 9;
     display: none;
     text-align: center;
@@ -595,17 +691,52 @@
   }
 
   #cn-game .cn-solved-title {
-    margin: 0 0 5px;
-    font-size: 17px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  #cn-game .cn-solved-status {
+    margin: 380px 0 0;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1.1;
   }
 
   #cn-game .cn-solved-copy {
-    margin: 0;
-    font-size: 13px;
+    margin: 22px 0 0;
+    font-size: 15px;
     font-weight: 500;
-    line-height: 1.45;
+    line-height: 1.2;
+  }
+
+  #cn-game .cn-solved-axis {
+    position: absolute;
+    z-index: 10;
+    display: none;
+    color: #111;
+    font-size: 6px;
+    font-weight: 850;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-app.cn-solved[data-view="game"] .cn-solved-axis {
+    display: block;
+  }
+
+  #cn-game .cn-solved-axis--right {
+    top: calc(131px + var(--cn-solved-h) * 0.7);
+    left: calc(50% + var(--cn-solved-w) / 2 + 76px);
+  }
+
+  #cn-game .cn-solved-axis--bottom {
+    top: 570px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   @keyframes cn-solved-info-in {
@@ -854,12 +985,55 @@
     display: none;
   }
 
+  #cn-game .cn-app[data-view="pack"]::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 71px;
+    background: var(--cn-accent);
+    z-index: 6;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar {
+    top: 0;
+    height: 184px;
+    background:
+      linear-gradient(180deg, rgba(247, 244, 238, 0.78) 0%, rgba(255, 163, 137, 0.92) 52%, var(--cn-accent) 100%);
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar::after {
+    content: "Solving now";
+    position: absolute;
+    right: 31px;
+    bottom: 28px;
+    color: #fffaf0;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar::before {
+    content: "";
+    position: absolute;
+    right: 16px;
+    bottom: 20px;
+    width: 13px;
+    height: 22px;
+    background: no-repeat center / contain
+      url("data:image/svg+xml,%3Csvg width='13' height='22' viewBox='0 0 13 22' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 2L11 11L2 20' stroke='%23FFFAF0' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+
   #cn-game .cn-app[data-view="pack"] .cn-tool:not(.cn-tool--back),
   #cn-game .cn-app[data-view="library"] .cn-tool:not(.cn-tool--back) {
     display: none;
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool--back {
+    top: 139px;
+    left: 16px;
     width: 86px;
     place-items: center start;
   }
@@ -885,7 +1059,8 @@
 
   #cn-game #cn-pack-screen {
     background: #f6f4ed;
-    padding: 12px 11px 32px;
+    inset: 184px 0 0;
+    padding: 12px 11px 88px;
   }
 
   #cn-game #cn-library-screen {
@@ -936,6 +1111,20 @@
       #fff;
   }
 
+  #cn-game .cn-pixel-preview {
+    display: grid;
+    grid-template-columns: repeat(var(--cn-preview-cols), 1fr);
+    grid-template-rows: repeat(var(--cn-preview-rows), 1fr);
+    overflow: hidden;
+    background: #fffaf0;
+  }
+
+  #cn-game .cn-pixel-preview span {
+    display: block;
+    min-width: 0;
+    min-height: 0;
+  }
+
   #cn-game .cn-library-thumb {
     width: 52px;
     height: 52px;
@@ -946,7 +1135,7 @@
   #cn-game .cn-pack-title {
     margin: 0;
     color: #4a6f73;
-    font-size: 15px;
+    font-size: 15.5px;
     font-weight: 600;
     line-height: 1.1;
   }
@@ -967,7 +1156,9 @@
   #cn-game .cn-pack-stats {
     display: grid;
     gap: 5px;
-    margin-top: 47px;
+    margin-top: 49px;
+    font-size: 13px;
+    line-height: 1.1;
   }
 
   #cn-game .cn-pack-stat {
@@ -978,8 +1169,8 @@
 
   #cn-game .cn-pack-stat::before {
     content: "";
-    width: 12px;
-    height: 12px;
+    width: 12.5px;
+    height: 12.5px;
     border-radius: 50%;
     flex: 0 0 auto;
     background: #ffa389;
@@ -1025,19 +1216,19 @@
     grid-template-columns: 116px 1fr;
     gap: 11px;
     align-items: start;
-    margin: 0 0 10px;
+    margin: 0 0 11px;
   }
 
   #cn-game .cn-pack-thumb {
     width: 116px;
     height: 116px;
-    border-radius: 20px;
+    border-radius: 19px;
   }
 
   #cn-game .cn-pack-grid {
     display: grid;
     grid-template-columns: repeat(3, 117px);
-    gap: 10px;
+    gap: 10px 10px;
   }
 
   #cn-game .cn-puzzle-card {
@@ -1048,65 +1239,94 @@
     border: 0;
     border-radius: 20px;
     background: #e6e6e6;
-    color: #111;
+    color: #4a6f73;
     box-shadow: inset 0 0 0 1px rgba(74, 111, 115, 0.5);
     font-weight: 600;
     cursor: pointer;
-    padding: 0;
+    padding: 10px;
     overflow: visible;
+    text-align: left;
+  }
+
+  #cn-game .cn-puzzle-card:disabled {
+    opacity: 1;
+    color: #4a6f73;
   }
 
   #cn-game .cn-puzzle-number {
-    position: absolute;
-    top: 11px;
-    left: 10px;
-    width: 12px;
-    height: 12px;
+    width: 12.5px;
+    height: 12.5px;
     border-radius: 50%;
-    display: grid;
-    place-items: center;
+    display: inline-block;
     background: #ffa389;
     color: transparent;
     border: 0;
     font-size: 0;
+    vertical-align: -1px;
+    margin-right: 8px;
   }
 
-  #cn-game .cn-puzzle-card:nth-child(3n + 2) .cn-puzzle-number {
+  #cn-game .cn-puzzle-card--saved .cn-puzzle-number {
     background: #5cd5f6;
   }
 
-  #cn-game .cn-puzzle-card:nth-child(3n) .cn-puzzle-number {
+  #cn-game .cn-puzzle-card--solved .cn-puzzle-number {
     background: #31ca6c;
   }
 
   #cn-game .cn-card-thumb {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 9px;
     width: 97px;
-    height: 97px;
-    margin: 10px auto 0;
-    border-radius: 10px;
-    opacity: 0.78;
+    height: 83px;
+    margin: 0;
+    border-radius: 12px;
+    opacity: 1;
   }
 
   #cn-game .cn-puzzle-card strong {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 20px;
     display: block;
-    font-size: 10px;
+    margin: 0 0 10px;
+    color: #4a6f73;
+    font-size: 13px;
+    font-weight: 500;
     line-height: 1;
-    text-align: center;
   }
 
   #cn-game .cn-card-status,
-  #cn-game .cn-puzzle-card small {
+  #cn-game .cn-puzzle-card small,
+  #cn-game .cn-card-detail {
+    display: block;
+    color: #4a6f73;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  #cn-game .cn-card-detail {
+    margin-top: 11px;
+  }
+
+  #cn-game .cn-card-detail svg {
+    width: 11px;
+    height: 11px;
+    margin-right: 8px;
+    vertical-align: -1px;
+    fill: #4a6f73;
+  }
+
+  #cn-game .cn-puzzle-card--solved .cn-card-detail,
+  #cn-game .cn-puzzle-card--solved small,
+  #cn-game .cn-puzzle-card--solved .cn-card-progress {
     display: none;
   }
 
   #cn-game .cn-card-progress {
     position: absolute;
     left: 10px;
-    bottom: 12px;
+    bottom: 11px;
     width: 97px;
     height: 4px;
     overflow: hidden;
@@ -1127,9 +1347,9 @@
     cursor: default;
   }
 
-  #cn-game .cn-puzzle-card--empty .cn-card-thumb,
-  #cn-game .cn-puzzle-card--empty strong {
-    opacity: 0.35;
+  #cn-game .cn-puzzle-card--empty {
+    cursor: default;
+    opacity: 1;
   }
 
   #cn-game .cn-pack-settings-backdrop {
@@ -1255,7 +1475,7 @@
 
     <section class="cn-screen cn-view" id="cn-pack-screen" aria-label="Пек">
       <div class="cn-pack-hero">
-        <div class="cn-pack-thumb" aria-hidden="true"></div>
+        <div class="cn-pack-thumb" id="cn-pack-thumb" aria-hidden="true"></div>
         <div>
           <h1 class="cn-pack-title" id="cn-pack-title">Our Planet 1</h1>
           <p class="cn-pack-stats" id="cn-pack-stats">0 New<br>0 Saved<br>0 Solved</p>
@@ -1277,14 +1497,14 @@
         <div class="cn-bottom-numbers" id="cn-bottom-numbers"></div>
         <div class="cn-side-numbers" id="cn-side-numbers"></div>
       </section>
+      <div class="cn-solved-axis cn-solved-axis--right" id="cn-solved-width-label"></div>
+      <div class="cn-solved-axis cn-solved-axis--bottom" id="cn-solved-height-label"></div>
     </div>
 
     <section class="cn-solved-info" id="cn-solved-info" aria-live="polite">
       <h1 class="cn-solved-title" id="cn-solved-title">Puzzle solved!</h1>
-      <p class="cn-solved-copy">
-        <span id="cn-solved-name">Puzzle</span> solved<br>
-        Time spent: <span id="cn-solved-time">00:00:00</span>
-      </p>
+      <p class="cn-solved-status">Puzzle solved!</p>
+      <p class="cn-solved-copy">Time spent: <span id="cn-solved-time">00:00:00</span></p>
     </section>
 
     <section class="cn-palette" id="cn-palette" aria-label="Палитра"></section>
@@ -1465,7 +1685,7 @@
         id: "planet-1",
         title: "Our Planet 1",
         puzzles: [
-          { id: "filled-25x35-v3", title: "Puzzle #1", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
+          { id: "filled-25x35-v3", title: "The Pool", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
         ],
       },
       {
@@ -1504,6 +1724,11 @@
       paletteButtonColor: puzzle.palette[0].id,
       markValue: true,
       holdTimer: null,
+      resolveTimer: null,
+      updateFrame: null,
+      pendingUpdateOptions: null,
+      renderedCellKeys: null,
+      changedDuringGesture: false,
       lastCell: null,
       showErrors: false,
       undoStack: [],
@@ -1599,6 +1824,13 @@
       state.paletteButtonColor = state.activeColor;
       state.markValue = true;
       state.holdTimer = null;
+      window.clearTimeout(state.resolveTimer);
+      state.resolveTimer = null;
+      if (state.updateFrame) cancelAnimationFrame(state.updateFrame);
+      state.updateFrame = null;
+      state.pendingUpdateOptions = null;
+      state.renderedCellKeys = null;
+      state.changedDuringGesture = false;
       state.lastCell = null;
       state.showErrors = false;
       state.undoStack = [];
@@ -1653,6 +1885,42 @@
       else pauseTimer();
     }
 
+    function paintPuzzlePreview(target, nextPuzzle) {
+      target.textContent = "";
+      target.classList.add("cn-pixel-preview");
+      target.style.setProperty("--cn-preview-cols", nextPuzzle.width);
+      target.style.setProperty("--cn-preview-rows", nextPuzzle.height);
+      const previewColors = Object.fromEntries(nextPuzzle.palette.map((color) => [color.id, color.color]));
+      nextPuzzle.solution.forEach((row) => {
+        row.forEach((cell) => {
+          const pixel = document.createElement("span");
+          pixel.style.background = cell ? previewColors[cell] : "#fffaf0";
+          target.appendChild(pixel);
+        });
+      });
+    }
+
+    function cardStatusLabel(status) {
+      if (status === "saved") return "In progress";
+      if (status === "solved") return "Solved";
+      return "Not started";
+    }
+
+    function cardDifficulty(nextPuzzle, status, index) {
+      if (status === "saved" || nextPuzzle.width >= 30) return "Hard";
+      return index % 5 === 0 ? "Medium" : "Medium";
+    }
+
+    function cardIcon(name) {
+      if (name === "size") {
+        return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10.5H1.5V14H5v-1.5H3.6l2.8-2.8-1.1-1.1L3 10.9v-.4ZM12.4 3.5H11V2h3.5v3.5H13V4.1l-2.8 2.8-1.1-1.1 3.3-2.3ZM3.6 3.5H5V2H1.5v3.5H3V4.1l2.8 2.8 1.1-1.1-3.3-2.3ZM12.4 12.5H11V14h3.5v-3.5H13v1.4l-2.8-2.8-1.1 1.1 3.3 2.3Z"/></svg>';
+      }
+      if (name === "time") {
+        return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1h8v3.1L9.2 8 12 11.9V15H4v-3.1L6.8 8 4 4.1V1Zm2 2v.5l2 2.8 2-2.8V3H6Zm2 6.7-2 2.8v.5h4v-.5L8 9.7Z"/></svg>';
+      }
+      return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 9.8 6 14.5 8 9.8 10 8 14.5 6.2 10 1.5 8 6.2 6 8 1.5Z"/></svg>';
+    }
+
     function renderLibrary() {
       const list = byId("cn-library-list");
       list.textContent = "";
@@ -1685,44 +1953,64 @@
 
     function renderPack(pack = currentPack) {
       const counts = packCounts(pack);
+      const heroPuzzle = pack.puzzles[0] || puzzle;
       byId("cn-pack-title").textContent = pack.title;
       byId("cn-pack-stats").innerHTML = `
         <span class="cn-pack-stat cn-pack-stat--new">${counts.new} New</span>
         <span class="cn-pack-stat cn-pack-stat--saved">${counts.saved} Saved</span>
         <span class="cn-pack-stat cn-pack-stat--solved">${counts.solved} Solved</span>
       `;
+      paintPuzzlePreview(byId("cn-pack-thumb"), heroPuzzle);
       const grid = byId("cn-pack-grid");
       grid.textContent = "";
-      const slotCount = Math.max(20, pack.puzzles.length);
+      const slotCount = Math.max(12, pack.puzzles.length);
       for (let index = 0; index < slotCount; index += 1) {
         const nextPuzzle = pack.puzzles[index];
+        const displayPuzzle = nextPuzzle || pack.puzzles[index % Math.max(pack.puzzles.length, 1)] || puzzle;
         if (!nextPuzzle) {
+          const mockStatus = index % 3 === 1 ? "saved" : index % 3 === 2 ? "solved" : "new";
+          const progressAmount = mockStatus === "solved" ? 100 : mockStatus === "saved" ? 45 : 0;
           const card = document.createElement("button");
-          card.className = "cn-puzzle-card cn-puzzle-card--empty";
+          card.className = `cn-puzzle-card cn-puzzle-card--empty cn-puzzle-card--${mockStatus}`;
           card.type = "button";
           card.disabled = true;
           card.innerHTML = `
-            <span class="cn-puzzle-number">${index + 1}</span>
-            <div class="cn-card-thumb" aria-hidden="true"></div>
-            <strong>Empty</strong>
+            <strong><span class="cn-puzzle-number">${index + 1}</span>${cardStatusLabel(mockStatus)}</strong>
+            <span class="cn-card-detail">${cardIcon("difficulty")}${cardDifficulty(displayPuzzle, mockStatus, index)}</span>
+            <span class="cn-card-detail">${cardIcon("size")}${displayPuzzle.width}x${displayPuzzle.height}</span>
+            <span class="cn-card-detail">${cardIcon("time")}${mockStatus === "saved" ? "00:16:28" : "00:00:00"}</span>
             <span class="cn-card-progress" style="--cn-card-progress: 0%"></span>
           `;
+          card.querySelector(".cn-card-progress").style.setProperty("--cn-card-progress", `${progressAmount}%`);
+          if (mockStatus === "solved") {
+            const thumb = document.createElement("div");
+            thumb.className = "cn-card-thumb";
+            thumb.setAttribute("aria-hidden", "true");
+            paintPuzzlePreview(thumb, displayPuzzle);
+            card.appendChild(thumb);
+          }
           grid.appendChild(card);
           continue;
         }
         const progress = progressFor(nextPuzzle);
         const progressAmount = progress.status === "solved" ? 100 : progress.status === "saved" ? 45 : 0;
         const card = document.createElement("button");
-        card.className = "cn-puzzle-card";
+        card.className = `cn-puzzle-card cn-puzzle-card--${progress.status}`;
         card.type = "button";
         card.innerHTML = `
-          <span class="cn-puzzle-number">${index + 1}</span>
-          <div class="cn-card-thumb" aria-hidden="true"></div>
-          <strong>${nextPuzzle.width}x${nextPuzzle.height}</strong>
-          <span class="cn-card-status">${progress.status === "new" ? "New" : progress.status === "saved" ? "Saved" : "Solved"}</span>
-          <small>${formatElapsed(progress.elapsedMs)}</small>
+          <strong><span class="cn-puzzle-number">${index + 1}</span>${cardStatusLabel(progress.status)}</strong>
+          <span class="cn-card-detail">${cardIcon("difficulty")}${cardDifficulty(nextPuzzle, progress.status, index)}</span>
+          <span class="cn-card-detail">${cardIcon("size")}${nextPuzzle.width}x${nextPuzzle.height}</span>
+          <span class="cn-card-detail">${cardIcon("time")}${formatElapsed(progress.elapsedMs)}</span>
           <span class="cn-card-progress" style="--cn-card-progress: ${progressAmount}%"></span>
         `;
+        if (progress.status === "solved") {
+          const thumb = document.createElement("div");
+          thumb.className = "cn-card-thumb";
+          thumb.setAttribute("aria-hidden", "true");
+          paintPuzzlePreview(thumb, nextPuzzle);
+          card.appendChild(thumb);
+        }
         card.addEventListener("click", () => loadPuzzle(pack, nextPuzzle));
         grid.appendChild(card);
       }
@@ -1846,16 +2134,20 @@
     function configurePuzzleGeometry() {
       clueCols = puzzle.width >= 30 ? 9 : 8;
       clueRows = puzzle.height >= 45 ? 12 : 11;
-      const cell = puzzle.width >= 30 ? 9.55 : 11;
+      const cell = puzzle.width >= 30 ? 9.35 : 11;
+      const solvedCell = puzzle.width >= 30 ? 7.33 : 8.85;
       root.style.setProperty("--cn-cols", puzzle.width);
       root.style.setProperty("--cn-rows", puzzle.height);
       root.style.setProperty("--cn-clue-cols", clueCols);
       root.style.setProperty("--cn-clue-rows", clueRows);
       root.style.setProperty("--cn-cell", `${cell}px`);
+      root.style.setProperty("--cn-solved-cell", `${solvedCell}px`);
       root.style.setProperty("--cn-clue-left", `${clueCols * cell}px`);
       root.style.setProperty("--cn-clue-top", `${clueRows * cell}px`);
       root.style.setProperty("--cn-grid-w", `${puzzle.width * cell}px`);
       root.style.setProperty("--cn-grid-h", `${puzzle.height * cell}px`);
+      root.style.setProperty("--cn-solved-w", `${puzzle.width * solvedCell}px`);
+      root.style.setProperty("--cn-solved-h", `${puzzle.height * solvedCell}px`);
       root.style.setProperty("--cn-board-w", `${(clueCols + puzzle.width) * cell}px`);
       root.style.setProperty("--cn-board-h", `${(clueRows + puzzle.height) * cell}px`);
     }
@@ -1907,36 +2199,49 @@
       });
     }
 
-    function autoDotSolvedClueGaps() {
-      rowClues.forEach((line, rowIndex) => {
-        line.forEach((clue, clueIndex) => {
-          const nextClue = line[clueIndex + 1];
-          const gapCol = clue.end + 1;
-          if (
-            nextClue?.color === clue.color &&
-            gapCol < puzzle.width &&
-            isClueSolved("cn-clue-row", rowIndex, clue) &&
-            !state.cells[rowIndex][gapCol]
-          ) {
-            state.cells[rowIndex][gapCol] = "dot";
-          }
-        });
-      });
+    function lineLengthFor(className) {
+      return className === "cn-clue-row" ? puzzle.width : puzzle.height;
+    }
 
-      colClues.forEach((line, colIndex) => {
+    function setLineDot(className, lineIndex, position) {
+      if (position < 0 || position >= lineLengthFor(className)) return;
+      const row = className === "cn-clue-row" ? lineIndex : position;
+      const col = className === "cn-clue-row" ? position : lineIndex;
+      if (!state.cells[row][col]) state.cells[row][col] = "dot";
+    }
+
+    function setLineDotRange(className, lineIndex, start, end) {
+      const from = Math.max(0, start);
+      const to = Math.min(lineLengthFor(className) - 1, end);
+      for (let position = from; position <= to; position += 1) {
+        setLineDot(className, lineIndex, position);
+      }
+    }
+
+    function autoDotSolvedClueGaps() {
+      const applyLine = (className, line, lineIndex) => {
+        const solved = line.map((clue) => isClueSolved(className, lineIndex, clue));
+        const length = lineLengthFor(className);
+
         line.forEach((clue, clueIndex) => {
-          const nextClue = line[clueIndex + 1];
-          const gapRow = clue.end + 1;
-          if (
-            nextClue?.color === clue.color &&
-            gapRow < puzzle.height &&
-            isClueSolved("cn-clue-col", colIndex, clue) &&
-            !state.cells[gapRow][colIndex]
-          ) {
-            state.cells[gapRow][colIndex] = "dot";
-          }
+          if (!solved[clueIndex]) return;
+
+          if (clueIndex === 0) setLineDotRange(className, lineIndex, 0, clue.start - 1);
+          if (clueIndex === line.length - 1) setLineDotRange(className, lineIndex, clue.end + 1, length - 1);
+
+          if (line[clueIndex - 1]?.color === clue.color) setLineDot(className, lineIndex, clue.start - 1);
+          if (line[clueIndex + 1]?.color === clue.color) setLineDot(className, lineIndex, clue.end + 1);
         });
-      });
+
+        for (let clueIndex = 0; clueIndex < line.length - 1; clueIndex += 1) {
+          if (solved[clueIndex] && solved[clueIndex + 1]) {
+            setLineDotRange(className, lineIndex, line[clueIndex].end + 1, line[clueIndex + 1].start - 1);
+          }
+        }
+      };
+
+      rowClues.forEach((line, rowIndex) => applyLine("cn-clue-row", line, rowIndex));
+      colClues.forEach((line, colIndex) => applyLine("cn-clue-col", line, colIndex));
     }
 
     function autoDotCompletedLines() {
@@ -1984,7 +2289,7 @@
       renderClue(byId("cn-col-clues"), colClues, "cn-clue-col");
     }
 
-    function syncClueDoneState() {
+    function syncClueDoneState(delay = 500) {
       [
         ["cn-clue-row", rowClues],
         ["cn-clue-col", colClues],
@@ -2010,7 +2315,7 @@
                   state.clueDone.add(key);
                   renderAllClues();
                 }
-              }, 500),
+              }, delay),
             );
           });
         });
@@ -2035,9 +2340,12 @@
         const visibleClues = className === "cn-clue-row" ? line.slice(-clueCols) : line.slice(-clueRows);
         visibleClues.forEach((clue) => {
           const chip = document.createElement("span");
-          chip.className = `cn-chip${clue.count >= 10 ? " cn-two-digit" : ""}${state.clueDone.has(clueKey(className, index, clue)) ? " cn-done" : ""}`;
-          chip.style.background = colorById[clue.color].color;
-          chip.style.color = textColorFor(colorById[clue.color].color);
+          const clueColor = colorById[clue.color].color;
+          const isDone = state.clueDone.has(clueKey(className, index, clue));
+          chip.className = `cn-chip${clue.count >= 10 ? " cn-two-digit" : ""}${isDone ? " cn-done" : ""}`;
+          chip.style.setProperty("--cn-clue-color", clueColor);
+          chip.style.background = clueColor;
+          chip.style.color = textColorFor(clueColor);
           chip.textContent = clue.count;
           item.appendChild(chip);
         });
@@ -2049,22 +2357,30 @@
     function renderPalette() {
       const palette = byId("cn-palette");
       palette.innerHTML = "";
+      const items = document.createElement("div");
+      items.className = "cn-palette-items";
+      palette.appendChild(items);
       palette.classList.toggle("cn-solved-nav", state.solved);
       if (state.solved) {
         palette.classList.remove("cn-hidden");
         const index = currentPuzzleIndex();
         const buttons = [
-          { label: "Previous puzzle", delta: -1, disabled: index <= 0 },
-          { label: "Next puzzle", delta: 1, disabled: index < 0 || index >= currentPack.puzzles.length - 1 },
+          { label: "Previous", delta: -1, disabled: index <= 0 },
+          { label: "Next", delta: 1, disabled: index < 0 || index >= currentPack.puzzles.length - 1 },
         ];
         buttons.forEach((item) => {
           const button = document.createElement("button");
           button.className = "cn-solved-nav-button";
           button.type = "button";
-          button.textContent = item.label;
+          const arrow =
+            '<svg viewBox="0 0 13 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 2L2 11L11 20" stroke="#fffaf0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          button.innerHTML =
+            item.delta < 0
+              ? `${arrow}<span>${item.label}</span>`
+              : `<span>${item.label}</span>${arrow.replace('viewBox="0 0 13 22"', 'viewBox="0 0 13 22" style="transform: scaleX(-1)"')}`;
           button.disabled = item.disabled;
           button.addEventListener("click", () => loadRelativePuzzle(item.delta));
-          palette.appendChild(button);
+          items.appendChild(button);
         });
         renderPaletteButton();
         return;
@@ -2081,7 +2397,7 @@
           state.activeColor = color.id;
           renderPalette();
         });
-        palette.appendChild(swatch);
+        items.appendChild(swatch);
       });
       renderPaletteButton();
     }
@@ -2116,7 +2432,8 @@
       } else {
         state.paletteHidden = false;
       }
-      renderPalette();
+      byId("cn-palette").classList.toggle("cn-hidden", state.paletteHidden);
+      renderPaletteButton();
       saveProgress();
     }
 
@@ -2194,6 +2511,25 @@
       return Number.parseFloat(getComputedStyle(root).getPropertyValue("--cn-cell")) || 11;
     }
 
+    function mergeUpdateOptions(current, next) {
+      return {
+        ...(current || {}),
+        ...(next || {}),
+        resolveLines: current?.resolveLines === false || next?.resolveLines === false ? false : next?.resolveLines,
+      };
+    }
+
+    function requestVisualUpdate(options = {}) {
+      state.pendingUpdateOptions = mergeUpdateOptions(state.pendingUpdateOptions, options);
+      if (state.updateFrame) return;
+      state.updateFrame = requestAnimationFrame(() => {
+        const nextOptions = state.pendingUpdateOptions || {};
+        state.updateFrame = null;
+        state.pendingUpdateOptions = null;
+        update(nextOptions);
+      });
+    }
+
     function dominantAxis(event) {
       const dx = event.clientX - state.startX;
       const dy = event.clientY - state.startY;
@@ -2213,7 +2549,7 @@
     }
 
     function freeCellFromPointer(event, origin) {
-      const step = cellSizePx() * 1.45;
+      const step = cellSizePx() * 1.18;
       const rowOffset = Math.trunc((event.clientY - state.startY) / step);
       const colOffset = Math.trunc((event.clientX - state.startX) / step);
       return {
@@ -2256,7 +2592,8 @@
 
       state.lastCell = target;
       setPointerCell(target.row, target.col);
-      update();
+      state.changedDuringGesture = true;
+      requestVisualUpdate({ resolveLines: false });
     }
 
     function markPath(fromCell, toCell) {
@@ -2282,7 +2619,7 @@
 
       state.lastCell = target;
       setPointerCell(target.row, target.col);
-      update();
+      requestVisualUpdate({ resolveLines: false });
     }
 
     function syncHotCell(prevRow, prevCol) {
@@ -2333,7 +2670,7 @@
       const targetCol = state.currentCol === null ? col : state.currentCol;
       if (state.markMode) {
         state.marks[targetRow][targetCol] = !state.marks[targetRow][targetCol];
-        update();
+        update({ resolveLines: false });
         return;
       }
       pushHistory();
@@ -2342,7 +2679,8 @@
       state.cells[targetRow][targetCol] = nextValue;
       state.armedValue = nextValue;
       state.showErrors = false;
-      update();
+      state.changedDuringGesture = true;
+      update({ resolveLines: false });
     }
 
     function cellFromPoint(event) {
@@ -2358,13 +2696,16 @@
     function renderGrid() {
       const grid = byId("cn-grid");
       grid.innerHTML = "";
+      const nextRenderedCellKeys = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(""));
 
       state.cells.forEach((row, rowIndex) => {
         row.forEach((cell, colIndex) => {
           const button = document.createElement("button");
-          const filled = cell && cell !== "dot";
-          const lightFilled = filled && textColorFor(colorById[cell].color) === "#111";
+          const displayCell = state.solved ? puzzle.solution[rowIndex][colIndex] : cell;
+          const filled = displayCell && displayCell !== "dot";
+          const lightFilled = filled && textColorFor(colorById[displayCell].color) === "#111";
           const wrong =
+            !state.solved &&
             state.showErrors &&
             ((cell && cell !== "dot" && cell !== puzzle.solution[rowIndex][colIndex]) ||
               (cell === "dot" && puzzle.solution[rowIndex][colIndex]));
@@ -2372,34 +2713,54 @@
           const lineHot = state.currentRow === rowIndex || state.currentCol === colIndex;
           const majorRight = (colIndex + 1) % 5 === 0 && colIndex + 1 < puzzle.width;
           const majorBottom = (rowIndex + 1) % 5 === 0 && rowIndex + 1 < puzzle.height;
-          button.className = `cn-cell${majorRight ? " cn-major-right" : ""}${majorBottom ? " cn-major-bottom" : ""}${filled ? " cn-filled" : ""}${lightFilled ? " cn-light-filled" : ""}${cell === "dot" ? " cn-dot" : ""}${state.marks[rowIndex][colIndex] ? " cn-mark" : ""}${wrong ? " cn-wrong" : ""}${lineHot ? " cn-line-hot" : ""}${hot ? " cn-hot" : ""}${state.solved && filled ? " cn-reveal" : ""}`;
+          const hasMark = !state.solved && state.marks[rowIndex][colIndex];
+          const cellKey = `${displayCell || ""}:${hasMark ? "mark" : ""}`;
+          const changed = state.renderedCellKeys && state.renderedCellKeys[rowIndex]?.[colIndex] !== cellKey;
+          nextRenderedCellKeys[rowIndex][colIndex] = cellKey;
+          button.className = `cn-cell${majorRight ? " cn-major-right" : ""}${majorBottom ? " cn-major-bottom" : ""}${filled ? " cn-filled" : ""}${lightFilled ? " cn-light-filled" : ""}${displayCell === "dot" ? " cn-dot" : ""}${hasMark ? " cn-mark" : ""}${wrong ? " cn-wrong" : ""}${lineHot && !state.solved ? " cn-line-hot" : ""}${hot && !state.solved ? " cn-hot" : ""}${changed && !state.solved ? " cn-just-changed" : ""}${state.solved && filled ? " cn-reveal" : ""}`;
           button.type = "button";
           button.dataset.row = rowIndex;
           button.dataset.col = colIndex;
           button.style.setProperty("--cn-i", rowIndex + colIndex);
-          button.style.background = cell && cell !== "dot" ? colorById[cell].color : "#fffaf0";
+          button.style.background = displayCell && displayCell !== "dot" ? colorById[displayCell].color : "#fffaf0";
           button.setAttribute("aria-label", `${rowIndex + 1}:${colIndex + 1}`);
 
           grid.appendChild(button);
         });
       });
+      state.renderedCellKeys = nextRenderedCellKeys;
     }
 
     function renderSolvedState() {
       app.classList.toggle("cn-solved", state.solved);
-      byId("cn-solved-title").textContent = puzzle.title;
-      byId("cn-solved-name").textContent = puzzle.title;
+      byId("cn-solved-title").textContent = puzzle.title.toUpperCase();
       byId("cn-solved-time").textContent = formatElapsed(getElapsedMs());
+      byId("cn-solved-width-label").textContent = puzzle.width;
+      byId("cn-solved-height-label").textContent = puzzle.height;
       byId("cn-mark-mode").disabled = state.solved;
       paletteButton.disabled = state.solved;
       byId("cn-review").disabled = state.solved;
       updateHistoryButtons();
     }
 
-    function update() {
+    function applyLineResolution(clueDelay = 0) {
       autoDotSolvedClueGaps();
       autoDotCompletedLines();
-      syncClueDoneState();
+      syncClueDoneState(clueDelay);
+    }
+
+    function scheduleLineResolution() {
+      window.clearTimeout(state.resolveTimer);
+      state.resolveTimer = window.setTimeout(() => {
+        state.resolveTimer = null;
+        applyLineResolution(0);
+        update({ resolveLines: false });
+      }, 500);
+    }
+
+    function update(options = {}) {
+      const shouldResolveLines = options.resolveLines !== false;
+      if (shouldResolveLines) applyLineResolution(options.clueDelay ?? 0);
       state.solved = isSolved();
       if (state.solved) pauseTimer();
       renderAllClues();
@@ -2431,16 +2792,16 @@
       col.style.display = "block";
       rowCount.style.display = "grid";
       colCount.style.display = "grid";
-      row.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow})`;
-      col.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol})`;
+      row.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow} - var(--cn-highlight-stroke))`;
+      col.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} - var(--cn-highlight-stroke))`;
       rowCount.textContent = countRun(state.currentRow, state.currentCol, "row");
       colCount.textContent = countRun(state.currentRow, state.currentCol, "col");
-      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 1px)`;
+      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 2px)`;
       rowCount.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow} + var(--cn-cell) / 2)`;
-      rowCount.style.transform = "translateY(-50%)";
+      rowCount.style.transform = "translate(-100%, -50%)";
       colCount.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} + var(--cn-cell) / 2)`;
-      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} + 1px)`;
-      colCount.style.transform = "translateX(-50%)";
+      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} - 2px)`;
+      colCount.style.transform = "translate(-50%, -100%)";
     }
 
     function renderIndexLabels() {
@@ -2454,7 +2815,7 @@
         label.className = "cn-index-label";
         label.textContent = col;
         label.style.left = `calc(var(--cn-cell) * ${clueCols + col})`;
-        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} + 2px)`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} - 7px)`;
         label.style.transform = "translateX(-50%)";
         bottom.appendChild(label);
       }
@@ -2463,9 +2824,9 @@
         const label = document.createElement("span");
         label.className = "cn-index-label";
         label.textContent = row;
-        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 3px)`;
+        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 2px)`;
         label.style.top = `calc(var(--cn-cell) * ${clueRows + row} + var(--cn-cell) / 2)`;
-        label.style.transform = "translateY(-50%)";
+        label.style.transform = "translate(-100%, -50%)";
         side.appendChild(label);
       }
     }
@@ -2571,6 +2932,8 @@
       state.markMode = false;
       state.markValue = true;
       state.holdTimer = null;
+      window.clearTimeout(state.resolveTimer);
+      state.resolveTimer = null;
       state.lastCell = null;
       state.showErrors = false;
       state.currentRow = null;
@@ -2771,6 +3134,7 @@
       state.pointerId = event.pointerId;
       state.isDrawing = true;
       state.moved = false;
+      state.changedDuringGesture = false;
       state.isPaintingDrag = false;
       const anchor = {
         row: state.currentRow === null ? cell.row : state.currentRow,
@@ -2787,6 +3151,8 @@
       state.startX = event.clientX;
       state.startY = event.clientY;
       window.clearTimeout(state.holdTimer);
+      window.clearTimeout(state.resolveTimer);
+      state.resolveTimer = null;
       state.holdTimer = window.setTimeout(() => {
         if (!state.isDrawing || state.moved || state.solved) return;
         state.isPaintingDrag = true;
@@ -2837,8 +3203,10 @@
         const targetCol = state.currentCol === null ? state.drawStart.col : state.currentCol;
         handleTap(targetRow, targetCol);
       }
+      const shouldResolveLines = state.changedDuringGesture;
       state.isDrawing = false;
       state.moved = false;
+      state.changedDuringGesture = false;
       state.isPaintingDrag = false;
       state.drawStart = null;
       state.drawAxis = null;
@@ -2849,6 +3217,7 @@
       state.markValue = true;
       state.lastCell = null;
       state.pointerId = null;
+      if (shouldResolveLines) scheduleLineResolution();
     });
 
     loadProgress();
