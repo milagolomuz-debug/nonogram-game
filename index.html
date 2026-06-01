@@ -245,28 +245,28 @@
     pointer-events: none;
     z-index: 6;
     color: #111;
-    font-size: 6px;
+    font-size: 5px;
     font-weight: 850;
     line-height: 1;
   }
 
   #cn-game .cn-index-label {
     position: absolute;
-    min-width: 10px;
+    min-width: 8px;
     text-align: center;
   }
 
   #cn-game .cn-cross-count {
     display: none;
     position: absolute;
-    min-width: 9px;
-    height: 9px;
+    min-width: 8px;
+    height: 8px;
     padding: 0 1px;
     box-sizing: border-box;
     place-items: center;
     background: #fffaf0;
     color: #111;
-    font-size: 7px;
+    font-size: 6px;
     font-weight: 850;
     line-height: 1;
     pointer-events: none;
@@ -562,15 +562,16 @@
   #cn-game .cn-cell.cn-mark::after {
     content: "";
     position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 7px;
-    height: 7px;
-    border: 1.4px solid #0d0d0d;
+    left: 50%;
+    top: 50%;
+    width: clamp(4.6px, calc(var(--cn-cell) * 0.58), 6.4px);
+    height: clamp(4.6px, calc(var(--cn-cell) * 0.58), 6.4px);
+    border: 1px solid #0d0d0d;
     border-radius: 50%;
     box-sizing: border-box;
     background: transparent;
-    z-index: 3;
+    transform: translate(-50%, -50%);
+    z-index: 6;
   }
 
   #cn-game .cn-cell.cn-filled.cn-mark::after {
@@ -2716,12 +2717,23 @@
       return null;
     }
 
-    function quantizedOffset(delta) {
-      const step = cellSizePx() * 1.75;
-      const abs = Math.abs(delta);
-      if (abs < step) return 0;
-      return Math.sign(delta) * Math.floor(abs / step);
-    }
+function quantizedOffset(delta) {
+  const size = cellSizePx();
+  const abs = Math.abs(delta);
+  const slowStep = size * 2.25;
+  const fastStep = size * 1.35;
+  const rampCells = 7;
+  const rampDistance = slowStep * rampCells;
+
+  if (abs < slowStep) return 0;
+
+  const cells =
+    abs <= rampDistance
+      ? Math.floor(abs / slowStep)
+      : rampCells + Math.floor((abs - rampDistance) / fastStep);
+
+  return Math.sign(delta) * cells;
+}
 
     function freeCellFromPointer(event, origin) {
       const step = cellSizePx() * 1.18;
@@ -2971,11 +2983,11 @@
       col.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} - var(--cn-highlight-stroke))`;
       rowCount.textContent = countRun(state.currentRow, state.currentCol, "row");
       colCount.textContent = countRun(state.currentRow, state.currentCol, "col");
-      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 3px)`;
+      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 5px)`;
       rowCount.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow} + var(--cn-cell) / 2)`;
       rowCount.style.transform = "translate(0, -50%)";
       colCount.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} + var(--cn-cell) / 2)`;
-      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} + 3px)`;
+      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} + 5px)`;
       colCount.style.transform = "translate(-50%, 0)";
     }
 
@@ -2990,7 +3002,7 @@
         label.className = "cn-index-label";
         label.textContent = col;
         label.style.left = `calc(var(--cn-cell) * ${clueCols + col})`;
-        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} - 7px)`;
+        label.style.top = `calc(var(--cn-cell) * ${clueRows + puzzle.height} - 5px)`;
         label.style.transform = "translateX(-50%)";
         bottom.appendChild(label);
       }
@@ -2999,7 +3011,7 @@
         const label = document.createElement("span");
         label.className = "cn-index-label";
         label.textContent = row;
-        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 2px)`;
+        label.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 3px)`;
         label.style.top = `calc(var(--cn-cell) * ${clueRows + row} + var(--cn-cell) / 2)`;
         label.style.transform = "translate(-100%, -50%)";
         side.appendChild(label);
