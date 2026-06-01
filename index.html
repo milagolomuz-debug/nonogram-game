@@ -985,7 +985,8 @@
     display: none;
   }
 
-  #cn-game .cn-app[data-view="pack"]::after {
+  #cn-game .cn-app[data-view="pack"]::after,
+  #cn-game .cn-app[data-view="library"]::after {
     content: "";
     position: absolute;
     left: 0;
@@ -997,14 +998,16 @@
     pointer-events: none;
   }
 
-  #cn-game .cn-app[data-view="pack"] .cn-toolbar {
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar,
+  #cn-game .cn-app[data-view="library"] .cn-toolbar {
     top: 0;
     height: 184px;
     background:
       linear-gradient(180deg, rgba(247, 244, 238, 0.78) 0%, rgba(255, 163, 137, 0.92) 52%, var(--cn-accent) 100%);
   }
 
-  #cn-game .cn-app[data-view="pack"] .cn-toolbar::after {
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar::after,
+  #cn-game .cn-app[data-view="library"] .cn-toolbar::after {
     content: "Solving now";
     position: absolute;
     right: 31px;
@@ -1015,7 +1018,8 @@
     line-height: 1;
   }
 
-  #cn-game .cn-app[data-view="pack"] .cn-toolbar::before {
+  #cn-game .cn-app[data-view="pack"] .cn-toolbar::before,
+  #cn-game .cn-app[data-view="library"] .cn-toolbar::before {
     content: "";
     position: absolute;
     right: 16px;
@@ -1049,6 +1053,25 @@
     line-height: 1;
   }
 
+  #cn-game .cn-app[data-view="library"] .cn-tool--back {
+    top: 139px;
+    left: 20px;
+    width: 22px;
+    height: 22px;
+  }
+
+  #cn-game .cn-app[data-view="library"] .cn-tool--back svg {
+    display: none;
+  }
+
+  #cn-game .cn-app[data-view="library"] .cn-tool--back::before {
+    content: "";
+    width: 22px;
+    height: 22px;
+    background: no-repeat center / contain
+      url("data:image/svg+xml,%3Csvg width='22' height='22' viewBox='0 0 22 22' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19.25 4.125H2.75C2.38533 4.125 2.03559 4.26987 1.77773 4.52773C1.51987 4.78559 1.375 5.13533 1.375 5.5V7.5625C1.375 7.92717 1.51987 8.27691 1.77773 8.53477C2.03559 8.79263 2.38533 8.9375 2.75 8.9375V16.5C2.75 16.8647 2.89487 17.2144 3.15273 17.4723C3.41059 17.7301 3.76033 17.875 4.125 17.875H17.875C18.2397 17.875 18.5894 17.7301 18.8473 17.4723C19.1051 17.2144 19.25 16.8647 19.25 16.5V8.9375C19.6147 8.9375 19.9644 8.79263 20.2223 8.53477C20.4801 8.27691 20.625 7.92717 20.625 7.5625V5.5C20.625 5.13533 20.4801 4.78559 20.2223 4.52773C19.9644 4.26987 19.6147 4.125 19.25 4.125ZM13.0625 12.375H8.9375C8.75516 12.375 8.5803 12.3026 8.45136 12.1736C8.32243 12.0447 8.25 11.8698 8.25 11.6875C8.25 11.5052 8.32243 11.3303 8.45136 11.2014C8.5803 11.0724 8.75516 11 8.9375 11H13.0625C13.2448 11 13.4197 11.0724 13.5486 11.2014C13.6776 11.3303 13.75 11.5052 13.75 11.6875C13.75 11.8698 13.6776 12.0447 13.5486 12.1736C13.4197 12.3026 13.2448 12.375 13.0625 12.375ZM19.25 7.5625H2.75V5.5H19.25V7.5625Z' fill='%23F6F4ED'/%3E%3C/svg%3E");
+  }
+
   #cn-game .cn-screen {
     position: absolute;
     inset: 134px 0 0;
@@ -1065,7 +1088,8 @@
 
   #cn-game #cn-library-screen {
     background: #f6f4ed;
-    padding: 21px 11px 32px;
+    inset: 184px 0 0;
+    padding: 21px 11px 88px;
   }
 
   #cn-game .cn-screen-title {
@@ -1079,7 +1103,7 @@
 
   #cn-game .cn-library-list {
     display: grid;
-    gap: 0;
+    gap: 30px;
   }
 
   #cn-game #cn-library-screen .cn-screen-title {
@@ -1092,14 +1116,21 @@
     grid-template-columns: 52px 1fr 30px;
     gap: 11px;
     align-items: center;
-    min-height: 82px;
-    padding: 9px 0;
+    min-height: 52px;
+    padding: 0;
     border: 0;
-    border-radius: 0;
+    border-radius: 26px;
     background: transparent;
     color: #4a6f73;
     text-align: left;
     cursor: pointer;
+  }
+
+  #cn-game .cn-library-card.cn-library-card--active {
+    min-height: 72px;
+    margin: 0 0 -20px;
+    padding: 10px 11px;
+    background: #f6f4ed;
   }
 
   #cn-game .cn-library-thumb,
@@ -1150,13 +1181,14 @@
   }
 
   #cn-game .cn-library-meta {
-    margin-top: 9px;
+    margin-top: 10px;
   }
 
   #cn-game .cn-pack-stats {
     display: grid;
     gap: 5px;
     margin-top: 49px;
+    color: #4a6f73;
     font-size: 13px;
     line-height: 1.1;
   }
@@ -1165,6 +1197,7 @@
     display: flex;
     align-items: center;
     gap: 7px;
+    white-space: nowrap;
   }
 
   #cn-game .cn-pack-stat::before {
@@ -1174,6 +1207,11 @@
     border-radius: 50%;
     flex: 0 0 auto;
     background: #ffa389;
+  }
+
+  #cn-game .cn-pack-stat-count {
+    min-width: 12px;
+    font-weight: 600;
   }
 
   #cn-game .cn-pack-stat--saved::before {
@@ -1228,7 +1266,8 @@
   #cn-game .cn-pack-grid {
     display: grid;
     grid-template-columns: repeat(3, 117px);
-    gap: 10px 10px;
+    gap: 10px;
+    align-items: start;
   }
 
   #cn-game .cn-puzzle-card {
@@ -1236,21 +1275,16 @@
     width: 117px;
     height: 117px;
     min-height: 117px;
-    border: 0;
+    border: 1px solid rgba(74, 111, 115, 0.5);
     border-radius: 20px;
     background: #e6e6e6;
     color: #4a6f73;
-    box-shadow: inset 0 0 0 1px rgba(74, 111, 115, 0.5);
+    box-shadow: none;
     font-weight: 600;
     cursor: pointer;
     padding: 10px;
     overflow: visible;
     text-align: left;
-  }
-
-  #cn-game .cn-puzzle-card:disabled {
-    opacity: 1;
-    color: #4a6f73;
   }
 
   #cn-game .cn-puzzle-number {
@@ -1288,11 +1322,12 @@
 
   #cn-game .cn-puzzle-card strong {
     display: block;
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     color: #4a6f73;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 500;
     line-height: 1;
+    white-space: nowrap;
   }
 
   #cn-game .cn-card-status,
@@ -1306,7 +1341,7 @@
   }
 
   #cn-game .cn-card-detail {
-    margin-top: 11px;
+    margin-top: 10px;
   }
 
   #cn-game .cn-card-detail svg {
@@ -1343,13 +1378,13 @@
     background: #4a6f73;
   }
 
-  #cn-game .cn-puzzle-card--empty {
-    cursor: default;
-  }
-
-  #cn-game .cn-puzzle-card--empty {
-    cursor: default;
-    opacity: 1;
+  #cn-game .cn-pack-empty {
+    grid-column: 1 / -1;
+    padding: 20px 0;
+    color: rgba(74, 111, 115, 0.75);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
   }
 
   #cn-game .cn-pack-settings-backdrop {
@@ -1553,6 +1588,7 @@
   </main>
 </div>
 
+<script src="packs-extra.js"></script>
 <script>
   (() => {
     try {
@@ -1680,29 +1716,65 @@
       { id: "orange", label: "O", color: "#eca258" },
     ];
 
-    const packs = [
+    const builtInPacks = [
       {
-        id: "planet-1",
-        title: "Our Planet 1",
+        id: "test-pack-1",
+        title: "Pack #1 | Test",
         puzzles: [
-          { id: "filled-25x35-v3", title: "The Pool", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
-        ],
-      },
-      {
-        id: "planet-2",
-        title: "Our Planet 2",
-        puzzles: [
-          { id: "planet-30x45-v1", title: "Puzzle #1", width: 30, height: 45, palette: basePalette, solution: makeSolution30() },
-        ],
-      },
-      {
-        id: "planet-3",
-        title: "Our Planet 3",
-        puzzles: [
-          { id: "planet-25x35-v2", title: "Puzzle #1", width: 25, height: 35, palette: basePalette, solution: makeSolutionVariant() },
+          { id: "test-25x35-v1", title: "The Pool", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
+          { id: "test-30x45-v1", title: "Test 30x45", width: 30, height: 45, palette: basePalette, solution: makeSolution30() },
         ],
       },
     ];
+
+    function normalizePack(pack, packIndex) {
+      if (!pack || !Array.isArray(pack.puzzles) || pack.puzzles.length === 0) return null;
+      const id = pack.id || `extra-pack-${packIndex + 1}`;
+      const puzzles = pack.puzzles
+        .filter((nextPuzzle) => nextPuzzle && Array.isArray(nextPuzzle.solution))
+        .map((nextPuzzle, puzzleIndex) => ({
+          ...nextPuzzle,
+          id: nextPuzzle.id || `${id}-puzzle-${puzzleIndex + 1}`,
+          title: nextPuzzle.title || `Puzzle #${puzzleIndex + 1}`,
+          width: nextPuzzle.width || nextPuzzle.solution[0]?.length || 0,
+          height: nextPuzzle.height || nextPuzzle.solution.length || 0,
+          palette: nextPuzzle.palette || basePalette,
+        }))
+        .filter((nextPuzzle) => nextPuzzle.width > 0 && nextPuzzle.height > 0);
+      if (puzzles.length === 0) return null;
+      return {
+        ...pack,
+        id,
+        title: pack.title || `Pack #${packIndex + 1}`,
+        puzzles,
+      };
+    }
+
+    function loadExtraPacks() {
+      const helpers = {
+        basePalette,
+        makeSolution,
+        makeSolution30,
+        makeSolutionVariant,
+      };
+      const factoryPacks = (window.NONOGRAM_PACK_FACTORIES || []).flatMap((factory) => {
+        if (typeof factory !== "function") return [];
+        try {
+          const result = factory(helpers);
+          return Array.isArray(result) ? result : [];
+        } catch (error) {
+          console.warn("Nonogram pack factory failed", error);
+          return [];
+        }
+      });
+      const dataPacks = Array.isArray(window.NONOGRAM_EXTRA_PACKS) ? window.NONOGRAM_EXTRA_PACKS : [];
+      return [...factoryPacks, ...dataPacks]
+        .map((pack, index) => normalizePack(pack, builtInPacks.length + index))
+        .filter(Boolean);
+    }
+
+    const extraPacks = loadExtraPacks();
+    const packs = extraPacks.length ? [...extraPacks, ...builtInPacks] : builtInPacks;
 
     let currentPack = packs[0];
     let puzzle = currentPack.puzzles[0];
@@ -1848,20 +1920,30 @@
       clearClueDoneState();
     }
 
+    function puzzleColorTotal(nextPuzzle) {
+      return nextPuzzle.solution.reduce((total, row) => total + row.filter(Boolean).length, 0);
+    }
+
     function progressFor(nextPuzzle) {
       const raw = storageGet(`color-nonogram:${nextPuzzle.id}`);
-      if (!raw) return { status: "new", elapsedMs: 0, filled: 0 };
+      const total = puzzleColorTotal(nextPuzzle);
+      if (!raw) return { status: "new", elapsedMs: 0, filled: 0, total, ratio: 0 };
       try {
         const data = JSON.parse(raw);
-        const filled = Array.isArray(data.cells) ? data.cells.flat().filter(Boolean).length : 0;
+        const filled = Array.isArray(data.cells)
+          ? data.cells.flat().filter((cell) => cell && cell !== "dot").length
+          : 0;
         const solved = Boolean(data.solved);
+        const ratio = total ? Math.min(1, filled / total) : 0;
         return {
           status: solved ? "solved" : filled ? "saved" : "new",
           elapsedMs: Number.isFinite(data.elapsedMs) ? data.elapsedMs : 0,
           filled,
+          total,
+          ratio,
         };
       } catch (error) {
-        return { status: "new", elapsedMs: 0, filled: 0 };
+        return { status: "new", elapsedMs: 0, filled: 0, total, ratio: 0 };
       }
     }
 
@@ -1907,6 +1989,7 @@
     }
 
     function cardDifficulty(nextPuzzle, status, index) {
+      if (nextPuzzle.difficulty) return nextPuzzle.difficulty;
       if (status === "saved" || nextPuzzle.width >= 30) return "Hard";
       return index % 5 === 0 ? "Medium" : "Medium";
     }
@@ -1935,10 +2018,11 @@
             <div class="cn-library-thumb" aria-hidden="true"></div>
             <div>
               <h2 class="cn-library-title">${pack.title}</h2>
-              <p class="cn-library-meta">${pack.puzzles.length} puzzle<br>${counts.new} New · ${counts.saved} Saved · ${counts.solved} Solved</p>
+              <p class="cn-library-meta">${counts.solved}/20 puzzles solved</p>
             </div>
             <span class="cn-pack-more" aria-label="Pack settings">&#8942;</span>
           `;
+          paintPuzzlePreview(card.querySelector(".cn-library-thumb"), pack.puzzles[0] || puzzle);
           card.addEventListener("click", (event) => {
             if (event.target.closest(".cn-pack-more")) {
               event.stopPropagation();
@@ -1956,44 +2040,24 @@
       const heroPuzzle = pack.puzzles[0] || puzzle;
       byId("cn-pack-title").textContent = pack.title;
       byId("cn-pack-stats").innerHTML = `
-        <span class="cn-pack-stat cn-pack-stat--new">${counts.new} New</span>
-        <span class="cn-pack-stat cn-pack-stat--saved">${counts.saved} Saved</span>
-        <span class="cn-pack-stat cn-pack-stat--solved">${counts.solved} Solved</span>
+        <span class="cn-pack-stat cn-pack-stat--new"><span class="cn-pack-stat-count">${counts.new}</span> Not started</span>
+        <span class="cn-pack-stat cn-pack-stat--saved"><span class="cn-pack-stat-count">${counts.saved}</span> In progress</span>
+        <span class="cn-pack-stat cn-pack-stat--solved"><span class="cn-pack-stat-count">${counts.solved}</span> Solved</span>
       `;
       paintPuzzlePreview(byId("cn-pack-thumb"), heroPuzzle);
       const grid = byId("cn-pack-grid");
       grid.textContent = "";
-      const slotCount = Math.max(12, pack.puzzles.length);
-      for (let index = 0; index < slotCount; index += 1) {
+      if (pack.puzzles.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "cn-pack-empty";
+        empty.textContent = "No puzzles yet";
+        grid.appendChild(empty);
+        return;
+      }
+      for (let index = 0; index < pack.puzzles.length; index += 1) {
         const nextPuzzle = pack.puzzles[index];
-        const displayPuzzle = nextPuzzle || pack.puzzles[index % Math.max(pack.puzzles.length, 1)] || puzzle;
-        if (!nextPuzzle) {
-          const mockStatus = index % 3 === 1 ? "saved" : index % 3 === 2 ? "solved" : "new";
-          const progressAmount = mockStatus === "solved" ? 100 : mockStatus === "saved" ? 45 : 0;
-          const card = document.createElement("button");
-          card.className = `cn-puzzle-card cn-puzzle-card--empty cn-puzzle-card--${mockStatus}`;
-          card.type = "button";
-          card.disabled = true;
-          card.innerHTML = `
-            <strong><span class="cn-puzzle-number">${index + 1}</span>${cardStatusLabel(mockStatus)}</strong>
-            <span class="cn-card-detail">${cardIcon("difficulty")}${cardDifficulty(displayPuzzle, mockStatus, index)}</span>
-            <span class="cn-card-detail">${cardIcon("size")}${displayPuzzle.width}x${displayPuzzle.height}</span>
-            <span class="cn-card-detail">${cardIcon("time")}${mockStatus === "saved" ? "00:16:28" : "00:00:00"}</span>
-            <span class="cn-card-progress" style="--cn-card-progress: 0%"></span>
-          `;
-          card.querySelector(".cn-card-progress").style.setProperty("--cn-card-progress", `${progressAmount}%`);
-          if (mockStatus === "solved") {
-            const thumb = document.createElement("div");
-            thumb.className = "cn-card-thumb";
-            thumb.setAttribute("aria-hidden", "true");
-            paintPuzzlePreview(thumb, displayPuzzle);
-            card.appendChild(thumb);
-          }
-          grid.appendChild(card);
-          continue;
-        }
         const progress = progressFor(nextPuzzle);
-        const progressAmount = progress.status === "solved" ? 100 : progress.status === "saved" ? 45 : 0;
+        const progressAmount = progress.status === "solved" ? 100 : Math.round(progress.ratio * 100);
         const card = document.createElement("button");
         card.className = `cn-puzzle-card cn-puzzle-card--${progress.status}`;
         card.type = "button";
@@ -2023,6 +2087,9 @@
 
     function closePackSettings() {
       byId("cn-pack-settings-backdrop").classList.remove("cn-open");
+      document.querySelectorAll(".cn-library-card--active").forEach((card) => {
+        card.classList.remove("cn-library-card--active");
+      });
     }
 
     function openPackSettings(pack, anchor) {
@@ -2030,20 +2097,27 @@
       const backdrop = byId("cn-pack-settings-backdrop");
       const panel = backdrop.querySelector(".cn-pack-settings");
       const rect = anchor.getBoundingClientRect();
+      const appRect = app.getBoundingClientRect();
       const panelWidth = 284;
       const panelHeight = 152;
       const margin = 11;
-      const gap = 25;
+      const gap = 28;
       const centerX = rect.left + rect.width / 2;
-      const left = Math.max(margin, Math.min(window.innerWidth - panelWidth - margin, centerX - panelWidth / 2));
-      const topBelow = rect.bottom + gap;
+      const activeRowBottom = Math.max(rect.bottom, rect.top + 72);
+      const left = Math.max(
+        appRect.left + margin,
+        Math.min(appRect.right - panelWidth - margin, centerX - panelWidth / 2),
+      );
+      const topBelow = activeRowBottom + gap;
       const topAbove = rect.top - panelHeight - gap;
-      const useAbove = topBelow + panelHeight + margin > window.innerHeight && topAbove >= margin;
+      const useAbove = topBelow + panelHeight + margin > appRect.bottom && topAbove >= appRect.top + margin;
       const top = useAbove
-        ? Math.max(margin, topAbove)
-        : Math.min(window.innerHeight - panelHeight - margin, topBelow);
+        ? Math.max(appRect.top + margin, topAbove)
+        : Math.min(appRect.bottom - panelHeight - margin, topBelow);
       const arrowLeft = Math.max(18, Math.min(panelWidth - 49, centerX - left - 15.5));
 
+      closePackSettings();
+      anchor.classList.add("cn-library-card--active");
       backdrop.style.setProperty("--cn-pack-settings-left", `${left}px`);
       backdrop.style.setProperty("--cn-pack-settings-top", `${top}px`);
       backdrop.style.setProperty("--cn-pack-settings-arrow-left", `${arrowLeft}px`);
