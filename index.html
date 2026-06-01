@@ -41,6 +41,13 @@
     --cn-grid-h: 385px;
     --cn-clue-left: 88px;
     --cn-clue-top: 121px;
+    --cn-header-h: 134px;
+    --cn-toolbar-top: 72px;
+    --cn-toolbar-h: 62px;
+    --cn-footer-h: 104px;
+    --cn-palette-top: 748px;
+    --cn-frame-top-bg: linear-gradient(180deg, #f8ded6 0%, #ffb9a8 48%, #ffa389 100%);
+    --cn-frame-bottom-bg: linear-gradient(180deg, #ffa389 0%, #ffa389 36%, #ffd9ce 100%);
     width: 100%;
     min-height: 852px;
     background: var(--cn-bg);
@@ -69,19 +76,41 @@
     margin: 0 auto;
     position: relative;
     overflow: hidden;
-    background: var(--cn-bg);
+    background: var(--cn-game-bg);
+  }
+
+  #cn-game .cn-app::before,
+  #cn-game .cn-app::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  #cn-game .cn-app::before {
+    top: 0;
+    height: var(--cn-header-h);
+    background: var(--cn-frame-top-bg);
+  }
+
+  #cn-game .cn-app::after {
+    bottom: 0;
+    height: var(--cn-footer-h);
+    background: var(--cn-frame-bottom-bg);
   }
 
   #cn-game .cn-toolbar {
     position: absolute;
     left: 0;
-    top: 72px;
+    top: var(--cn-toolbar-top);
     width: 100%;
-    height: 62px;
+    height: var(--cn-toolbar-h);
     display: block;
-    background: var(--cn-accent);
+    background: transparent;
     padding: 0;
-    z-index: 10;
+    z-index: 20;
   }
 
   #cn-game .cn-tool {
@@ -149,13 +178,14 @@
   #cn-game .cn-play-area {
     position: absolute;
     left: 0;
-    top: 134px;
+    top: var(--cn-header-h);
     width: 100%;
-    height: 578px;
+    height: calc(100% - var(--cn-header-h) - var(--cn-footer-h));
     display: grid;
     place-items: center;
     padding-top: 0;
     background: var(--cn-game-bg);
+    z-index: 5;
   }
 
   #cn-game .cn-board-wrap {
@@ -198,14 +228,14 @@
 
   #cn-game .cn-cross-row {
     left: calc(var(--cn-highlight-stroke) * -1);
-    width: calc(100% + var(--cn-highlight-stroke) * 2);
+    width: calc(100% + var(--cn-highlight-stroke) * 2 + 12px);
     height: calc(var(--cn-cell) + var(--cn-highlight-stroke) * 2);
   }
 
   #cn-game .cn-cross-col {
     top: calc(var(--cn-highlight-stroke) * -1);
     width: calc(var(--cn-cell) + var(--cn-highlight-stroke) * 2);
-    height: calc(100% + var(--cn-highlight-stroke) * 2);
+    height: calc(100% + var(--cn-highlight-stroke) * 2 + 12px);
   }
 
   #cn-game .cn-bottom-numbers,
@@ -591,15 +621,16 @@
   #cn-game .cn-palette {
     position: absolute;
     left: 0;
-    top: 712px;
+    top: var(--cn-palette-top);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--cn-accent);
+    background: transparent;
     width: 100%;
     height: 58px;
     padding: 0 0 8px;
     overflow: hidden;
+    z-index: 20;
   }
 
   #cn-game .cn-palette-items {
@@ -987,32 +1018,28 @@
 
   #cn-game .cn-app[data-view="pack"]::after,
   #cn-game .cn-app[data-view="library"]::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 71px;
-    background: var(--cn-accent);
-    z-index: 6;
-    pointer-events: none;
+    height: var(--cn-footer-h);
+    background: var(--cn-frame-bottom-bg);
+    z-index: 4;
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-toolbar,
   #cn-game .cn-app[data-view="library"] .cn-toolbar {
-    top: 0;
-    height: 184px;
-    background:
-      linear-gradient(180deg, rgba(247, 244, 238, 0.78) 0%, rgba(255, 163, 137, 0.92) 52%, var(--cn-accent) 100%);
+    top: var(--cn-toolbar-top);
+    height: var(--cn-toolbar-h);
+    background: transparent;
+    overflow: visible;
   }
 
   #cn-game .cn-solving-now {
     display: none;
     position: absolute;
-    right: 16px;
-    bottom: 20px;
-    height: 30px;
+    right: 15px;
+    top: 15px;
+    min-width: 120px;
+    height: 32px;
     align-items: center;
+    justify-content: flex-end;
     gap: 7px;
     border: 0;
     background: transparent;
@@ -1022,7 +1049,11 @@
     line-height: 1;
     cursor: pointer;
     padding: 0;
-    z-index: 2;
+    z-index: 20;
+    opacity: 1;
+    visibility: visible;
+    white-space: nowrap;
+    pointer-events: auto;
   }
 
   #cn-game .cn-solving-now svg {
@@ -1034,7 +1065,9 @@
 
   #cn-game .cn-app[data-view="pack"] .cn-solving-now,
   #cn-game .cn-app[data-view="library"] .cn-solving-now {
-    display: flex;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool:not(.cn-tool--back),
@@ -1043,7 +1076,7 @@
   }
 
   #cn-game .cn-app[data-view="pack"] .cn-tool--back {
-    top: 134px;
+    top: 16px;
     left: 16px;
     width: 110px;
     height: 32px;
@@ -1062,7 +1095,7 @@
   }
 
   #cn-game .cn-app[data-view="library"] .cn-tool--back {
-    top: 134px;
+    top: 16px;
     left: 20px;
     width: 30px;
     height: 32px;
@@ -1082,22 +1115,23 @@
 
   #cn-game .cn-screen {
     position: absolute;
-    inset: 134px 0 0;
+    inset: 0;
     overflow: hidden auto;
-    background: #e4eeee;
-    padding: 22px 11px 30px;
+    background: transparent;
+    padding: calc(var(--cn-header-h) + 22px) 11px calc(var(--cn-footer-h) + 30px);
+    z-index: 2;
   }
 
   #cn-game #cn-pack-screen {
-    background: #f6f4ed;
-    inset: 184px 0 0;
-    padding: 12px 11px 88px;
+    background: transparent;
+    inset: 0;
+    padding: calc(var(--cn-header-h) + 12px) 11px calc(var(--cn-footer-h) + 16px);
   }
 
   #cn-game #cn-library-screen {
-    background: #f6f4ed;
-    inset: 184px 0 0;
-    padding: 21px 11px 88px;
+    background: transparent;
+    inset: 0;
+    padding: calc(var(--cn-header-h) + 21px) 11px calc(var(--cn-footer-h) + 16px);
   }
 
   #cn-game .cn-screen-title {
@@ -1290,14 +1324,14 @@
     box-shadow: none;
     font-weight: 600;
     cursor: pointer;
-    padding: 10px;
-    overflow: visible;
+    padding: 9px;
+    overflow: hidden;
     text-align: left;
   }
 
   #cn-game .cn-puzzle-number {
-    width: 12.5px;
-    height: 12.5px;
+    width: 9.5px;
+    height: 9.5px;
     border-radius: 50%;
     display: inline-block;
     background: #ffa389;
@@ -1305,7 +1339,8 @@
     border: 0;
     font-size: 0;
     vertical-align: -1px;
-    margin-right: 8px;
+    margin-right: 0;
+    flex: 0 0 auto;
   }
 
   #cn-game .cn-puzzle-card--saved .cn-puzzle-number {
@@ -1331,10 +1366,10 @@
   #cn-game .cn-card-status {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 12px;
+    gap: 5px;
+    margin: 0 0 10px;
     color: #4a6f73;
-    font-size: 13.5px;
+    font-size: 10.8px;
     font-weight: 500;
     line-height: 1;
     white-space: nowrap;
@@ -1344,19 +1379,19 @@
   #cn-game .cn-card-detail {
     display: block;
     color: #4a6f73;
-    font-size: 12.5px;
+    font-size: 10.5px;
     font-weight: 500;
     line-height: 1;
   }
 
   #cn-game .cn-card-detail {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   #cn-game .cn-card-detail svg {
-    width: 11px;
-    height: 11px;
-    margin-right: 8px;
+    width: 9px;
+    height: 9px;
+    margin-right: 6px;
     vertical-align: -1px;
     fill: #4a6f73;
   }
@@ -1369,9 +1404,9 @@
 
   #cn-game .cn-card-progress {
     position: absolute;
-    left: 10px;
-    bottom: 11px;
-    width: 97px;
+    left: 9px;
+    bottom: 9px;
+    width: 99px;
     height: 4px;
     overflow: hidden;
     border-radius: 999px;
@@ -1510,6 +1545,7 @@
       <button class="cn-tool cn-tool--mode" id="cn-mark-mode" type="button" aria-label="Marking squares"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11.0001 14.6069C12.992 14.6069 14.6067 12.9921 14.6067 11.0002C14.6067 9.00831 12.992 7.39355 11.0001 7.39355C9.00818 7.39355 7.39343 9.00831 7.39343 11.0002C7.39343 12.9921 9.00818 14.6069 11.0001 14.6069Z" fill="#F6F4ED"/><path d="M11 19.25C15.5563 19.25 19.25 15.5563 19.25 11C19.25 6.44365 15.5563 2.75 11 2.75C6.44365 2.75 2.75 6.44365 2.75 11C2.75 15.5563 6.44365 19.25 11 19.25Z" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button class="cn-tool cn-tool--palette" type="button" aria-label="Палитра"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.2537 4.63118C15.5897 2.9834 13.3418 2.0601 11 2.0625H10.908C8.55365 2.08673 6.30391 3.03904 4.64764 4.71253C2.99137 6.38602 2.06238 8.64548 2.0625 11C2.0625 14.6953 4.34672 17.7942 8.02313 19.0927C8.43778 19.2389 8.88145 19.2836 9.31692 19.2229C9.75239 19.1622 10.167 18.9981 10.5259 18.7441C10.8848 18.4901 11.1776 18.1538 11.3797 17.7634C11.5818 17.3729 11.6874 16.9397 11.6875 16.5C11.6875 16.1353 11.8324 15.7856 12.0902 15.5277C12.3481 15.2699 12.6978 15.125 13.0625 15.125H17.0337C17.6575 15.128 18.2635 14.9176 18.7513 14.5287C19.239 14.1397 19.579 13.5957 19.7149 12.9869C19.8686 12.3103 19.9433 11.6182 19.9375 10.9244C19.9287 9.75001 19.687 8.58906 19.2263 7.50879C18.7656 6.42852 18.0951 5.45043 17.2537 4.63118ZM7.21875 14.4375C7.01479 14.4375 6.81541 14.377 6.64582 14.2637C6.47623 14.1504 6.34405 13.9893 6.266 13.8009C6.18795 13.6125 6.16752 13.4051 6.20732 13.2051C6.24711 13.005 6.34532 12.8213 6.48955 12.6771C6.63377 12.5328 6.81752 12.4346 7.01756 12.3948C7.21761 12.355 7.42496 12.3755 7.61339 12.4535C7.80183 12.5316 7.96289 12.6637 8.0762 12.8333C8.18952 13.0029 8.25 13.2023 8.25 13.4063C8.25 13.6798 8.14135 13.9421 7.94795 14.1355C7.75456 14.3289 7.49225 14.4375 7.21875 14.4375ZM7.21875 9.625C7.01479 9.625 6.81541 9.56452 6.64582 9.45121C6.47623 9.33789 6.34405 9.17683 6.266 8.9884C6.18795 8.79996 6.16752 8.59261 6.20732 8.39257C6.24711 8.19252 6.34532 8.00877 6.48955 7.86455C6.63377 7.72033 6.81752 7.62211 7.01756 7.58232C7.21761 7.54253 7.42496 7.56295 7.61339 7.641C7.80183 7.71906 7.96289 7.85123 8.0762 8.02082C8.18952 8.19041 8.25 8.38979 8.25 8.59375C8.25 8.86726 8.14135 9.12956 7.94795 9.32296C7.75456 9.51636 7.49225 9.625 7.21875 9.625ZM11 7.5625C10.796 7.5625 10.5967 7.50202 10.4271 7.38871C10.2575 7.27539 10.1253 7.11433 10.0472 6.9259C9.9692 6.73746 9.94877 6.53011 9.98857 6.33007C10.0284 6.13002 10.1266 5.94627 10.2708 5.80205C10.415 5.65783 10.5988 5.55961 10.7988 5.51982C10.9989 5.48003 11.2062 5.50045 11.3946 5.5785C11.5831 5.65656 11.7441 5.78873 11.8575 5.95832C11.9708 6.12791 12.0312 6.32729 12.0312 6.53125C12.0312 6.80476 11.9226 7.06706 11.7292 7.26046C11.5358 7.45386 11.2735 7.5625 11 7.5625ZM14.7812 9.625C14.5773 9.625 14.3779 9.56452 14.2083 9.45121C14.0387 9.33789 13.9066 9.17683 13.8285 8.9884C13.7504 8.79996 13.73 8.59261 13.7698 8.39257C13.8096 8.19252 13.9078 8.00877 14.052 7.86455C14.1963 7.72033 14.38 7.62211 14.5801 7.58232C14.7801 7.54253 14.9875 7.56295 15.1759 7.641C15.3643 7.71906 15.5254 7.85123 15.6387 8.02082C15.752 8.19041 15.8125 8.38979 15.8125 8.59375C15.8125 8.86726 15.7039 9.12956 15.5105 9.32296C15.3171 9.51636 15.0548 9.625 14.7812 9.625Z" fill="#F6F4ED"/></svg></button>
       <button class="cn-tool cn-tool--menu" id="cn-menu-toggle" type="button" aria-label="Меню"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.875 8.25L11 15.125L4.125 8.25" stroke="#F6F4ED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="cn-solving-now" id="cn-solving-now" type="button" aria-label="Вернуться к пазлу">Solving now<svg width="13" height="22" viewBox="0 0 13 22" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 2L11 11L2 20" stroke="#FFFAF0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     </nav>
 
     <section class="cn-screen cn-view" id="cn-library-screen" aria-label="Библиотека">
@@ -1785,8 +1821,32 @@
     const extraPacks = loadExtraPacks();
     const packs = extraPacks.length ? [...extraPacks, ...builtInPacks] : builtInPacks;
 
-    let currentPack = packs[0];
-    let puzzle = currentPack.puzzles[0];
+    function readLastPuzzleRef() {
+      try {
+        const data = JSON.parse(window.localStorage.getItem("color-nonogram:last-puzzle") || "null");
+        return data && typeof data === "object" ? data : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function findPuzzleRef(ref) {
+      if (!ref?.puzzleId) return null;
+      for (const pack of packs) {
+        if (ref.packId && pack.id !== ref.packId) continue;
+        const foundPuzzle = pack.puzzles.find((nextPuzzle) => nextPuzzle.id === ref.puzzleId);
+        if (foundPuzzle) return { pack, puzzle: foundPuzzle };
+      }
+      for (const pack of packs) {
+        const foundPuzzle = pack.puzzles.find((nextPuzzle) => nextPuzzle.id === ref.puzzleId);
+        if (foundPuzzle) return { pack, puzzle: foundPuzzle };
+      }
+      return null;
+    }
+
+    const lastPuzzleRef = findPuzzleRef(readLastPuzzleRef());
+    let currentPack = lastPuzzleRef?.pack || packs[0];
+    let puzzle = lastPuzzleRef?.puzzle || currentPack.puzzles[0];
 
     const state = {
       activeColor: puzzle.palette[0].id,
@@ -1855,6 +1915,10 @@
       } catch (error) {
         // Standalone iOS/file previews can block storage; the game should still render.
       }
+    }
+
+    function rememberCurrentPuzzle() {
+      storageSet("color-nonogram:last-puzzle", JSON.stringify({ packId: currentPack.id, puzzleId: puzzle.id }));
     }
 
     function storageRemove(key) {
@@ -2071,7 +2135,7 @@
         card.className = `cn-puzzle-card cn-puzzle-card--${progress.status}`;
         card.type = "button";
         card.innerHTML = `
-          <strong><span class="cn-puzzle-number">${index + 1}</span>${cardStatusLabel(progress.status)}</strong>
+          <span class="cn-card-status"><span class="cn-puzzle-number">${index + 1}</span>${cardStatusLabel(progress.status)}</span>
           <span class="cn-card-detail">${cardIcon("difficulty")}${cardDifficulty(nextPuzzle, progress.status, index)}</span>
           <span class="cn-card-detail">${cardIcon("size")}${nextPuzzle.width}x${nextPuzzle.height}</span>
           <span class="cn-card-detail">${cardIcon("time")}${formatElapsed(progress.elapsedMs)}</span>
@@ -2143,6 +2207,7 @@
     }
 
     function showGame() {
+      rememberCurrentPuzzle();
       renderLibrary();
       renderPack(currentPack);
       setView("game");
@@ -2164,6 +2229,7 @@
       saveProgress();
       currentPack = pack;
       puzzle = nextPuzzle;
+      rememberCurrentPuzzle();
       refreshPuzzleRefs();
       resetRuntimeState();
       loadProgress();
@@ -2345,22 +2411,35 @@
       }
     }
 
+    function getLineCell(className, lineIndex, position) {
+      return className === "cn-clue-row" ? state.cells[lineIndex][position] : state.cells[position][lineIndex];
+    }
+
+    function getPaintedRun(className, lineIndex, position) {
+      const color = getLineCell(className, lineIndex, position);
+      if (!color || color === "dot") return null;
+
+      let start = position;
+      let end = position;
+      const length = lineLengthFor(className);
+
+      while (start > 0 && getLineCell(className, lineIndex, start - 1) === color) start -= 1;
+      while (end < length - 1 && getLineCell(className, lineIndex, end + 1) === color) end += 1;
+
+      return { color, start, end, count: end - start + 1 };
+    }
+
     function isClueSolved(className, lineIndex, clue) {
-      if (className === "cn-clue-row") {
-        for (let col = clue.start; col <= clue.end; col += 1) {
-          if (state.cells[lineIndex][col] !== clue.color) return false;
-        }
-        if (clue.start > 0 && state.cells[lineIndex][clue.start - 1] === clue.color) return false;
-        if (clue.end < puzzle.width - 1 && state.cells[lineIndex][clue.end + 1] === clue.color) return false;
-        return true;
+      const run = getPaintedRun(className, lineIndex, clue.start);
+      if (!run) return false;
+      if (run.color !== clue.color) return false;
+      if (run.start !== clue.start || run.end !== clue.end) return false;
+
+      for (let position = clue.start + 1; position <= clue.end; position += 1) {
+        if (getLineCell(className, lineIndex, position) !== clue.color) return false;
       }
 
-      for (let row = clue.start; row <= clue.end; row += 1) {
-        if (state.cells[row][lineIndex] !== clue.color) return false;
-      }
-      if (clue.start > 0 && state.cells[clue.start - 1][lineIndex] === clue.color) return false;
-      if (clue.end < puzzle.height - 1 && state.cells[clue.end + 1][lineIndex] === clue.color) return false;
-      return true;
+      return run.count === clue.count;
     }
 
     function clueKey(className, lineIndex, clue) {
@@ -2571,14 +2650,27 @@
     function nextCellValue(cell) {
       if (!cell) return state.activeColor;
       if (cell === "dot") return null;
+      if (cell !== state.activeColor) return state.activeColor;
       return "dot";
+    }
+
+    function canPaintBaseCell(baseCell, startCell) {
+      if (!state.gestureCellsBase) return true;
+      if (state.drawValue === null) return Boolean(baseCell);
+      if (state.drawValue === "dot") return baseCell === startCell;
+      if (!startCell) return !baseCell;
+      if (startCell !== "dot" && startCell !== state.drawValue) return baseCell !== "dot";
+      return baseCell === startCell;
     }
 
     function paintCell(rowIndex, colIndex) {
       if (state.solved) return;
       const baseCell = state.gestureCellsBase?.[rowIndex]?.[colIndex];
+      const startCell = state.drawStart
+        ? state.gestureCellsBase?.[state.drawStart.row]?.[state.drawStart.col]
+        : null;
       const isStartCell = state.drawStart?.row === rowIndex && state.drawStart?.col === colIndex;
-      if (baseCell && !isStartCell) return;
+      if (!isStartCell && !canPaintBaseCell(baseCell, startCell)) return;
       state.cells[rowIndex][colIndex] = state.drawValue;
     }
 
@@ -2879,12 +2971,12 @@
       col.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} - var(--cn-highlight-stroke))`;
       rowCount.textContent = countRun(state.currentRow, state.currentCol, "row");
       colCount.textContent = countRun(state.currentRow, state.currentCol, "col");
-      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} - 2px)`;
+      rowCount.style.left = `calc(var(--cn-cell) * ${clueCols + puzzle.width} + 3px)`;
       rowCount.style.top = `calc(var(--cn-cell) * ${clueH + state.currentRow} + var(--cn-cell) / 2)`;
-      rowCount.style.transform = "translate(-100%, -50%)";
+      rowCount.style.transform = "translate(0, -50%)";
       colCount.style.left = `calc(var(--cn-cell) * ${clueCols + state.currentCol} + var(--cn-cell) / 2)`;
-      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} - 2px)`;
-      colCount.style.transform = "translate(-50%, -100%)";
+      colCount.style.top = `calc(var(--cn-cell) * ${clueH + puzzle.height} + 3px)`;
+      colCount.style.transform = "translate(-50%, 0)";
     }
 
     function renderIndexLabels() {
@@ -2965,6 +3057,7 @@
         elapsedMs: getElapsedMs(),
         solved: state.solved || isSolved(),
       };
+      rememberCurrentPuzzle();
       storageSet(storageKey, JSON.stringify(data));
     }
 
@@ -3176,6 +3269,7 @@
       }
       showGame();
     });
+    byId("cn-solving-now").addEventListener("click", showGame);
 
     byId("cn-close-pack-settings").addEventListener("click", closePackSettings);
 
