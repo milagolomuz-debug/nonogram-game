@@ -1530,7 +1530,6 @@
   }
 
   #cn-game .cn-app[data-view="triddler"] .cn-play-area,
-  #cn-game .cn-app[data-view="triddler"] .cn-palette,
   #cn-game .cn-app[data-view="triddler"] .cn-solving-now,
   #cn-game .cn-app[data-view="triddler"] .cn-tool:not(.cn-tool--back) {
     display: none;
@@ -1565,19 +1564,19 @@
   }
 
   #cn-game .cn-triddler-screen {
-    padding: calc(var(--cn-header-h) + 12px) 12px calc(var(--cn-footer-h) + 17px);
+    padding: calc(var(--cn-header-h) + 11px) 11px calc(var(--cn-footer-h) + 12px);
     color: #294f53;
+    overflow: hidden;
   }
 
   #cn-game .cn-triddler-shell {
-    min-height: 680px;
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
-    gap: 10px;
+    width: 371px;
+    height: 592px;
+    position: relative;
   }
 
   #cn-game .cn-triddler-head {
-    display: grid;
+    display: none;
     grid-template-columns: 1fr auto;
     align-items: start;
     gap: 10px;
@@ -1610,7 +1609,7 @@
   }
 
   #cn-game .cn-triddler-toolbar {
-    display: grid;
+    display: none;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
   }
@@ -1633,37 +1632,39 @@
   }
 
   #cn-game .cn-triddler-board {
-    align-self: start;
-    width: 100%;
-    border: 1px solid rgba(74, 111, 115, 0.25);
-    border-radius: 20px;
-    background: #fffaf0;
-    overflow: hidden;
+    position: absolute;
+    inset: 0;
+    width: 371px;
+    height: 592px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: visible;
     touch-action: manipulation;
-    box-shadow: 0 1px 1px rgba(74, 111, 115, 0.12);
+    box-shadow: none;
   }
 
   #cn-game .cn-triddler-svg {
     display: block;
     width: 100%;
-    height: auto;
-    background: #fffaf0;
+    height: 100%;
+    background: transparent;
   }
 
   #cn-game .cn-tri-cell {
-    stroke: rgba(74, 111, 115, 0.52);
-    stroke-width: 1;
-    fill: #fffaf0;
+    stroke: rgba(74, 111, 115, 0.34);
+    stroke-width: 0.55;
+    fill: transparent;
     cursor: pointer;
     transition: fill 110ms ease, opacity 110ms ease;
   }
 
   #cn-game .cn-tri-cell.cn-filled {
-    fill: #4a6f73;
+    fill: rgba(74, 111, 115, 0.82);
   }
 
   #cn-game .cn-tri-cell.cn-marked {
-    fill: #f6d8cf;
+    fill: rgba(255, 163, 137, 0.34);
   }
 
   #cn-game .cn-tri-cell.cn-wrong {
@@ -1677,7 +1678,7 @@
   #cn-game .cn-triddler-clue {
     fill: #111;
     font-family: "Montserrat", sans-serif;
-    font-size: 9px;
+    font-size: 6.5px;
     font-weight: 600;
     line-height: 1;
     pointer-events: none;
@@ -1685,14 +1686,30 @@
   }
 
   #cn-game .cn-triddler-axis {
-    stroke: rgba(74, 111, 115, 0.55);
-    stroke-width: 1;
+    stroke: rgba(74, 111, 115, 0.36);
+    stroke-width: 0.72;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-triddler-major {
+    stroke: rgba(74, 111, 115, 0.72);
+    stroke-width: 1.05;
+    fill: none;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-triddler-chip {
+    stroke: none;
     pointer-events: none;
   }
 
   #cn-game .cn-triddler-status {
-    min-height: 35px;
-    display: grid;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 7px;
+    min-height: 20px;
+    display: none;
     align-items: center;
     color: #4a6f73;
     font-size: 12px;
@@ -1702,6 +1719,7 @@
   }
 
   #cn-game .cn-triddler-primer {
+    display: none;
     margin: 0;
     color: rgba(74, 111, 115, 0.78);
     font-size: 11px;
@@ -2284,15 +2302,8 @@
     }
 
     const triddlerPuzzle = {
-      size: 6,
-      filled: new Set([
-        "0:2:a", "0:3:b",
-        "1:1:a", "1:1:b", "1:2:a", "1:2:b", "1:3:a", "1:3:b", "1:4:a", "1:4:b",
-        "2:0:b", "2:1:a", "2:1:b", "2:2:a", "2:3:b", "2:4:a", "2:4:b", "2:5:a",
-        "3:0:a", "3:1:a", "3:1:b", "3:2:b", "3:3:a", "3:4:a", "3:4:b", "3:5:b",
-        "4:1:a", "4:1:b", "4:2:a", "4:2:b", "4:3:a", "4:3:b", "4:4:a", "4:4:b",
-        "5:2:b", "5:3:a",
-      ]),
+      filled: new Set(),
+      triangles: [],
     };
 
     const triddlerState = {
@@ -2302,74 +2313,39 @@
       rendered: false,
     };
 
-    function triddlerKey(row, col, part) {
-      return `${row}:${col}:${part}`;
-    }
-
-    function triddlerPoint(row, col, size, marginX, marginY) {
-      const h = size * 0.8660254;
-      return {
-        x: marginX + col * size + row * size * 0.5,
-        y: marginY + row * h,
-      };
-    }
+    const triddlerGuide = {
+      width: 371,
+      height: 592,
+      unit: 8.9,
+      vertices: [
+        { x: 191, y: 124 },
+        { x: 319, y: 198 },
+        { x: 319, y: 555 },
+        { x: 191, y: 592 },
+        { x: 63, y: 555 },
+        { x: 63, y: 198 },
+      ],
+      topClues: [
+        [{ n: 28, c: "#3fa7ff" }, { n: 4, c: "#3fa7ff" }, { n: 1, c: "#3fa7ff" }, { n: 5, c: "#e26a82" }, { n: 12, c: "#3fa7ff" }, { n: 1, c: "#e26a82" }],
+        [{ n: 28, c: "#ffb53f" }, { n: 4, c: "#ffb53f" }, { n: 1, c: "#ffb53f" }, { n: 5, c: "#e26a82" }, { n: 12, c: "#3fa7ff" }, { n: 1, c: "#e26a82" }],
+        [{ n: 1, c: "#ffb53f" }, { n: 5, c: "#e26a82" }, { n: 12, c: "#3fa7ff" }, { n: 1, c: "#e26a82" }],
+        [{ n: 5, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }, { n: 1, c: "#3fa7ff" }],
+        [{ n: 1, c: "#3fa7ff" }],
+      ],
+      leftClues: [
+        [{ n: 1, c: "#3fa7ff" }, { n: 1, c: "#ffb53f" }, { n: 1, c: "#ffb53f" }],
+        [{ n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }],
+        [{ n: 1, c: "#e26a82" }, { n: 1, c: "#e26a82" }, { n: 1, c: "#e26a82" }, { n: 1, c: "#3fa7ff" }, { n: 1, c: "#3fa7ff" }],
+      ],
+      rightClues: [
+        [{ n: 1, c: "#3fa7ff" }, { n: 1, c: "#ffb53f" }, { n: 1, c: "#ffb53f" }],
+        [{ n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }, { n: 12, c: "#3fa7ff" }],
+        [{ n: 1, c: "#e26a82" }, { n: 1, c: "#e26a82" }, { n: 1, c: "#e26a82" }, { n: 1, c: "#3fa7ff" }, { n: 1, c: "#3fa7ff" }],
+      ],
+    };
 
     function triddlerTriangles() {
-      const items = [];
-      for (let row = 0; row < triddlerPuzzle.size; row += 1) {
-        for (let col = 0; col < triddlerPuzzle.size; col += 1) {
-          items.push({ row, col, part: "a", key: triddlerKey(row, col, "a") });
-          items.push({ row, col, part: "b", key: triddlerKey(row, col, "b") });
-        }
-      }
-      return items;
-    }
-
-    function triddlerLineGroups(axis) {
-      const size = triddlerPuzzle.size;
-      if (axis === "row") {
-        return Array.from({ length: size }, (_, row) =>
-          Array.from({ length: size }, (_, col) => [
-            { row, col, part: "a", key: triddlerKey(row, col, "a") },
-            { row, col, part: "b", key: triddlerKey(row, col, "b") },
-          ]).flat(),
-        );
-      }
-      if (axis === "col") {
-        return Array.from({ length: size }, (_, col) =>
-          Array.from({ length: size }, (_, row) => [
-            { row, col, part: "a", key: triddlerKey(row, col, "a") },
-            { row, col, part: "b", key: triddlerKey(row, col, "b") },
-          ]).flat(),
-        );
-      }
-      const diagonals = [];
-      for (let diff = -(size - 1); diff <= size - 1; diff += 1) {
-        const line = [];
-        for (let row = 0; row < size; row += 1) {
-          const col = row + diff;
-          if (col < 0 || col >= size) continue;
-          line.push({ row, col, part: "a", key: triddlerKey(row, col, "a") });
-          line.push({ row, col, part: "b", key: triddlerKey(row, col, "b") });
-        }
-        diagonals.push(line);
-      }
-      return diagonals;
-    }
-
-    function triddlerCluesFor(line) {
-      const clues = [];
-      let count = 0;
-      line.forEach((cell) => {
-        if (triddlerPuzzle.filled.has(cell.key)) {
-          count += 1;
-          return;
-        }
-        if (count) clues.push(count);
-        count = 0;
-      });
-      if (count) clues.push(count);
-      return clues.length ? clues : [0];
+      return triddlerPuzzle.triangles;
     }
 
     function triddlerStoredCells() {
@@ -2453,76 +2429,199 @@
       }
     }
 
-    function triddlerPolygon(cell, unit, marginX, marginY) {
-      const p = triddlerPoint(cell.row, cell.col, unit, marginX, marginY);
-      const pRight = triddlerPoint(cell.row, cell.col + 1, unit, marginX, marginY);
-      const pDown = triddlerPoint(cell.row + 1, cell.col, unit, marginX, marginY);
-      const pDiag = triddlerPoint(cell.row + 1, cell.col + 1, unit, marginX, marginY);
-      const points = cell.part === "a" ? [p, pRight, pDown] : [pRight, pDiag, pDown];
-      return points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+    function triddlerSvgEl(name, attrs = {}) {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+      return node;
+    }
+
+    function triddlerPointInHex(point) {
+      const vertices = triddlerGuide.vertices;
+      let inside = false;
+      for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i, i += 1) {
+        const a = vertices[i];
+        const b = vertices[j];
+        const intersects =
+          a.y > point.y !== b.y > point.y &&
+          point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
+        if (intersects) inside = !inside;
+      }
+      return inside;
+    }
+
+    function triddlerCentroid(points) {
+      return {
+        x: points.reduce((sum, point) => sum + point.x, 0) / points.length,
+        y: points.reduce((sum, point) => sum + point.y, 0) / points.length,
+      };
+    }
+
+    function triddlerBuildTriangles() {
+      const unit = triddlerGuide.unit;
+      const h = unit * 0.8660254;
+      const triangles = [];
+      let index = 0;
+
+      for (let row = -2; row < 62; row += 1) {
+        const y = triddlerGuide.vertices[0].y + row * h;
+        const rowShift = row % 2 ? unit / 2 : 0;
+        for (let col = -25; col < 35; col += 1) {
+          const x = 191 + col * unit + rowShift;
+          const up = [
+            { x, y },
+            { x: x + unit, y },
+            { x: x + unit / 2, y: y + h },
+          ];
+          const down = [
+            { x: x + unit, y },
+            { x: x + unit * 1.5, y: y + h },
+            { x: x + unit / 2, y: y + h },
+          ];
+
+          [up, down].forEach((points, partIndex) => {
+            const center = triddlerCentroid(points);
+            if (!triddlerPointInHex(center)) return;
+            triangles.push({
+              key: `tri-${index}`,
+              points,
+              row,
+              col,
+              part: partIndex ? "b" : "a",
+              center,
+            });
+            index += 1;
+          });
+        }
+      }
+
+      triddlerPuzzle.triangles = triangles;
+      triddlerPuzzle.filled = new Set(
+        triangles
+          .filter((cell) => {
+            const nx = (cell.center.x - 191) / 128;
+            const ny = (cell.center.y - 358) / 224;
+            const butterfly = Math.abs(nx) * 0.55 + Math.abs(ny + 0.04) < 0.68;
+            const spine = Math.abs(nx) < 0.08 && cell.center.y > 180 && cell.center.y < 535;
+            const wings = ((nx * 2.2) ** 2 + (ny * 1.2) ** 2 < 1) && cell.center.y > 235;
+            return spine || (butterfly && wings);
+          })
+          .map((cell) => cell.key),
+      );
+    }
+
+    function triddlerDrawChip(svg, x, y, clue, options = {}) {
+      const width = clue.n >= 10 ? 11 : 10;
+      const height = 17.9;
+      const group = triddlerSvgEl("g", {
+        transform: `translate(${x.toFixed(2)} ${y.toFixed(2)})${options.rotate ? ` rotate(${options.rotate} ${width / 2} ${height / 2})` : ""}`,
+      });
+      group.appendChild(
+        triddlerSvgEl("rect", {
+          class: "cn-triddler-chip",
+          x: 0,
+          y: 0,
+          width,
+          height,
+          fill: clue.c,
+        }),
+      );
+      const text = triddlerSvgEl("text", {
+        class: "cn-triddler-clue",
+        x: width / 2,
+        y: 11.8,
+      });
+      text.textContent = clue.n;
+      group.appendChild(text);
+      svg.appendChild(group);
+    }
+
+    function triddlerDrawRays(svg) {
+      const [top, rightTop, rightBottom, bottom, leftBottom, leftTop] = triddlerGuide.vertices;
+      const lerp = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+
+      for (let i = 1; i < 11; i += 1) {
+        const t = i / 11;
+        const point = t <= 0.5 ? lerp(leftTop, top, t * 2) : lerp(top, rightTop, (t - 0.5) * 2);
+        svg.appendChild(triddlerSvgEl("line", { class: "cn-triddler-axis", x1: point.x, y1: 0, x2: point.x, y2: point.y }));
+      }
+
+      for (let i = 0; i < 21; i += 1) {
+        const t = i / 20;
+        const left = lerp(leftTop, leftBottom, t);
+        const right = lerp(rightTop, rightBottom, t);
+        svg.appendChild(triddlerSvgEl("line", { class: "cn-triddler-axis", x1: left.x - 63, y1: left.y + 36, x2: left.x, y2: left.y }));
+        svg.appendChild(triddlerSvgEl("line", { class: "cn-triddler-axis", x1: right.x, y1: right.y, x2: right.x + 63, y2: right.y + 36 }));
+      }
+
+      for (let i = 1; i < 11; i += 1) {
+        const t = i / 11;
+        const point = t <= 0.5 ? lerp(leftBottom, bottom, t * 2) : lerp(bottom, rightBottom, (t - 0.5) * 2);
+        svg.appendChild(triddlerSvgEl("line", { class: "cn-triddler-axis", x1: point.x, y1: point.y, x2: point.x - (point.x < bottom.x ? 55 : -55), y2: point.y + 33 }));
+      }
+    }
+
+    function triddlerDrawClues(svg) {
+      const topStarts = [
+        { x: 72, y: 121 },
+        { x: 83, y: 133 },
+        { x: 95, y: 150 },
+        { x: 106, y: 168 },
+        { x: 116, y: 186 },
+      ];
+      triddlerGuide.topClues.forEach((line, lineIndex) => {
+        line.forEach((clue, clueIndex) => {
+          triddlerDrawChip(svg, topStarts[lineIndex].x + lineIndex * 0.2, topStarts[lineIndex].y - (line.length - clueIndex) * 11.9, clue);
+        });
+      });
+
+      const drawSide = (lines, side) => {
+        const mirror = side === "right";
+        const baseX = mirror ? 319 : 10;
+        const baseY = 198;
+        lines.forEach((line, lineIndex) => {
+          line.forEach((clue, clueIndex) => {
+            const stepX = mirror ? -10.6 : 10.6;
+            const x = baseX + (mirror ? 20 : 0) + clueIndex * stepX + lineIndex * (mirror ? -1 : 1) * 10.7;
+            const y = baseY + lineIndex * 48 + (line.length - clueIndex - 1) * 6.35;
+            triddlerDrawChip(svg, x, y, clue);
+          });
+        });
+      };
+
+      drawSide(triddlerGuide.leftClues, "left");
+      drawSide(triddlerGuide.rightClues, "right");
     }
 
     function renderTriddler() {
       const board = byId("cn-triddler-board");
-      const unit = 31;
-      const marginX = 44;
-      const marginY = 82;
-      const size = triddlerPuzzle.size;
-      const h = unit * 0.8660254;
-      const width = 370;
-      const height = 465;
-      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-      svg.setAttribute("class", "cn-triddler-svg");
-      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      triddlerBuildTriangles();
+      const width = triddlerGuide.width;
+      const height = triddlerGuide.height;
+      const svg = triddlerSvgEl("svg", {
+        class: "cn-triddler-svg",
+        viewBox: `0 0 ${width} ${height}`,
+      });
       svg.setAttribute("role", "img");
-      svg.setAttribute("aria-label", "Small Triddler puzzle with clues around a triangular grid");
+      svg.setAttribute("aria-label", "Triddler puzzle with hexagonal triangular grid and three clue directions");
 
-      const topClues = triddlerLineGroups("col").map(triddlerCluesFor);
-      const leftClues = triddlerLineGroups("row").map(triddlerCluesFor);
-      const rightClues = triddlerLineGroups("diag").map(triddlerCluesFor);
+      const defs = triddlerSvgEl("defs");
+      const clip = triddlerSvgEl("clipPath", { id: "cn-triddler-clip" });
+      clip.appendChild(
+        triddlerSvgEl("polygon", {
+          points: triddlerGuide.vertices.map((point) => `${point.x},${point.y}`).join(" "),
+        }),
+      );
+      defs.appendChild(clip);
+      svg.appendChild(defs);
 
-      topClues.forEach((clues, col) => {
-        const point = triddlerPoint(0, col + 0.5, unit, marginX, marginY);
-        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("class", "cn-triddler-axis");
-        line.setAttribute("x1", point.x);
-        line.setAttribute("y1", 34);
-        line.setAttribute("x2", point.x);
-        line.setAttribute("y2", marginY - 4);
-        svg.appendChild(line);
-        clues.forEach((clue, clueIndex) => {
-          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          text.setAttribute("class", "cn-triddler-clue");
-          text.setAttribute("x", point.x);
-          text.setAttribute("y", 48 + clueIndex * 12);
-          text.textContent = clue;
-          svg.appendChild(text);
-        });
-      });
-
-      leftClues.forEach((clues, row) => {
-        const point = triddlerPoint(row + 0.45, 0, unit, marginX, marginY);
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("class", "cn-triddler-clue");
-        text.setAttribute("x", Math.max(14, point.x - 32));
-        text.setAttribute("y", point.y + 8);
-        text.textContent = clues.join(" ");
-        svg.appendChild(text);
-      });
-
-      rightClues.forEach((clues, index) => {
-        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        text.setAttribute("class", "cn-triddler-clue");
-        text.setAttribute("x", width - 43);
-        text.setAttribute("y", 104 + index * 23);
-        text.textContent = clues.join(" ");
-        svg.appendChild(text);
-      });
+      triddlerDrawRays(svg);
+      triddlerDrawClues(svg);
 
       triddlerTriangles().forEach((cell) => {
-        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const polygon = triddlerSvgEl("polygon");
         polygon.setAttribute("class", "cn-tri-cell");
-        polygon.setAttribute("points", triddlerPolygon(cell, unit, marginX, marginY));
+        polygon.setAttribute("clip-path", "url(#cn-triddler-clip)");
+        polygon.setAttribute("points", cell.points.map((point) => `${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(" "));
         polygon.dataset.key = cell.key;
         polygon.addEventListener("click", () => {
           const value = triddlerState.cells.get(cell.key);
@@ -2540,6 +2639,13 @@
         });
         svg.appendChild(polygon);
       });
+
+      svg.appendChild(
+        triddlerSvgEl("polygon", {
+          class: "cn-triddler-major",
+          points: triddlerGuide.vertices.map((point) => `${point.x},${point.y}`).join(" "),
+        }),
+      );
 
       board.textContent = "";
       board.appendChild(svg);
