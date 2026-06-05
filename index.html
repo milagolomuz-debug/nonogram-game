@@ -1529,6 +1529,187 @@
     font-weight: 500;
   }
 
+  #cn-game .cn-app[data-view="triddler"] .cn-play-area,
+  #cn-game .cn-app[data-view="triddler"] .cn-palette,
+  #cn-game .cn-app[data-view="triddler"] .cn-solving-now,
+  #cn-game .cn-app[data-view="triddler"] .cn-tool:not(.cn-tool--back) {
+    display: none;
+  }
+
+  #cn-game .cn-app[data-view="triddler"] .cn-tool--back {
+    top: 16px;
+    left: 16px;
+    width: 116px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 9px;
+  }
+
+  #cn-game .cn-app[data-view="triddler"] .cn-tool--back::after {
+    content: "Library";
+    color: #f6f4ed;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  #cn-game .cn-triddler-card .cn-library-thumb,
+  #cn-game .cn-triddler-thumb {
+    background:
+      linear-gradient(30deg, transparent 48%, rgba(74, 111, 115, 0.55) 49% 51%, transparent 52%) 0 0 / 13px 22px,
+      linear-gradient(150deg, transparent 48%, rgba(74, 111, 115, 0.55) 49% 51%, transparent 52%) 0 0 / 13px 22px,
+      linear-gradient(90deg, rgba(74, 111, 115, 0.55) 1px, transparent 1px) 0 0 / 13px 22px,
+      #fffaf0;
+  }
+
+  #cn-game .cn-triddler-screen {
+    padding: calc(var(--cn-header-h) + 12px) 12px calc(var(--cn-footer-h) + 17px);
+    color: #294f53;
+  }
+
+  #cn-game .cn-triddler-shell {
+    min-height: 680px;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
+    gap: 10px;
+  }
+
+  #cn-game .cn-triddler-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 10px;
+  }
+
+  #cn-game .cn-triddler-title {
+    margin: 0;
+    color: #4a6f73;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.05;
+  }
+
+  #cn-game .cn-triddler-meta {
+    margin: 4px 0 0;
+    color: rgba(74, 111, 115, 0.74);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  #cn-game .cn-triddler-score {
+    min-width: 74px;
+    padding-top: 1px;
+    color: #4a6f73;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: right;
+  }
+
+  #cn-game .cn-triddler-toolbar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  #cn-game .cn-triddler-action {
+    min-height: 34px;
+    border: 0;
+    border-radius: 17px;
+    background: rgba(74, 111, 115, 0.18);
+    color: #4a6f73;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 8px;
+  }
+
+  #cn-game .cn-triddler-action.cn-active {
+    background: #4a6f73;
+    color: #fffaf0;
+  }
+
+  #cn-game .cn-triddler-board {
+    align-self: start;
+    width: 100%;
+    border: 1px solid rgba(74, 111, 115, 0.25);
+    border-radius: 20px;
+    background: #fffaf0;
+    overflow: hidden;
+    touch-action: manipulation;
+    box-shadow: 0 1px 1px rgba(74, 111, 115, 0.12);
+  }
+
+  #cn-game .cn-triddler-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #fffaf0;
+  }
+
+  #cn-game .cn-tri-cell {
+    stroke: rgba(74, 111, 115, 0.52);
+    stroke-width: 1;
+    fill: #fffaf0;
+    cursor: pointer;
+    transition: fill 110ms ease, opacity 110ms ease;
+  }
+
+  #cn-game .cn-tri-cell.cn-filled {
+    fill: #4a6f73;
+  }
+
+  #cn-game .cn-tri-cell.cn-marked {
+    fill: #f6d8cf;
+  }
+
+  #cn-game .cn-tri-cell.cn-wrong {
+    fill: #f48776;
+  }
+
+  #cn-game .cn-tri-cell.cn-hint {
+    fill: #ffa389;
+  }
+
+  #cn-game .cn-triddler-clue {
+    fill: #111;
+    font-family: "Montserrat", sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    line-height: 1;
+    pointer-events: none;
+    text-anchor: middle;
+  }
+
+  #cn-game .cn-triddler-axis {
+    stroke: rgba(74, 111, 115, 0.55);
+    stroke-width: 1;
+    pointer-events: none;
+  }
+
+  #cn-game .cn-triddler-status {
+    min-height: 35px;
+    display: grid;
+    align-items: center;
+    color: #4a6f73;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  #cn-game .cn-triddler-primer {
+    margin: 0;
+    color: rgba(74, 111, 115, 0.78);
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: center;
+  }
+
   @media (max-width: 392px) {
     #cn-game .cn-app {
       transform-origin: top center;
@@ -1581,6 +1762,29 @@
       <div class="cn-solved-axis cn-solved-axis--right" id="cn-solved-width-label"></div>
       <div class="cn-solved-axis cn-solved-axis--bottom" id="cn-solved-height-label"></div>
     </div>
+
+    <section class="cn-screen cn-view cn-triddler-screen" id="cn-triddler-screen" aria-label="Triddler test puzzle">
+      <div class="cn-triddler-shell">
+        <header class="cn-triddler-head">
+          <div>
+            <h1 class="cn-triddler-title">Triddler Test</h1>
+            <p class="cn-triddler-meta">6x6 triangle grid | 3 clue directions</p>
+          </div>
+          <div class="cn-triddler-score" id="cn-triddler-score">0 / 0</div>
+        </header>
+        <div class="cn-triddler-toolbar" aria-label="Triddler tools">
+          <button class="cn-triddler-action cn-active" id="cn-triddler-fill" type="button">Fill</button>
+          <button class="cn-triddler-action" id="cn-triddler-mark" type="button">Mark</button>
+          <button class="cn-triddler-action" id="cn-triddler-check" type="button">Check</button>
+          <button class="cn-triddler-action" id="cn-triddler-reset" type="button">Reset</button>
+        </div>
+        <div class="cn-triddler-board" id="cn-triddler-board"></div>
+        <div>
+          <div class="cn-triddler-status" id="cn-triddler-status">Tap triangles to match the clue runs.</div>
+          <p class="cn-triddler-primer">Top, left, and right clues describe contiguous filled triangle groups along three axes.</p>
+        </div>
+      </div>
+    </section>
 
     <section class="cn-solved-info" id="cn-solved-info" aria-live="polite">
       <h1 class="cn-solved-title" id="cn-solved-title">Puzzle solved!</h1>
@@ -2037,6 +2241,7 @@
       byId("cn-game-screen").classList.toggle("cn-open", view === "game");
       byId("cn-pack-screen").classList.toggle("cn-open", view === "pack");
       byId("cn-library-screen").classList.toggle("cn-open", view === "library");
+      byId("cn-triddler-screen").classList.toggle("cn-open", view === "triddler");
       if (view === "game") startTimer();
       else pauseTimer();
     }
@@ -2078,6 +2283,278 @@
       return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5 9.8 6 14.5 8 9.8 10 8 14.5 6.2 10 1.5 8 6.2 6 8 1.5Z"/></svg>';
     }
 
+    const triddlerPuzzle = {
+      size: 6,
+      filled: new Set([
+        "0:2:a", "0:3:b",
+        "1:1:a", "1:1:b", "1:2:a", "1:2:b", "1:3:a", "1:3:b", "1:4:a", "1:4:b",
+        "2:0:b", "2:1:a", "2:1:b", "2:2:a", "2:3:b", "2:4:a", "2:4:b", "2:5:a",
+        "3:0:a", "3:1:a", "3:1:b", "3:2:b", "3:3:a", "3:4:a", "3:4:b", "3:5:b",
+        "4:1:a", "4:1:b", "4:2:a", "4:2:b", "4:3:a", "4:3:b", "4:4:a", "4:4:b",
+        "5:2:b", "5:3:a",
+      ]),
+    };
+
+    const triddlerState = {
+      cells: new Map(),
+      mode: "fill",
+      checked: false,
+      rendered: false,
+    };
+
+    function triddlerKey(row, col, part) {
+      return `${row}:${col}:${part}`;
+    }
+
+    function triddlerPoint(row, col, size, marginX, marginY) {
+      const h = size * 0.8660254;
+      return {
+        x: marginX + col * size + row * size * 0.5,
+        y: marginY + row * h,
+      };
+    }
+
+    function triddlerTriangles() {
+      const items = [];
+      for (let row = 0; row < triddlerPuzzle.size; row += 1) {
+        for (let col = 0; col < triddlerPuzzle.size; col += 1) {
+          items.push({ row, col, part: "a", key: triddlerKey(row, col, "a") });
+          items.push({ row, col, part: "b", key: triddlerKey(row, col, "b") });
+        }
+      }
+      return items;
+    }
+
+    function triddlerLineGroups(axis) {
+      const size = triddlerPuzzle.size;
+      if (axis === "row") {
+        return Array.from({ length: size }, (_, row) =>
+          Array.from({ length: size }, (_, col) => [
+            { row, col, part: "a", key: triddlerKey(row, col, "a") },
+            { row, col, part: "b", key: triddlerKey(row, col, "b") },
+          ]).flat(),
+        );
+      }
+      if (axis === "col") {
+        return Array.from({ length: size }, (_, col) =>
+          Array.from({ length: size }, (_, row) => [
+            { row, col, part: "a", key: triddlerKey(row, col, "a") },
+            { row, col, part: "b", key: triddlerKey(row, col, "b") },
+          ]).flat(),
+        );
+      }
+      const diagonals = [];
+      for (let diff = -(size - 1); diff <= size - 1; diff += 1) {
+        const line = [];
+        for (let row = 0; row < size; row += 1) {
+          const col = row + diff;
+          if (col < 0 || col >= size) continue;
+          line.push({ row, col, part: "a", key: triddlerKey(row, col, "a") });
+          line.push({ row, col, part: "b", key: triddlerKey(row, col, "b") });
+        }
+        diagonals.push(line);
+      }
+      return diagonals;
+    }
+
+    function triddlerCluesFor(line) {
+      const clues = [];
+      let count = 0;
+      line.forEach((cell) => {
+        if (triddlerPuzzle.filled.has(cell.key)) {
+          count += 1;
+          return;
+        }
+        if (count) clues.push(count);
+        count = 0;
+      });
+      if (count) clues.push(count);
+      return clues.length ? clues : [0];
+    }
+
+    function triddlerStoredCells() {
+      try {
+        const raw = storageGet("color-nonogram:triddler-test");
+        const data = JSON.parse(raw || "[]");
+        if (!Array.isArray(data)) return new Map();
+        return new Map(
+          data.filter((item) => Array.isArray(item) && typeof item[0] === "string" && ["filled", "marked"].includes(item[1])),
+        );
+      } catch (error) {
+        return new Map();
+      }
+    }
+
+    function saveTriddler() {
+      storageSet("color-nonogram:triddler-test", JSON.stringify([...triddlerState.cells.entries()]));
+    }
+
+    function renderTriddlerCard(list) {
+      const card = document.createElement("button");
+      card.className = "cn-library-card cn-triddler-card";
+      card.type = "button";
+      card.innerHTML = `
+        <div class="cn-library-thumb" aria-hidden="true"></div>
+        <div>
+          <h2 class="cn-library-title">Triddlers | Test</h2>
+          <p class="cn-library-meta">Triangle puzzle | 3 axes</p>
+        </div>
+        <span class="cn-pack-more" aria-hidden="true"></span>
+      `;
+      card.addEventListener("click", showTriddler);
+      list.appendChild(card);
+    }
+
+    function triddlerFilledCount() {
+      let count = 0;
+      triddlerPuzzle.filled.forEach((key) => {
+        if (triddlerState.cells.get(key) === "filled") count += 1;
+      });
+      return count;
+    }
+
+    function triddlerErrorCount() {
+      let errors = 0;
+      triddlerTriangles().forEach((cell) => {
+        const value = triddlerState.cells.get(cell.key);
+        if (value === "filled" && !triddlerPuzzle.filled.has(cell.key)) errors += 1;
+      });
+      return errors;
+    }
+
+    function updateTriddlerStatus(message) {
+      const filled = triddlerFilledCount();
+      const total = triddlerPuzzle.filled.size;
+      byId("cn-triddler-score").textContent = `${filled} / ${total}`;
+      if (message) byId("cn-triddler-status").textContent = message;
+    }
+
+    function syncTriddlerButtons() {
+      byId("cn-triddler-fill").classList.toggle("cn-active", triddlerState.mode === "fill");
+      byId("cn-triddler-mark").classList.toggle("cn-active", triddlerState.mode === "mark");
+    }
+
+    function syncTriddlerCells() {
+      root.querySelectorAll(".cn-tri-cell").forEach((node) => {
+        const key = node.dataset.key;
+        const value = triddlerState.cells.get(key);
+        const isWrong = triddlerState.checked && value === "filled" && !triddlerPuzzle.filled.has(key);
+        node.classList.toggle("cn-filled", value === "filled");
+        node.classList.toggle("cn-marked", value === "marked");
+        node.classList.toggle("cn-wrong", isWrong);
+      });
+      const errors = triddlerErrorCount();
+      if (triddlerFilledCount() === triddlerPuzzle.filled.size && errors === 0) {
+        updateTriddlerStatus("Puzzle solved!");
+      } else if (triddlerState.checked) {
+        updateTriddlerStatus(errors ? `${errors} incorrect triangle(s)` : "No incorrect filled triangles");
+      } else {
+        updateTriddlerStatus("Tap triangles to match the clue runs.");
+      }
+    }
+
+    function triddlerPolygon(cell, unit, marginX, marginY) {
+      const p = triddlerPoint(cell.row, cell.col, unit, marginX, marginY);
+      const pRight = triddlerPoint(cell.row, cell.col + 1, unit, marginX, marginY);
+      const pDown = triddlerPoint(cell.row + 1, cell.col, unit, marginX, marginY);
+      const pDiag = triddlerPoint(cell.row + 1, cell.col + 1, unit, marginX, marginY);
+      const points = cell.part === "a" ? [p, pRight, pDown] : [pRight, pDiag, pDown];
+      return points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(" ");
+    }
+
+    function renderTriddler() {
+      const board = byId("cn-triddler-board");
+      const unit = 31;
+      const marginX = 44;
+      const marginY = 82;
+      const size = triddlerPuzzle.size;
+      const h = unit * 0.8660254;
+      const width = 370;
+      const height = 465;
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "cn-triddler-svg");
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", "Small Triddler puzzle with clues around a triangular grid");
+
+      const topClues = triddlerLineGroups("col").map(triddlerCluesFor);
+      const leftClues = triddlerLineGroups("row").map(triddlerCluesFor);
+      const rightClues = triddlerLineGroups("diag").map(triddlerCluesFor);
+
+      topClues.forEach((clues, col) => {
+        const point = triddlerPoint(0, col + 0.5, unit, marginX, marginY);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("class", "cn-triddler-axis");
+        line.setAttribute("x1", point.x);
+        line.setAttribute("y1", 34);
+        line.setAttribute("x2", point.x);
+        line.setAttribute("y2", marginY - 4);
+        svg.appendChild(line);
+        clues.forEach((clue, clueIndex) => {
+          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text.setAttribute("class", "cn-triddler-clue");
+          text.setAttribute("x", point.x);
+          text.setAttribute("y", 48 + clueIndex * 12);
+          text.textContent = clue;
+          svg.appendChild(text);
+        });
+      });
+
+      leftClues.forEach((clues, row) => {
+        const point = triddlerPoint(row + 0.45, 0, unit, marginX, marginY);
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("class", "cn-triddler-clue");
+        text.setAttribute("x", Math.max(14, point.x - 32));
+        text.setAttribute("y", point.y + 8);
+        text.textContent = clues.join(" ");
+        svg.appendChild(text);
+      });
+
+      rightClues.forEach((clues, index) => {
+        const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        text.setAttribute("class", "cn-triddler-clue");
+        text.setAttribute("x", width - 43);
+        text.setAttribute("y", 104 + index * 23);
+        text.textContent = clues.join(" ");
+        svg.appendChild(text);
+      });
+
+      triddlerTriangles().forEach((cell) => {
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("class", "cn-tri-cell");
+        polygon.setAttribute("points", triddlerPolygon(cell, unit, marginX, marginY));
+        polygon.dataset.key = cell.key;
+        polygon.addEventListener("click", () => {
+          const value = triddlerState.cells.get(cell.key);
+          if (triddlerState.mode === "mark") {
+            if (value === "marked") triddlerState.cells.delete(cell.key);
+            else triddlerState.cells.set(cell.key, "marked");
+          } else if (value === "filled") {
+            triddlerState.cells.delete(cell.key);
+          } else {
+            triddlerState.cells.set(cell.key, "filled");
+          }
+          triddlerState.checked = false;
+          saveTriddler();
+          syncTriddlerCells();
+        });
+        svg.appendChild(polygon);
+      });
+
+      board.textContent = "";
+      board.appendChild(svg);
+      triddlerState.rendered = true;
+      syncTriddlerCells();
+      syncTriddlerButtons();
+    }
+
+    function showTriddler() {
+      triddlerState.cells = triddlerStoredCells();
+      triddlerState.checked = false;
+      setView("triddler");
+      renderTriddler();
+    }
+
     function renderLibrary() {
       const list = byId("cn-library-list");
       list.textContent = "";
@@ -2107,6 +2584,7 @@
           });
           list.appendChild(card);
         });
+      renderTriddlerCard(list);
     }
 
     function renderPack(pack = currentPack) {
@@ -2452,7 +2930,7 @@
       renderClue(byId("cn-col-clues"), colClues, "cn-clue-col");
     }
 
-    function syncClueDoneState(delay = 500) {
+      function syncClueDoneState(delay = 250) {
       [
         ["cn-clue-row", rowClues],
         ["cn-clue-col", colClues],
@@ -2658,7 +3136,7 @@
     function canPaintBaseCell(baseCell, startCell) {
       if (!state.gestureCellsBase) return true;
       if (state.drawValue === null) return Boolean(baseCell);
-      if (state.drawValue === "dot") return baseCell === startCell;
+      if (state.drawValue === "dot") return !baseCell || baseCell === startCell || baseCell === state.activeColor;
       if (!startCell) return !baseCell;
       if (startCell !== "dot" && startCell !== state.drawValue) return baseCell !== "dot";
       return baseCell === startCell;
@@ -2936,14 +3414,14 @@ function quantizedOffset(delta) {
       syncClueDoneState(clueDelay);
     }
 
-    function scheduleLineResolution() {
-      window.clearTimeout(state.resolveTimer);
-      state.resolveTimer = window.setTimeout(() => {
-        state.resolveTimer = null;
-        applyLineResolution(0);
-        update({ resolveLines: false });
-      }, 500);
-    }
+      function scheduleLineResolution() {
+        window.clearTimeout(state.resolveTimer);
+        state.resolveTimer = window.setTimeout(() => {
+          state.resolveTimer = null;
+          applyLineResolution(125);
+          update({ resolveLines: false });
+        }, 125);
+      }
 
     function update(options = {}) {
       const shouldResolveLines = options.resolveLines !== false;
@@ -3206,6 +3684,31 @@ function quantizedOffset(delta) {
       }
     }
 
+    byId("cn-triddler-fill").addEventListener("click", () => {
+      triddlerState.mode = "fill";
+      syncTriddlerButtons();
+      updateTriddlerStatus("Fill mode");
+    });
+
+    byId("cn-triddler-mark").addEventListener("click", () => {
+      triddlerState.mode = "mark";
+      syncTriddlerButtons();
+      updateTriddlerStatus("Mark mode");
+    });
+
+    byId("cn-triddler-check").addEventListener("click", () => {
+      triddlerState.checked = true;
+      syncTriddlerCells();
+      saveTriddler();
+    });
+
+    byId("cn-triddler-reset").addEventListener("click", () => {
+      triddlerState.cells.clear();
+      triddlerState.checked = false;
+      storageRemove("color-nonogram:triddler-test");
+      syncTriddlerCells();
+    });
+
     byId("cn-menu-toggle").addEventListener("click", openMenu);
 
     root.querySelector(".cn-tool--palette").addEventListener("click", togglePalette);
@@ -3271,6 +3774,10 @@ function quantizedOffset(delta) {
     byId("cn-undo").addEventListener("click", undo);
     byId("cn-redo").addEventListener("click", redo);
     byId("cn-back").addEventListener("click", () => {
+      if (currentView === "triddler") {
+        showLibrary();
+        return;
+      }
       if (currentView === "game") {
         showPack(currentPack.id);
         return;
