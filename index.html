@@ -2955,9 +2955,9 @@
     let clueRows = 11;
 
     function configurePuzzleGeometry() {
-      clueCols = puzzle.width >= 30 ? 9 : 8;
-      clueRows = puzzle.height >= 45 ? 12 : 11;
-      const cell = puzzle.width >= 30 ? 9.35 : 11;
+      clueCols = puzzle.width >= 30 ? 9 : 12;
+      clueRows = puzzle.height >= 45 ? 15 : 18;
+      const cell = puzzle.width >= 30 ? 9.35 : 9.8;
       const solvedCell = puzzle.width >= 30 ? 7.33 : 8.85;
       root.style.setProperty("--cn-cols", puzzle.width);
       root.style.setProperty("--cn-rows", puzzle.height);
