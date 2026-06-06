@@ -2022,6 +2022,50 @@
       return grid;
     };
 
+    const makeSolution35 = () => {
+      const width = 35;
+      const height = 50;
+      const grid = Array.from({ length: height }, () => Array(width).fill(null));
+      const paintEllipse = (cx, cy, rx, ry, color) => {
+        for (let row = 0; row < height; row += 1) {
+          for (let col = 0; col < width; col += 1) {
+            if (((col - cx) ** 2) / (rx ** 2) + ((row - cy) ** 2) / (ry ** 2) <= 1) grid[row][col] = color;
+          }
+        }
+      };
+      const paintLine = (row, from, to, color) => {
+        for (let col = from; col <= to; col += 1) grid[row][col] = color;
+      };
+      const paintVLine = (col, from, to, color) => {
+        for (let row = from; row <= to; row += 1) grid[row][col] = color;
+      };
+      const paintRect = (top, left, bottom, right, color) => {
+        for (let row = top; row <= bottom; row += 1) {
+          for (let col = left; col <= right; col += 1) grid[row][col] = color;
+        }
+      };
+
+      paintEllipse(17, 12, 10, 8, "blue");
+      paintEllipse(17, 22, 13, 9, "yellow");
+      paintEllipse(10, 25, 5, 9, "green");
+      paintEllipse(24, 25, 5, 9, "green");
+      paintEllipse(17, 35, 8, 10, "orange");
+      paintRect(15, 16, 42, 19, "black");
+      paintRect(43, 13, 48, 22, "black");
+      paintLine(45, 4, 30, "red");
+      paintLine(47, 7, 27, "blue");
+      paintVLine(4, 8, 18, "yellow");
+      paintVLine(30, 8, 18, "yellow");
+
+      for (let row = 0; row < height; row += 1) {
+        if (!grid[row].some(Boolean)) grid[row][row % 2 ? 32 : 2] = row % 2 ? "red" : "green";
+      }
+      for (let col = 0; col < width; col += 1) {
+        if (!grid.some((row) => row[col])) grid[col % height][col] = col % 2 ? "black" : "blue";
+      }
+      return grid;
+    };
+
     const makeSolutionVariant = () => {
       const grid = makeSolution().map((row) => [...row]);
       grid.forEach((row, rowIndex) => {
@@ -2050,6 +2094,7 @@
         puzzles: [
           { id: "test-25x35-v1", title: "The Pool", width: 25, height: 35, palette: basePalette.slice(0, 6), solution: makeSolution() },
           { id: "test-30x45-v1", title: "Test 30x45", width: 30, height: 45, palette: basePalette, solution: makeSolution30() },
+          { id: "test-35x50-v1", title: "Test 35x50", width: 35, height: 50, palette: basePalette, solution: makeSolution35() },
         ],
       },
     ];
@@ -2082,6 +2127,7 @@
         basePalette,
         makeSolution,
         makeSolution30,
+        makeSolution35,
         makeSolutionVariant,
       };
       const factoryPacks = (window.NONOGRAM_PACK_FACTORIES || []).flatMap((factory) => {
@@ -2954,11 +3000,22 @@
     let clueCols = 8;
     let clueRows = 11;
 
+    function puzzleGeometry(nextPuzzle = puzzle) {
+      if (nextPuzzle.width >= 35 || nextPuzzle.height >= 50) {
+        return { clueCols: 9, clueRows: 17, cell: 8.24, solvedCell: 6.35 };
+      }
+      if (nextPuzzle.width >= 30 || nextPuzzle.height >= 45) {
+        return { clueCols: 9, clueRows: 15, cell: 9.35, solvedCell: 7.33 };
+      }
+      return { clueCols: 12, clueRows: 18, cell: 9.8, solvedCell: 8.85 };
+    }
+
     function configurePuzzleGeometry() {
-      clueCols = puzzle.width >= 30 ? 9 : 12;
-      clueRows = puzzle.height >= 45 ? 15 : 18;
-      const cell = puzzle.width >= 30 ? 9.35 : 9.8;
-      const solvedCell = puzzle.width >= 30 ? 7.33 : 8.85;
+      const geometry = puzzleGeometry();
+      clueCols = geometry.clueCols;
+      clueRows = geometry.clueRows;
+      const cell = geometry.cell;
+      const solvedCell = geometry.solvedCell;
       root.style.setProperty("--cn-cols", puzzle.width);
       root.style.setProperty("--cn-rows", puzzle.height);
       root.style.setProperty("--cn-clue-cols", clueCols);
