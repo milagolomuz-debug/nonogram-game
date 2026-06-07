@@ -2147,7 +2147,7 @@
     }
 
     const extraPacks = loadExtraPacks();
-    const packs = extraPacks.length ? [...extraPacks, ...builtInPacks] : builtInPacks;
+    const packs = extraPacks.length ? extraPacks : builtInPacks;
 
     function readLastPuzzleRef() {
       try {
