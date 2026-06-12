@@ -2149,6 +2149,21 @@
     const extraPacks = loadExtraPacks();
     const packs = extraPacks.length ? extraPacks : builtInPacks;
 
+    const progressResetMarker = "color-nonogram:reset-2026-06-12-extra-puzzles";
+    try {
+      if (window.localStorage.getItem(progressResetMarker) !== "done") {
+        const progressKeys = [];
+        for (let index = 0; index < window.localStorage.length; index += 1) {
+          const key = window.localStorage.key(index);
+          if (key && key.startsWith("color-nonogram:")) progressKeys.push(key);
+        }
+        progressKeys.forEach((key) => window.localStorage.removeItem(key));
+        window.localStorage.setItem(progressResetMarker, "done");
+      }
+    } catch (error) {
+      // Storage can be unavailable in some standalone previews.
+    }
+
     function readLastPuzzleRef() {
       try {
         const data = JSON.parse(window.localStorage.getItem("color-nonogram:last-puzzle") || "null");
