@@ -2214,6 +2214,9 @@
       timerStartedAt: null,
       timerRunning: false,
       timerInterval: null,
+      saveIdleCallback: null,
+      saveIdleCancel: null,
+      lastSavedPayload: "",
       cells: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null)),
       marks: Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false)),
       clueDone: new Set(),
@@ -2286,6 +2289,7 @@
     function resetRuntimeState(options = {}) {
       window.clearTimeout(state.holdTimer);
       window.clearInterval(state.timerInterval);
+      cancelQueuedProgressSave();
       state.activeColor = puzzle.palette[0].id;
       state.isDrawing = false;
       state.moved = false;
@@ -2320,6 +2324,7 @@
       state.timerStartedAt = null;
       state.timerRunning = false;
       state.timerInterval = null;
+      state.lastSavedPayload = "";
       state.cells = emptyCells();
       state.marks = emptyMarks();
       state.solved = false;
@@ -2946,7 +2951,7 @@
 
     function loadPuzzle(pack, nextPuzzle) {
       pauseTimer();
-      saveProgress();
+      saveProgressNow();
       currentPack = pack;
       puzzle = nextPuzzle;
       rememberCurrentPuzzle();
@@ -3789,10 +3794,10 @@ function quantizedOffset(delta) {
       state.timerStartedAt = null;
       window.clearInterval(state.timerInterval);
       renderTimer();
-      saveProgress();
+      saveProgressNow();
     }
 
-    function saveProgress() {
+    function buildProgressPayload() {
       const data = {
         cells: state.cells,
         marks: state.marks,
@@ -3804,8 +3809,44 @@ function quantizedOffset(delta) {
         elapsedMs: getElapsedMs(),
         solved: state.solved || isSolved(),
       };
+      return JSON.stringify(data);
+    }
+
+    function cancelQueuedProgressSave() {
+      if (state.saveIdleCallback === null) return;
+      if (state.saveIdleCancel) state.saveIdleCancel();
+      state.saveIdleCallback = null;
+      state.saveIdleCancel = null;
+    }
+
+    function saveProgressNow() {
+      cancelQueuedProgressSave();
+      const payload = buildProgressPayload();
+      if (payload === state.lastSavedPayload) return;
       rememberCurrentPuzzle();
-      storageSet(storageKey, JSON.stringify(data));
+      storageSet(storageKey, payload);
+      state.lastSavedPayload = payload;
+    }
+
+    function saveProgress() {
+      if (state.saveIdleCallback !== null) return;
+
+      const runSave = () => {
+        state.saveIdleCallback = null;
+        state.saveIdleCancel = null;
+        saveProgressNow();
+      };
+
+      if ("requestIdleCallback" in window) {
+        const id = window.requestIdleCallback(runSave, { timeout: 1200 });
+        state.saveIdleCallback = id;
+        state.saveIdleCancel = () => window.cancelIdleCallback(id);
+        return;
+      }
+
+      const id = window.setTimeout(runSave, 250);
+      state.saveIdleCallback = id;
+      state.saveIdleCancel = () => window.clearTimeout(id);
     }
 
     function loadProgress() {
@@ -4178,6 +4219,11 @@ function quantizedOffset(delta) {
       state.lastCell = null;
       state.pointerId = null;
       if (shouldResolveLines) scheduleLineResolution();
+    });
+
+    window.addEventListener("pagehide", saveProgressNow);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") saveProgressNow();
     });
 
     loadProgress();
