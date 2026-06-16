@@ -2228,7 +2228,6 @@
       elapsedMs: 0,
       timerStartedAt: null,
       timerRunning: false,
-      timerInterval: null,
       saveIdleCallback: null,
       saveIdleCancel: null,
       lastSavedPayload: "",
@@ -2293,17 +2292,20 @@
     let selectedPackForSettings = currentPack;
     let selectedPackIsArchived = false;
 
+    function emptyGrid(value) {
+      return Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(value));
+    }
+
     function emptyCells() {
-      return Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
+      return emptyGrid(null);
     }
 
     function emptyMarks() {
-      return Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
+      return emptyGrid(false);
     }
 
     function resetRuntimeState(options = {}) {
       window.clearTimeout(state.holdTimer);
-      window.clearInterval(state.timerInterval);
       cancelQueuedProgressSave();
       state.activeColor = puzzle.palette[0].id;
       state.isDrawing = false;
@@ -2330,15 +2332,16 @@
       state.changedDuringGesture = false;
       state.lastCell = null;
       state.showErrors = false;
-      state.undoStack = [];
-      state.redoStack = [];
+      if (options.resetHistory !== false) {
+        state.undoStack = [];
+        state.redoStack = [];
+      }
       state.pointerId = null;
       state.currentRow = null;
       state.currentCol = null;
       state.elapsedMs = options.keepElapsed ? state.elapsedMs : 0;
       state.timerStartedAt = null;
       state.timerRunning = false;
-      state.timerInterval = null;
       state.lastSavedPayload = "";
       state.cells = emptyCells();
       state.marks = emptyMarks();
@@ -3703,6 +3706,7 @@ function quantizedOffset(delta) {
     function update(options = {}) {
       const shouldResolveLines = options.resolveLines !== false;
       if (shouldResolveLines) applyLineResolution(options.clueDelay ?? 0);
+      const wasSolved = state.solved;
       state.solved = isSolved();
       if (state.solved) pauseTimer();
       renderAllClues();
@@ -3710,7 +3714,8 @@ function quantizedOffset(delta) {
       renderCross();
       renderModeButton();
       renderSolvedState();
-      renderPalette();
+      if (state.solved !== wasSolved) renderPalette();
+      else renderPaletteButton();
 
       saveProgress();
     }
@@ -3795,8 +3800,6 @@ function quantizedOffset(delta) {
       if (state.timerRunning || state.solved) return;
       state.timerRunning = true;
       state.timerStartedAt = Date.now();
-      window.clearInterval(state.timerInterval);
-      state.timerInterval = window.setInterval(saveProgress, 10000);
     }
 
     function pauseTimer() {
@@ -3807,7 +3810,6 @@ function quantizedOffset(delta) {
       state.elapsedMs = getElapsedMs();
       state.timerRunning = false;
       state.timerStartedAt = null;
-      window.clearInterval(state.timerInterval);
       renderTimer();
       saveProgressNow();
     }
@@ -3822,7 +3824,7 @@ function quantizedOffset(delta) {
         currentRow: state.currentRow,
         currentCol: state.currentCol,
         elapsedMs: getElapsedMs(),
-        solved: state.solved || isSolved(),
+        solved: state.solved,
       };
       return JSON.stringify(data);
     }
@@ -3893,36 +3895,7 @@ function quantizedOffset(delta) {
 
     function resetPuzzle() {
       pushHistory();
-      window.clearInterval(state.timerInterval);
-      state.cells = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(null));
-      state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
-      state.activeColor = puzzle.palette[0].id;
-      state.paletteButtonColor = state.activeColor;
-      state.isDrawing = false;
-      state.moved = false;
-      state.armedValue = null;
-      state.isPaintingDrag = false;
-      state.drawStart = null;
-      state.drawAxis = null;
-      state.gestureCellsBase = null;
-      state.gestureMarksBase = null;
-      state.gestureAxis = null;
-      state.drawValue = null;
-      state.markMode = false;
-      state.markValue = true;
-      state.holdTimer = null;
-      window.clearTimeout(state.resolveTimer);
-      state.resolveTimer = null;
-      state.lastCell = null;
-      state.showErrors = false;
-      state.currentRow = null;
-      state.currentCol = null;
-      state.elapsedMs = 0;
-      state.timerStartedAt = null;
-      state.timerRunning = false;
-      state.timerInterval = null;
-      state.solved = false;
-      clearClueDoneState();
+      resetRuntimeState({ resetHistory: false });
       storageRemove(storageKey);
       renderPalette();
       update();
@@ -4045,7 +4018,7 @@ function quantizedOffset(delta) {
     });
 
     byId("cn-clear-marks").addEventListener("click", () => {
-      state.marks = Array.from({ length: puzzle.height }, () => Array(puzzle.width).fill(false));
+      state.marks = emptyMarks();
       byId("cn-mark-backdrop").classList.remove("cn-open");
       update();
     });
